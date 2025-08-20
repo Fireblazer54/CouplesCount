@@ -7,19 +7,33 @@ struct CountdownCardView: View {
     let daysLeft: Int
     let dateText: String
     let archived: Bool
+    let backgroundStyle: String
+    let colorHex: String?
+    let imageData: Data?
 
     private let corner: CGFloat = 22
     private let height: CGFloat = 120
 
     var body: some View {
         ZStack(alignment: .leading) {
-            // Themed background (simple, sleek)
+            // Background color or image
             RoundedRectangle(cornerRadius: corner, style: .continuous)
-                .fill(LinearGradient(
-                    colors: [accent, accent.opacity(0.75)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                ))
-                .overlay(                         // tiny inner highlight
+                .fill(backgroundFill)
+                .overlay(
+                    Group {
+                        if let data = imageData,
+                           backgroundStyle == "image",
+                           let ui = UIImage(data: data) {
+                            Image(uiImage: ui)
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                                .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
+                        }
+                    }
+                )
+                .overlay(
+                    // tiny inner highlight
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
                         .stroke(.white.opacity(0.06), lineWidth: 1)
                 )
@@ -50,4 +64,21 @@ struct CountdownCardView: View {
     }
 
     private var accent: Color { theme.theme.accent }
+
+    private var backgroundFill: some ShapeStyle {
+        if backgroundStyle == "color",
+           let hex = colorHex,
+           let c = Color(hex: hex) {
+            return AnyShapeStyle(
+                LinearGradient(colors: [c, c.opacity(0.75)],
+                               startPoint: .topLeading,
+                               endPoint: .bottomTrailing)
+            )
+        }
+        return AnyShapeStyle(
+            LinearGradient(colors: [accent, accent.opacity(0.75)],
+                           startPoint: .topLeading,
+                           endPoint: .bottomTrailing)
+        )
+    }
 }
