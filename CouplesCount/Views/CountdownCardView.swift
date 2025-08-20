@@ -28,10 +28,10 @@ struct CountdownCardView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                         }
                     }
                 )
+                .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     // tiny inner highlight
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
