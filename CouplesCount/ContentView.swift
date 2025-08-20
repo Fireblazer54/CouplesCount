@@ -67,7 +67,10 @@ struct ContentView: View {
                                             title: item.title,
                                             daysLeft: days,
                                             dateText: dateText,
-                                            archived: item.isArchived
+                                            archived: item.isArchived,
+                                            backgroundStyle: item.backgroundStyle,
+                                            colorHex: item.backgroundColorHex,
+                                            imageData: item.backgroundImageData
                                         )
                                         .environmentObject(theme)
                                     }
