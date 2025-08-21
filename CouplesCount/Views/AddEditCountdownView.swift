@@ -67,9 +67,8 @@ struct AddEditCountdownView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    VStack(spacing: 18) {
+            ScrollView {
+                VStack(spacing: 18) {
 
                     // MARK: Swipable widget preview (square → rectangular)
                     TabView {
@@ -269,18 +268,6 @@ struct AddEditCountdownView: View {
                     .padding(.vertical, 8)
                     .padding(.trailing, 2)
             }
-
-                Button(action: save) {
-                    Image(systemName: "checkmark")
-                        .font(.title2)
-                        .padding(18)
-                        .background(Circle().fill(theme.theme.accent))
-                        .foregroundStyle(.white)
-                        .shadow(radius: 4, y: 2)
-                }
-                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .padding(24)
-            }
             .background(theme.theme.background.ignoresSafeArea())
             .tint(theme.theme.accent)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
@@ -288,6 +275,12 @@ struct AddEditCountdownView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: save) {
+                        Image(systemName: "checkmark")
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .sheet(isPresented: $showPhotoPicker) { PhotoPicker(imageData: $imageData) }
