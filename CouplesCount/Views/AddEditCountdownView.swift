@@ -58,6 +58,11 @@ struct AddEditCountdownView: View {
     @State private var showValidation = false
     @State private var saveError: String?
 
+    // Sharing
+    @State private var isShared: Bool = false
+    @State private var selectedFriends: Set<UUID> = []
+    @Query(sort: \Friend.name) private var friends: [Friend]
+
     init(existing: Countdown? = nil) { self.existing = existing }
 
     var body: some View {
@@ -189,6 +194,21 @@ struct AddEditCountdownView: View {
                             }
                         }
                     }
+                    // MARK: Sharing
+                    SettingsCard {
+                        Toggle("Shared countdown", isOn: $isShared)
+                        if isShared {
+                            ForEach(friends) { friend in
+                                let isSelected = Binding<Bool>(
+                                    get: { selectedFriends.contains(friend.id) },
+                                    set: { newVal in
+                                        if newVal { selectedFriends.insert(friend.id) } else { selectedFriends.remove(friend.id) }
+                                    }
+                                )
+                                Toggle(friend.name, isOn: isSelected)
+                            }
+                        }
+                    }
 
                     // MARK: Reminder
                     SettingsCard {
@@ -270,6 +290,8 @@ struct AddEditCountdownView: View {
                     colorHex = existing.backgroundColorHex ?? colorHex
                     imageData = existing.backgroundImageData
                     preset = Self.preset(from: existing.reminderOffsetMinutes)
+                    isShared = existing.isShared
+                    selectedFriends = Set(existing.sharedWith.map { $0.id })
                 } else {
                     NotificationManager.requestAuthorizationIfNeeded()
                 }
@@ -300,6 +322,8 @@ struct AddEditCountdownView: View {
                 existing.backgroundColorHex = colorHex
                 existing.backgroundImageData = imageData
                 existing.reminderOffsetMinutes = preset.minutes
+                existing.isShared = isShared
+                existing.sharedWith = friends.filter { selectedFriends.contains($0.id) }
                 NotificationManager.cancelAll(for: existing.id)
                 if preset.minutes != nil { NotificationManager.scheduleReminder(for: existing) }
             } else {
@@ -310,7 +334,9 @@ struct AddEditCountdownView: View {
                     backgroundStyle: backgroundStyle,
                     backgroundColorHex: colorHex,
                     backgroundImageData: imageData,
-                    reminderOffsetMinutes: preset.minutes
+                    reminderOffsetMinutes: preset.minutes,
+                    isShared: isShared,
+                    sharedWith: friends.filter { selectedFriends.contains($0.id) }
                 )
                 modelContext.insert(cd)
                 if preset.minutes != nil { NotificationManager.scheduleReminder(for: cd) }
