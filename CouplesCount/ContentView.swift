@@ -32,6 +32,7 @@ struct CountdownListView: View {
     @State private var editing: Countdown? = nil
     @State private var showSettings = false
     @State private var deleteConfirm: Countdown? = nil
+    @State private var showPremium = false
 
     var body: some View {
         NavigationStack {
@@ -41,7 +42,11 @@ struct CountdownListView: View {
                 VStack(spacing: 0) {
                     // Top bar
                     HStack {
-                        Button { /* premium placeholder */ } label: {
+                        Button {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                showPremium = true
+                            }
+                        } label: {
                             Image(systemName: "crown.fill").font(.title2)
                         }
                         Spacer()
@@ -140,6 +145,14 @@ struct CountdownListView: View {
                     .padding(.bottom, 24)
                 }
                 .frame(maxWidth: .infinity) // centers horizontally
+            }
+            .overlay(alignment: .topLeading) {
+                if showPremium {
+                    PremiumPromoView(show: $showPremium)
+                        .environmentObject(theme)
+                        .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
+                        .zIndex(1)
+                }
             }
             .sheet(isPresented: $showAddEdit) {
                 AddEditCountdownView(existing: editing)

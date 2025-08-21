@@ -222,8 +222,11 @@ struct ArchiveView: View {
                 }
             }
             .navigationTitle("Archive")
+            .navigationBarBackButtonHidden(true)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Back") { dismiss() }
+                }
             }
             .confirmationDialog(
                 "Delete Countdown?",
