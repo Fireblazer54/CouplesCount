@@ -1,10 +1,14 @@
 import SwiftUI
+import StoreKit
+import UIKit
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var theme: ThemeManager
 
     private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
+    private let supportEmail = "support@couplescount.app"
 
     var body: some View {
         NavigationStack {
@@ -92,11 +96,16 @@ struct SettingsView: View {
                     SectionHeader(text: "Support")
                     SettingsCard {
                         buttonRow(icon: "envelope.fill", title: "Contact Support") {
-                            // TODO: open mailto support
+                            if let url = URL(string: "mailto:\(supportEmail)") {
+                                openURL(url)
+                            }
                         }
                         Divider().opacity(0.1)
                         buttonRow(icon: "star.fill", title: "Rate CouplesCount") {
-                            // TODO: open review URL
+                            if let scene = UIApplication.shared.connectedScenes
+                                .first as? UIWindowScene {
+                                SKStoreReviewController.requestReview(in: scene)
+                            }
                         }
                     }
 
