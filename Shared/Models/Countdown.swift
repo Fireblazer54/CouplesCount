@@ -20,6 +20,10 @@ final class Countdown {
     // Reminder offset in minutes before target (nil = no reminder)
     var reminderOffsetMinutes: Int?
 
+    // Sharing
+    var isShared: Bool
+    @Relationship(deleteRule: .cascade) var sharedWith: [Friend]
+
     init(id: UUID = UUID(),
          title: String,
          targetDate: Date,
@@ -28,7 +32,9 @@ final class Countdown {
          backgroundStyle: String = "color",
          backgroundColorHex: String? = "#0A84FF",
          backgroundImageData: Data? = nil,
-         reminderOffsetMinutes: Int? = nil) {
+         reminderOffsetMinutes: Int? = nil,
+         isShared: Bool = false,
+         sharedWith: [Friend] = []) {
         self.id = id
         self.title = title
         self.targetDate = targetDate
@@ -38,5 +44,7 @@ final class Countdown {
         self.backgroundColorHex = backgroundColorHex
         self.backgroundImageData = backgroundImageData
         self.reminderOffsetMinutes = reminderOffsetMinutes
+        self.isShared = isShared
+        self.sharedWith = sharedWith
     }
 }

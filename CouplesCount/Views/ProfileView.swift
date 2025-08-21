@@ -3,7 +3,9 @@ import SwiftData
 
 struct ProfileView: View {
     @EnvironmentObject private var theme: ThemeManager
-    @Query(sort: \Countdown.targetDate, order: .forward)
+    @Environment(\.modelContext) private var modelContext
+    @Query(filter: #Predicate<Countdown> { $0.isShared && !$0.isArchived },
+           sort: \Countdown.targetDate, order: .forward)
     private var shared: [Countdown]
 
     var body: some View {
@@ -44,6 +46,12 @@ struct ProfileView: View {
                     .padding(.horizontal)
                     .padding(.top, 4)
 
+                Button("Add Friend") {
+                    // Placeholder for friend adding flow
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 4)
+
                 // Grid of shared countdowns
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
                     ForEach(shared) { item in
@@ -56,7 +64,8 @@ struct ProfileView: View {
                             archived: item.isArchived,
                             backgroundStyle: item.backgroundStyle,
                             colorHex: item.backgroundColorHex,
-                            imageData: item.backgroundImageData
+                            imageData: item.backgroundImageData,
+                            shared: item.isShared
                         )
                         .environmentObject(theme)
                     }
