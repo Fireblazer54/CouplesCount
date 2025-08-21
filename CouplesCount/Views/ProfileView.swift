@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct ProfileView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -8,14 +9,53 @@ struct ProfileView: View {
            sort: \Countdown.targetDate, order: .forward)
     private var shared: [Countdown]
 
+    @AppStorage("profileImageData") private var profileImageData: Data?
+    @State private var showPhotoPicker = false
+    @State private var showCameraPicker = false
+    @State private var showPhotoOptions = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
                 // Header similar to Instagram
                 HStack {
-                    Circle()
-                        .fill(theme.theme.accent)
+                    Button {
+                        showPhotoOptions = true
+                    } label: {
+                        Group {
+                            if let data = profileImageData,
+                               let img = UIImage(data: data) {
+                                Image(uiImage: img)
+                                    .resizable()
+                                    .scaledToFill()
+                            } else {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundColor(.gray)
+                                    .padding(4)
+                            }
+                        }
                         .frame(width: 80, height: 80)
+                        .background(Color.gray.opacity(profileImageData == nil ? 0.2 : 0))
+                        .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .confirmationDialog("Profile Photo", isPresented: $showPhotoOptions) {
+                        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                            Button("Take Photo") { showCameraPicker = true }
+                        }
+                        Button("Choose Photo") { showPhotoPicker = true }
+                        if profileImageData != nil {
+                            Button("Remove Photo", role: .destructive) { profileImageData = nil }
+                        }
+                    }
+                    .sheet(isPresented: $showPhotoPicker) {
+                        PhotoPicker(imageData: $profileImageData)
+                    }
+                    .sheet(isPresented: $showCameraPicker) {
+                        CameraPicker(imageData: $profileImageData)
+                    }
                     Spacer()
                     VStack {
                         Text("\(shared.count)")
