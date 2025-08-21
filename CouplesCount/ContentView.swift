@@ -113,7 +113,7 @@ struct CountdownListView: View {
                                               .background(Circle().fill(Color.red))
                                               .foregroundStyle(.white)
                                       }
-                                      .buttonStyle(.plain)
+                                      .tint(.clear)
                                   }
                                   .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                       Button {
@@ -128,7 +128,7 @@ struct CountdownListView: View {
                                               .background(Circle().fill(Color.blue))
                                               .foregroundStyle(.white)
                                       }
-                                      .buttonStyle(.plain)
+                                      .tint(.clear)
                                   }
                             }
                         }
