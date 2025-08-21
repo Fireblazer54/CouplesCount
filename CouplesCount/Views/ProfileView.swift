@@ -109,21 +109,19 @@ struct ProfileView: View {
                             shared: item.isShared
                         )
                         .environmentObject(theme)
-                        .swipeActions(edge: .trailing) {
+                        .contextMenu {
                             Button(role: .destructive) {
                                 deleteConfirm = item
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
-                        }
-                        .swipeActions(edge: .leading) {
+
                             Button {
                                 item.isArchived = true
                                 try? modelContext.save()
                             } label: {
                                 Label("Archive", systemImage: "archivebox")
                             }
-                            .tint(.blue)
                         }
                     }
                 }
