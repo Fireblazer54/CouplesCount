@@ -99,7 +99,7 @@ struct CountdownListView: View {
                                     showAddEdit = true
                                 }
                                 .listRowSeparator(.hidden)
-                                .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         deleteConfirm = item
