@@ -10,8 +10,16 @@ struct FeedbackFormView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                Text("How can we improve?")
+                Text("I'm a solo dev and every review means a lot. I read every suggestion, so please let me know how I can improve.")
                     .font(.headline)
+                    .multilineTextAlignment(.center)
+
+                TextEditor(text: $message)
+                    .frame(height: 120)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(.secondary.opacity(0.2))
+                    )
 
                 HStack {
                     ForEach(1...5, id: \.self) { index in
@@ -23,19 +31,13 @@ struct FeedbackFormView: View {
                 }
                 .padding(.vertical)
 
-                TextEditor(text: $message)
-                    .frame(height: 120)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.secondary.opacity(0.2))
-                    )
-
                 Button("Submit") {
                     // TODO: Send feedback to backend
                     print("Feedback rating: \(rating), message: \(message)")
                     dismiss()
                 }
                 .frame(maxWidth: .infinity)
+                .controlSize(.large)
                 .buttonStyle(.borderedProminent)
             }
             .padding()
