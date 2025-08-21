@@ -31,7 +31,6 @@ struct CountdownListView: View {
     @State private var showAddEdit = false
     @State private var editing: Countdown? = nil
     @State private var showSettings = false
-    @State private var deleteConfirm: Countdown? = nil
     @State private var showPremium = false
 
     var body: some View {
@@ -101,25 +100,36 @@ struct CountdownListView: View {
                                   .listRowSeparator(.hidden)
                                   .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                   .listRowBackground(theme.theme.background)
-                                  .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                      Button(role: .destructive) {
-                                          deleteConfirm = item
+                                  .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                      Button {
+                                          withAnimation(.easeInOut) {
+                                              modelContext.delete(item)
+                                              try? modelContext.save()
+                                          }
                                       } label: {
-                                          Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                                .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                    Button {
-                                        withAnimation(.easeInOut) {
-                                            item.isArchived.toggle()
-                                            try? modelContext.save()
-                                        }
-                                    } label: {
-                                        Label(item.isArchived ? "Unarchive" : "Archive",
-                                              systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
-                                    }
-                                    .tint(.blue)
-                                }
+                                          Text("Delete")
+                                              .font(.caption)
+                                              .padding(10)
+                                              .background(Circle().fill(Color.red))
+                                              .foregroundColor(.white)
+                                      }
+                                      .buttonStyle(.plain)
+                                  }
+                                  .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                      Button {
+                                          withAnimation(.easeInOut) {
+                                              item.isArchived.toggle()
+                                              try? modelContext.save()
+                                          }
+                                      } label: {
+                                          Text(item.isArchived ? "Unarchive" : "Archive")
+                                              .font(.caption)
+                                              .padding(10)
+                                              .background(Circle().fill(Color.blue))
+                                              .foregroundColor(.white)
+                                      }
+                                      .buttonStyle(.plain)
+                                  }
                             }
                         }
                           .listStyle(.plain)
@@ -162,25 +172,6 @@ struct CountdownListView: View {
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView().environmentObject(theme)
-            }
-            .confirmationDialog(
-                "Delete Countdown?",
-                isPresented: Binding(
-                    get: { deleteConfirm != nil },
-                    set: { if !$0 { deleteConfirm = nil } }
-                ),
-                titleVisibility: .visible
-            ) {
-                Button("Delete", role: .destructive) {
-                    if let item = deleteConfirm {
-                        withAnimation(.easeInOut) {
-                            modelContext.delete(item)
-                            try? modelContext.save()
-                        }
-                    }
-                    deleteConfirm = nil
-                }
-                Button("Cancel", role: .cancel) { deleteConfirm = nil }
             }
         }
         .tint(theme.theme.accent)
