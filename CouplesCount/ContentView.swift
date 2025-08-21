@@ -89,7 +89,8 @@ struct CountdownListView: View {
                                             archived: item.isArchived,
                                             backgroundStyle: item.backgroundStyle,
                                             colorHex: item.backgroundColorHex,
-                                            imageData: item.backgroundImageData
+                                            imageData: item.backgroundImageData,
+                                            shared: item.isShared
                                         )
                                         .environmentObject(theme)
                                     }
