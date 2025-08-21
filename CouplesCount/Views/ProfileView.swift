@@ -13,6 +13,7 @@ struct ProfileView: View {
     @State private var showPhotoPicker = false
     @State private var showCameraPicker = false
     @State private var showPhotoOptions = false
+    @State private var deleteConfirm: Countdown? = nil
 
     var body: some View {
         ScrollView {
@@ -108,6 +109,22 @@ struct ProfileView: View {
                             shared: item.isShared
                         )
                         .environmentObject(theme)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                deleteConfirm = item
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                item.isArchived = true
+                                try? modelContext.save()
+                            } label: {
+                                Label("Archive", systemImage: "archivebox")
+                            }
+                            .tint(.blue)
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -115,5 +132,22 @@ struct ProfileView: View {
             }
         }
         .background(theme.theme.background.ignoresSafeArea())
+        .confirmationDialog(
+            "Delete Countdown?",
+            isPresented: Binding(
+                get: { deleteConfirm != nil },
+                set: { if !$0 { deleteConfirm = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let item = deleteConfirm {
+                    modelContext.delete(item)
+                    try? modelContext.save()
+                }
+                deleteConfirm = nil
+            }
+            Button("Cancel", role: .cancel) { deleteConfirm = nil }
+        }
     }
 }
