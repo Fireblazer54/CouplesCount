@@ -9,11 +9,9 @@ struct CouplesCountApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(theme)
-                .modelContainer(for: Countdown.self)
                 // Use a custom container so the widget and app share data
                 .modelContainer(Persistence.container)
                 .onAppear {
-                    NotificationManager.requestAuthorizationIfNeeded()   // ← add
                     NotificationManager.requestAuthorizationIfNeeded()
                 }
         }

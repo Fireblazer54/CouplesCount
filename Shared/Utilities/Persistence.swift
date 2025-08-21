@@ -18,7 +18,7 @@ enum Persistence {
 
         let config = ModelConfiguration(url: url)
         do {
-            let schema = Schema([Countdown.self])
+            let schema = Schema([Countdown.self, Friend.self])
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
             fatalError("ModelContainer error: \(error)")
