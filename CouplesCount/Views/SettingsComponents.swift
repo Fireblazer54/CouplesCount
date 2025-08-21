@@ -88,37 +88,3 @@ struct ThemeSwatch: View {
     }
 }
 
-// A tiny live preview of a countdown card inside Settings
-struct MiniCountdownPreview: View {
-    let title: String
-    let days: Int
-    let dateText: String
-
-    var body: some View {
-        HStack(spacing: 10) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(.tint.opacity(0.18))
-                Text("\(days)")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-            }
-            .frame(width: 56, height: 44)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .lineLimit(1)
-                Text(dateText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-        }
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.background)
-                .shadow(radius: 2, y: 1)
-        )
-    }
-}

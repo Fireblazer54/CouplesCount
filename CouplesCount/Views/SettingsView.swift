@@ -9,26 +9,15 @@ struct SettingsView: View {
 
     private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
     private let supportEmail = "support@couplescount.app"
+    @State private var activeAlert: ActiveAlert?
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                // Precompute any formatted values to keep SwiftUI type-checking fast
-                let previewDateText = Date.now.formatted(date: .abbreviated, time: .shortened)
-
                 VStack(spacing: 18) {
                     // APPEARANCE
                     SectionHeader(text: "Appearance")
                     SettingsCard {
-                        // Live preview responds instantly to theme
-                        MiniCountdownPreview(
-                            title: "Dinner Date",
-                            days: 12,
-                            dateText: previewDateText
-                        )
-                        .tint(theme.theme.accent)
-
-                        // Swatches grid
                         LazyVGrid(
                             columns: [GridItem(.flexible(), spacing: 12),
                                       GridItem(.flexible(), spacing: 12)],
@@ -45,51 +34,17 @@ struct SettingsView: View {
                     }
 
                     // NOTIFICATIONS
-                    SectionHeader(text: "Notifications")
                     SettingsCard {
-                        NavigationLink {
-                            Text("Configure reminders (coming soon)")
-                                .navigationTitle("Reminders")
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "bell.badge.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 30, height: 30)
-                                    .background(RoundedRectangle(cornerRadius: 8).fill(.tint))
-                                Text("Reminders")
-                                    .font(.body)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(Color.secondary)
-                            }
+                        buttonRow(icon: "bell.badge.fill", title: "Reminders") {
+                            activeAlert = .reminders
                         }
-                        .buttonStyle(.plain)
                     }
 
                     // ARCHIVE
-                    SectionHeader(text: "Archive")
                     SettingsCard {
-                        NavigationLink {
-                            Text("Archived countdowns (coming soon)")
-                                .navigationTitle("Archive")
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "archivebox.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 30, height: 30)
-                                    .background(RoundedRectangle(cornerRadius: 8).fill(.tint))
-                                Text("Manage Archive")
-                                    .font(.body)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(Color.secondary)
-                            }
+                        buttonRow(icon: "archivebox.fill", title: "Manage Archive") {
+                            activeAlert = .archive
                         }
-                        .buttonStyle(.plain)
                     }
 
                     // SUPPORT
@@ -135,6 +90,22 @@ struct SettingsView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
             }
         }
+        .alert(item: $activeAlert) { alert in
+            switch alert {
+            case .reminders:
+                return Alert(
+                    title: Text("Coming Soon"),
+                    message: Text("Configure reminders coming soon."),
+                    dismissButton: .default(Text("OK"))
+                )
+            case .archive:
+                return Alert(
+                    title: Text("Coming Soon"),
+                    message: Text("Archived countdowns coming soon."),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        }
     }
 
     // MARK: - Row helpers
@@ -150,12 +121,15 @@ struct SettingsView: View {
                     .font(.title3)
                     .foregroundStyle(.white)
                     .frame(width: 30, height: 30)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(.tint))
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(theme.theme.accent)
+                    )
                 Text(title).font(.body)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(theme.theme.accent)
             }
         }
         .buttonStyle(.plain)
@@ -171,4 +145,10 @@ struct SettingsView: View {
         }
         .font(.body)
     }
+}
+
+private enum ActiveAlert: Identifiable {
+    case reminders, archive
+
+    var id: Int { hashValue }
 }
