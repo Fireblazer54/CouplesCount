@@ -78,38 +78,34 @@ struct CountdownListView: View {
                                     )
                                     let dateText = DateUtils.readableDate.string(from: item.targetDate)
 
-                                    Button {
+                                    CountdownCardView(
+                                        title: item.title,
+                                        daysLeft: days,
+                                        dateText: dateText,
+                                        archived: item.isArchived,
+                                        backgroundStyle: item.backgroundStyle,
+                                        colorHex: item.backgroundColorHex,
+                                        imageData: item.backgroundImageData,
+                                        shared: item.isShared
+                                    )
+                                    .environmentObject(theme)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
                                         editing = item
                                         showAddEdit = true
-                                    } label: {
-                                        CountdownCardView(
-                                            title: item.title,
-                                            daysLeft: days,
-                                            dateText: dateText,
-                                            archived: item.isArchived,
-                                            backgroundStyle: item.backgroundStyle,
-                                            colorHex: item.backgroundColorHex,
-                                            imageData: item.backgroundImageData,
-                                            shared: item.isShared
-                                        )
-                                        .environmentObject(theme)
                                     }
-                                    .buttonStyle(.plain)
-                                    .swipeActions(edge: .trailing) {
-                                        Button(role: .destructive) {
-                                            deleteConfirm = item
-                                        } label: { Label("Delete", systemImage: "trash") }
-                                    }
-                                    .swipeActions(edge: .leading) {
-                                        Button {
-                                            item.isArchived.toggle()
-                                            try? modelContext.save()
-                                        } label: {
-                                            Label(item.isArchived ? "Unarchive" : "Archive",
-                                                  systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
-                                        }
-                                        .tint(.blue)
-                                    }
+                                    .gesture(
+                                        DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                                            .onEnded { value in
+                                                guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                                                if value.translation.width < -80 {
+                                                    deleteConfirm = item
+                                                } else if value.translation.width > 80 {
+                                                    item.isArchived.toggle()
+                                                    try? modelContext.save()
+                                                }
+                                            }
+                                    )
                                 }
                                 .padding(.horizontal) // nice side gutters
                                 .padding(.top, 12)

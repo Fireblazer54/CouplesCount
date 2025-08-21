@@ -13,6 +13,7 @@ struct ProfileView: View {
     @State private var showPhotoPicker = false
     @State private var showCameraPicker = false
     @State private var showPhotoOptions = false
+    @State private var deleteConfirm: Countdown? = nil
 
     var body: some View {
         ScrollView {
@@ -108,6 +109,18 @@ struct ProfileView: View {
                             shared: item.isShared
                         )
                         .environmentObject(theme)
+                        .gesture(
+                            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                                .onEnded { value in
+                                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                                    if value.translation.width < -80 {
+                                        deleteConfirm = item
+                                    } else if value.translation.width > 80 {
+                                        item.isArchived = true
+                                        try? modelContext.save()
+                                    }
+                                }
+                        )
                     }
                 }
                 .padding(.horizontal)
@@ -115,5 +128,22 @@ struct ProfileView: View {
             }
         }
         .background(theme.theme.background.ignoresSafeArea())
+        .confirmationDialog(
+            "Delete Countdown?",
+            isPresented: Binding(
+                get: { deleteConfirm != nil },
+                set: { if !$0 { deleteConfirm = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let item = deleteConfirm {
+                    modelContext.delete(item)
+                    try? modelContext.save()
+                }
+                deleteConfirm = nil
+            }
+            Button("Cancel", role: .cancel) { deleteConfirm = nil }
+        }
     }
 }
