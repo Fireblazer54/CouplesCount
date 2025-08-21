@@ -179,8 +179,6 @@ struct ArchiveView: View {
            sort: \Countdown.targetDate, order: .forward)
     private var items: [Countdown]
 
-    @State private var deleteConfirm: Countdown? = nil
-
     var body: some View {
         NavigationStack {
             ZStack {
@@ -211,21 +209,31 @@ struct ArchiveView: View {
                             .environmentObject(theme)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    deleteConfirm = item
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    modelContext.delete(item)
+                                    try? modelContext.save()
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Text("Delete")
+                                        .font(.caption)
+                                        .padding(10)
+                                        .background(Circle().fill(Color.red))
+                                        .foregroundColor(.white)
                                 }
+                                .buttonStyle(.plain)
                             }
-                            .swipeActions(edge: .leading) {
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 Button {
                                     item.isArchived = false
                                     try? modelContext.save()
                                 } label: {
-                                    Label("Unarchive", systemImage: "tray.and.arrow.up")
+                                    Text("Unarchive")
+                                        .font(.caption)
+                                        .padding(10)
+                                        .background(Circle().fill(Color.blue))
+                                        .foregroundColor(.white)
                                 }
-                                .tint(.blue)
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -239,22 +247,6 @@ struct ArchiveView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") { dismiss() }
                 }
-            }
-            .confirmationDialog(
-                "Delete Countdown?",
-                isPresented: Binding(
-                    get: { deleteConfirm != nil },
-                    set: { if !$0 { deleteConfirm = nil } }
-                )
-            ) {
-                Button("Delete", role: .destructive) {
-                    if let item = deleteConfirm {
-                        modelContext.delete(item)
-                        try? modelContext.save()
-                    }
-                    deleteConfirm = nil
-                }
-                Button("Cancel", role: .cancel) { deleteConfirm = nil }
             }
         }
         .tint(theme.theme.accent)

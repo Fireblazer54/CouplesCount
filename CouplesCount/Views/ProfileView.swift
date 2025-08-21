@@ -13,7 +13,6 @@ struct ProfileView: View {
     @State private var showPhotoPicker = false
     @State private var showCameraPicker = false
     @State private var showPhotoOptions = false
-    @State private var deleteConfirm: Countdown? = nil
 
     var body: some View {
         ScrollView {
@@ -111,10 +110,12 @@ struct ProfileView: View {
                         .environmentObject(theme)
                         .contextMenu {
                             Button(role: .destructive) {
-                                deleteConfirm = item
+                                modelContext.delete(item)
+                                try? modelContext.save()
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
+                            .tint(.red)
 
                             Button {
                                 item.isArchived = true
@@ -130,22 +131,5 @@ struct ProfileView: View {
             }
         }
         .background(theme.theme.background.ignoresSafeArea())
-        .confirmationDialog(
-            "Delete Countdown?",
-            isPresented: Binding(
-                get: { deleteConfirm != nil },
-                set: { if !$0 { deleteConfirm = nil } }
-            ),
-            titleVisibility: .visible
-        ) {
-            Button("Delete", role: .destructive) {
-                if let item = deleteConfirm {
-                    modelContext.delete(item)
-                    try? modelContext.save()
-                }
-                deleteConfirm = nil
-            }
-            Button("Cancel", role: .cancel) { deleteConfirm = nil }
-        }
     }
 }
