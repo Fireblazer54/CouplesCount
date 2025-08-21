@@ -67,8 +67,9 @@ struct AddEditCountdownView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
+            ZStack(alignment: .bottomTrailing) {
+                ScrollView {
+                    VStack(spacing: 18) {
 
                     // MARK: Swipable widget preview (square → rectangular)
                     TabView {
@@ -235,6 +236,17 @@ struct AddEditCountdownView: View {
 
                     if let existing {
                         SettingsCard {
+                            Button {
+                                existing.isArchived.toggle()
+                                try? modelContext.save()
+                                dismiss()
+                            } label: {
+                                Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
+                                      systemImage: existing.isArchived ? "tray.and.arrow.up" : "archivebox")
+                            }
+                        }
+
+                        SettingsCard {
                             Button(role: .destructive) {
                                 NotificationManager.cancelAll(for: existing.id)
                                 modelContext.delete(existing)
@@ -245,24 +257,29 @@ struct AddEditCountdownView: View {
                             }
                         }
                     }
-
-                    // MARK: Big Save at bottom
-                    SettingsCard {
-                        Button(action: save) {
-                            Label("Save", systemImage: "checkmark.circle.fill")
-                                .font(.headline)
-                                .padding(.vertical, 12)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(theme.theme.accent)
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-                    .padding(.horizontal, 0)
-                    .padding(.bottom, 24)
                 }
                 .padding(.top, 14)
                 .padding(.horizontal, 16)
+            }
+            .scrollIndicators(.hidden)
+            .overlay(alignment: .trailing) {
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(.gray.opacity(0.4))
+                    .frame(width: 6)
+                    .padding(.vertical, 8)
+                    .padding(.trailing, 2)
+            }
+
+                Button(action: save) {
+                    Image(systemName: "checkmark")
+                        .font(.title2)
+                        .padding(18)
+                        .background(Circle().fill(theme.theme.accent))
+                        .foregroundStyle(.white)
+                        .shadow(radius: 4, y: 2)
+                }
+                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .padding(24)
             }
             .background(theme.theme.background.ignoresSafeArea())
             .tint(theme.theme.accent)
@@ -271,11 +288,6 @@ struct AddEditCountdownView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .bold()
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .sheet(isPresented: $showPhotoPicker) { PhotoPicker(imageData: $imageData) }
