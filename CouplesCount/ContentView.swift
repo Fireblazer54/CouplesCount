@@ -3,6 +3,25 @@ import SwiftData
 
 struct ContentView: View {
     @EnvironmentObject private var theme: ThemeManager
+
+    var body: some View {
+        TabView {
+            CountdownListView()
+                .tabItem {
+                    Label("Countdowns", systemImage: "timer")
+                }
+
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.crop.circle")
+                }
+        }
+        .tint(theme.theme.accent)
+    }
+}
+
+struct CountdownListView: View {
+    @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
