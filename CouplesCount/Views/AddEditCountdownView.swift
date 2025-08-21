@@ -235,6 +235,17 @@ struct AddEditCountdownView: View {
 
                     if let existing {
                         SettingsCard {
+                            Button {
+                                existing.isArchived.toggle()
+                                try? modelContext.save()
+                                dismiss()
+                            } label: {
+                                Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
+                                      systemImage: existing.isArchived ? "tray.and.arrow.up" : "archivebox")
+                            }
+                        }
+
+                        SettingsCard {
                             Button(role: .destructive) {
                                 NotificationManager.cancelAll(for: existing.id)
                                 modelContext.delete(existing)
@@ -245,27 +256,19 @@ struct AddEditCountdownView: View {
                             }
                         }
                     }
-
-                    // MARK: Big Save at bottom
-                    SettingsCard {
-                        Button(action: save) {
-                            Label("Save", systemImage: "checkmark.circle.fill")
-                                .font(.headline)
-                                .padding(.vertical, 12)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(theme.theme.accent)
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-                    .padding(.horizontal, 0)
-                    .padding(.bottom, 24)
                 }
                 .padding(.top, 14)
                 .padding(.horizontal, 16)
             }
+            .scrollIndicators(.hidden)
+            .overlay(alignment: .trailing) {
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(.gray.opacity(0.4))
+                    .frame(width: 6)
+                    .padding(.vertical, 8)
+                    .padding(.trailing, 2)
+            }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -273,9 +276,10 @@ struct AddEditCountdownView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .bold()
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button(action: save) {
+                        Image(systemName: "checkmark")
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .sheet(isPresented: $showPhotoPicker) { PhotoPicker(imageData: $imageData) }

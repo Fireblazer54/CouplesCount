@@ -102,11 +102,10 @@ struct CountdownListView: View {
                                     }
                                     .swipeActions(edge: .leading) {
                                         Button {
-                                            item.isArchived.toggle()
+                                            item.isArchived = true
                                             try? modelContext.save()
                                         } label: {
-                                            Label(item.isArchived ? "Unarchive" : "Archive",
-                                                  systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
+                                            Label("Archive", systemImage: "archivebox")
                                         }
                                         .tint(.blue)
                                     }
