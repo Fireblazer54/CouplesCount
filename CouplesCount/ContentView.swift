@@ -94,18 +94,20 @@ struct CountdownListView: View {
                                     showAddEdit = true
                                 }
                                 .listRowSeparator(.hidden)
-                                .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
-                                .swipeActions(edge: .trailing) {
+                                .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         deleteConfirm = item
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
-                                .swipeActions(edge: .leading) {
+                                .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                     Button {
-                                        item.isArchived.toggle()
-                                        try? modelContext.save()
+                                        withAnimation(.easeInOut) {
+                                            item.isArchived.toggle()
+                                            try? modelContext.save()
+                                        }
                                     } label: {
                                         Label(item.isArchived ? "Unarchive" : "Archive",
                                               systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
@@ -115,7 +117,9 @@ struct CountdownListView: View {
                             }
                         }
                         .listStyle(.plain)
-                        .padding(.top, 12)
+                        .listRowSpacing(16)
+                        .padding(.top, 28)
+                        .animation(.easeInOut, value: items)
                     }
                 }
 
@@ -154,8 +158,10 @@ struct CountdownListView: View {
             ) {
                 Button("Delete", role: .destructive) {
                     if let item = deleteConfirm {
-                        modelContext.delete(item)
-                        try? modelContext.save()
+                        withAnimation(.easeInOut) {
+                            modelContext.delete(item)
+                            try? modelContext.save()
+                        }
                     }
                     deleteConfirm = nil
                 }
