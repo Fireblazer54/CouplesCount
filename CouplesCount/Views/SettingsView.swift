@@ -47,19 +47,19 @@ struct SettingsView: View {
                             ArchiveView()
                                 .environmentObject(theme)
                         } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "archivebox.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 30, height: 30)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(theme.theme.accent)
-                                    )
-                                Text("Manage Archive")
-                                    .font(.body)
-                                Spacer()
-                            }
+                              HStack(spacing: 12) {
+                                  Image(systemName: "archivebox.fill")
+                                      .font(.title3)
+                                      .foregroundStyle(theme.theme.background)
+                                      .frame(width: 30, height: 30)
+                                      .background(
+                                          RoundedRectangle(cornerRadius: 8)
+                                              .fill(theme.theme.accent)
+                                      )
+                                  Text("Manage Archive")
+                                      .font(.body)
+                                  Spacer()
+                              }
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
@@ -145,7 +145,7 @@ struct SettingsView: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.theme.background)
                     .frame(width: 30, height: 30)
                     .background(
                         RoundedRectangle(cornerRadius: 8)

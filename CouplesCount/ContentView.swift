@@ -73,14 +73,14 @@ struct CountdownListView: View {
                         }
                         Spacer()
                     } else {
-                        List {
-                            ForEach(items) { item in
-                                // Compute per-item display values
-                                let days = DateUtils.daysUntil(
-                                    target: item.targetDate,
-                                    in: item.timeZoneID
-                                )
-                                let dateText = DateUtils.readableDate.string(from: item.targetDate)
+                          List {
+                              ForEach(items) { item in
+                                  // Compute per-item display values
+                                  let days = DateUtils.daysUntil(
+                                      target: item.targetDate,
+                                      in: item.timeZoneID
+                                  )
+                                  let dateText = DateUtils.readableDate.string(from: item.targetDate)
 
                                 CountdownCardView(
                                     title: item.title,
@@ -98,13 +98,14 @@ struct CountdownListView: View {
                                     editing = item
                                     showAddEdit = true
                                 }
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                    Button(role: .destructive) {
-                                        deleteConfirm = item
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
+                                  .listRowSeparator(.hidden)
+                                  .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+                                  .listRowBackground(theme.theme.background)
+                                  .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                      Button(role: .destructive) {
+                                          deleteConfirm = item
+                                      } label: {
+                                          Label("Delete", systemImage: "trash")
                                     }
                                 }
                                 .swipeActions(edge: .leading, allowsFullSwipe: true) {
@@ -121,11 +122,12 @@ struct CountdownListView: View {
                                 }
                             }
                         }
-                        .listStyle(.plain)
-                        .listRowSpacing(16)
-                        .padding(.top, 28)
-                        .animation(.easeInOut, value: items)
-                    }
+                          .listStyle(.plain)
+                          .listRowSpacing(16)
+                          .padding(.top, 28)
+                          .scrollContentBackground(.hidden)
+                          .animation(.easeInOut, value: items)
+                      }
                 }
 
                 // Centered bottom +
