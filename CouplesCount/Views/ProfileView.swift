@@ -3,7 +3,7 @@ import SwiftData
 
 struct ProfileView: View {
     @EnvironmentObject private var theme: ThemeManager
-    @Query(sort: \.targetDate, order: .forward)
+    @Query(sort: \Countdown.targetDate, order: .forward)
     private var shared: [Countdown]
 
     var body: some View {
