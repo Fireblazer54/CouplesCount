@@ -269,7 +269,6 @@ struct AddEditCountdownView: View {
                     .padding(.trailing, 2)
             }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
