@@ -68,55 +68,54 @@ struct CountdownListView: View {
                         }
                         Spacer()
                     } else {
-                        ScrollView {
-                            LazyVStack(spacing: 16) {
-                                ForEach(items) { item in
-                                    // Compute per-item display values
-                                    let days = DateUtils.daysUntil(
-                                        target: item.targetDate,
-                                        in: item.timeZoneID
-                                    )
-                                    let dateText = DateUtils.readableDate.string(from: item.targetDate)
+                        List {
+                            ForEach(items) { item in
+                                // Compute per-item display values
+                                let days = DateUtils.daysUntil(
+                                    target: item.targetDate,
+                                    in: item.timeZoneID
+                                )
+                                let dateText = DateUtils.readableDate.string(from: item.targetDate)
 
-                                    CountdownCardView(
-                                        title: item.title,
-                                        daysLeft: days,
-                                        dateText: dateText,
-                                        archived: item.isArchived,
-                                        backgroundStyle: item.backgroundStyle,
-                                        colorHex: item.backgroundColorHex,
-                                        imageData: item.backgroundImageData,
-                                        shared: item.isShared
-                                    )
-                                    .environmentObject(theme)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        editing = item
-                                        showAddEdit = true
-                                    }
-                                    .swipeActions(edge: .trailing) {
-                                        Button(role: .destructive) {
-                                            deleteConfirm = item
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                    .swipeActions(edge: .leading) {
-                                        Button {
-                                            item.isArchived.toggle()
-                                            try? modelContext.save()
-                                        } label: {
-                                            Label(item.isArchived ? "Unarchive" : "Archive",
-                                                  systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
-                                        }
-                                        .tint(.blue)
+                                CountdownCardView(
+                                    title: item.title,
+                                    daysLeft: days,
+                                    dateText: dateText,
+                                    archived: item.isArchived,
+                                    backgroundStyle: item.backgroundStyle,
+                                    colorHex: item.backgroundColorHex,
+                                    imageData: item.backgroundImageData,
+                                    shared: item.isShared
+                                )
+                                .environmentObject(theme)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    editing = item
+                                    showAddEdit = true
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        deleteConfirm = item
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
                                 }
-                                .padding(.horizontal) // nice side gutters
-                                .padding(.top, 12)
+                                .swipeActions(edge: .leading) {
+                                    Button {
+                                        item.isArchived.toggle()
+                                        try? modelContext.save()
+                                    } label: {
+                                        Label(item.isArchived ? "Unarchive" : "Archive",
+                                              systemImage: item.isArchived ? "tray.and.arrow.up" : "archivebox")
+                                    }
+                                    .tint(.blue)
+                                }
                             }
                         }
-                        .scrollIndicators(.hidden)
+                        .listStyle(.plain)
+                        .padding(.top, 12)
                     }
                 }
 
