@@ -1,6 +1,7 @@
 import SwiftUI
 import StoreKit
 import UIKit
+import SwiftData
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -15,8 +16,6 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
-                    // APPEARANCE
-                    SectionHeader(text: "Appearance")
                     SettingsCard {
                         LazyVGrid(
                             columns: [GridItem(.flexible(), spacing: 12),
@@ -42,9 +41,28 @@ struct SettingsView: View {
 
                     // ARCHIVE
                     SettingsCard {
-                        buttonRow(icon: "archivebox.fill", title: "Manage Archive") {
-                            activeAlert = .archive
+                        NavigationLink {
+                            ArchiveView()
+                                .environmentObject(theme)
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "archivebox.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 30, height: 30)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(theme.theme.accent)
+                                    )
+                                Text("Manage Archive")
+                                    .font(.body)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(theme.theme.accent)
+                            }
                         }
+                        .buttonStyle(.plain)
                     }
 
                     // SUPPORT
@@ -98,12 +116,6 @@ struct SettingsView: View {
                     message: Text("Configure reminders coming soon."),
                     dismissButton: .default(Text("OK"))
                 )
-            case .archive:
-                return Alert(
-                    title: Text("Coming Soon"),
-                    message: Text("Archived countdowns coming soon."),
-                    dismissButton: .default(Text("OK"))
-                )
             }
         }
     }
@@ -147,8 +159,96 @@ struct SettingsView: View {
     }
 }
 
+struct ArchiveView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var theme: ThemeManager
+    @Query(filter: #Predicate<Countdown> { $0.isArchived },
+           sort: \Countdown.targetDate, order: .forward)
+    private var items: [Countdown]
+
+    @State private var deleteConfirm: Countdown? = nil
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                theme.theme.background.ignoresSafeArea()
+
+                if items.isEmpty {
+                    VStack(spacing: 8) {
+                        Text("No archived countdowns")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(items) { item in
+                                let days = DateUtils.daysUntil(target: item.targetDate, in: item.timeZoneID)
+                                let dateText = DateUtils.readableDate.string(from: item.targetDate)
+
+                                CountdownCardView(
+                                    title: item.title,
+                                    daysLeft: days,
+                                    dateText: dateText,
+                                    archived: item.isArchived,
+                                    backgroundStyle: item.backgroundStyle,
+                                    colorHex: item.backgroundColorHex,
+                                    imageData: item.backgroundImageData,
+                                    shared: item.isShared
+                                )
+                                .environmentObject(theme)
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        deleteConfirm = item
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                                .swipeActions(edge: .leading) {
+                                    Button {
+                                        item.isArchived = false
+                                        try? modelContext.save()
+                                    } label: {
+                                        Label("Unarchive", systemImage: "tray.and.arrow.up")
+                                    }
+                                    .tint(.blue)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 12)
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                }
+            }
+            .navigationTitle("Archive")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+            }
+            .confirmationDialog(
+                "Delete Countdown?",
+                isPresented: Binding(
+                    get: { deleteConfirm != nil },
+                    set: { if !$0 { deleteConfirm = nil } }
+                )
+            ) {
+                Button("Delete", role: .destructive) {
+                    if let item = deleteConfirm {
+                        modelContext.delete(item)
+                        try? modelContext.save()
+                    }
+                    deleteConfirm = nil
+                }
+                Button("Cancel", role: .cancel) { deleteConfirm = nil }
+            }
+        }
+        .tint(theme.theme.accent)
+    }
+}
+
 private enum ActiveAlert: Identifiable {
-    case reminders, archive
+    case reminders
 
     var id: Int { hashValue }
 }
