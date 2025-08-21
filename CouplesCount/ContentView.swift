@@ -107,13 +107,13 @@ struct CountdownListView: View {
                                               try? modelContext.save()
                                           }
                                       } label: {
-                                          Text("Delete")
-                                              .font(.caption)
-                                              .padding(10)
+                                          Image(systemName: "trash")
+                                              .font(.system(size: 16, weight: .bold))
+                                              .padding(12)
                                               .background(Circle().fill(Color.red))
-                                              .foregroundColor(.white)
+                                              .foregroundStyle(.white)
                                       }
-                                      .buttonStyle(.plain)
+                                      .tint(.clear)
                                   }
                                   .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                       Button {
@@ -122,13 +122,13 @@ struct CountdownListView: View {
                                               try? modelContext.save()
                                           }
                                       } label: {
-                                          Text(item.isArchived ? "Unarchive" : "Archive")
-                                              .font(.caption)
-                                              .padding(10)
+                                          Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
+                                              .font(.system(size: 16, weight: .bold))
+                                              .padding(12)
                                               .background(Circle().fill(Color.blue))
-                                              .foregroundColor(.white)
+                                              .foregroundStyle(.white)
                                       }
-                                      .buttonStyle(.plain)
+                                      .tint(.clear)
                                   }
                             }
                         }
