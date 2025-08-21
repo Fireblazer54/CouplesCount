@@ -11,6 +11,8 @@ struct SettingsView: View {
     private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
+    @State private var showEnjoyPrompt = false
+    @State private var showFeedbackForm = false
 
     var body: some View {
         NavigationStack {
@@ -57,10 +59,8 @@ struct SettingsView: View {
                                 Text("Manage Archive")
                                     .font(.body)
                                 Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(theme.theme.accent)
                             }
+                            .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                     }
@@ -75,10 +75,7 @@ struct SettingsView: View {
                         }
                         Divider().opacity(0.1)
                         buttonRow(icon: "star.fill", title: "Rate CouplesCount") {
-                            if let scene = UIApplication.shared.connectedScenes
-                                .first as? UIWindowScene {
-                                SKStoreReviewController.requestReview(in: scene)
-                            }
+                            showEnjoyPrompt = true
                         }
                     }
 
@@ -118,6 +115,23 @@ struct SettingsView: View {
                 )
             }
         }
+        .confirmationDialog(
+            "Are you enjoying the app so far?",
+            isPresented: $showEnjoyPrompt,
+            titleVisibility: .visible
+        ) {
+            Button("Yes") {
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
+            Button("No") { showFeedbackForm = true }
+            Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $showFeedbackForm) {
+            FeedbackFormView()
+                .environmentObject(theme)
+        }
     }
 
     // MARK: - Row helpers
@@ -139,10 +153,8 @@ struct SettingsView: View {
                     )
                 Text(title).font(.body)
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(theme.theme.accent)
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
