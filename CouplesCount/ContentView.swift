@@ -46,6 +46,8 @@ struct CountdownListView: View {
     @State private var editing: Countdown? = nil
     @State private var showSettings = false
     @State private var showPremium = false
+    @State private var shareURL: URL? = nil
+    @State private var showShareSheet = false
 
     var body: some View {
         NavigationStack {
@@ -94,6 +96,7 @@ struct CountdownListView: View {
                                       in: item.timeZoneID
                                   )
                                   let dateText = DateUtils.readableDate.string(from: item.targetDate)
+                                  let exportURL = CountdownShareService.exportURL(for: item)
 
                                 CountdownCardView(
                                     title: item.title,
@@ -104,7 +107,11 @@ struct CountdownListView: View {
                                     colorHex: item.backgroundColorHex,
                                     imageData: item.backgroundImageData,
                                     shared: item.isShared,
-                                    shareURL: CountdownShareService.exportURL(for: item)
+                                    shareAction: {
+                                        shareURL = exportURL
+                                        showShareSheet = shareURL != nil
+                                    }
+
                                 )
                                 .environmentObject(theme)
                                 .contentShape(Rectangle())
@@ -119,14 +126,24 @@ struct CountdownListView: View {
                                     editing = item
                                     showAddEdit = true
                                 }
-                                  .listRowSeparator(.hidden)
-                                  .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                  .listRowBackground(theme.theme.background)
-                                  .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                      Button {
-                                          withAnimation(.easeInOut) {
-                                              modelContext.delete(item)
-                                              try? modelContext.save()
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+                                .listRowBackground(theme.theme.background)
+                                .contextMenu {
+                                    if let exportURL {
+                                        Button {
+                                            shareURL = exportURL
+                                            showShareSheet = true
+                                        } label: {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+                                    }
+                                }
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button {
+                                        withAnimation(.easeInOut) {
+                                            modelContext.delete(item)
+                                            try? modelContext.save()
                                           }
                                       } label: {
                                           Image(systemName: "trash")
@@ -194,6 +211,11 @@ struct CountdownListView: View {
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView().environmentObject(theme)
+            }
+            .sheet(isPresented: $showShareSheet) {
+                if let shareURL {
+                    ShareSheet(activityItems: [shareURL])
+                }
             }
         }
         .tint(theme.theme.accent)

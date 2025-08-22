@@ -62,6 +62,8 @@ struct AddEditCountdownView: View {
     @State private var isShared: Bool = false
     @State private var selectedFriends: Set<UUID> = []
     @Query(sort: \Friend.name) private var friends: [Friend]
+    @State private var shareURL: URL? = nil
+    @State private var showShareSheet = false
 
     init(existing: Countdown? = nil) { self.existing = existing }
 
@@ -278,8 +280,11 @@ struct AddEditCountdownView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
-                        if let existing, let url = CountdownShareService.exportURL(for: existing) {
-                            ShareLink(item: url) {
+                        if let existing {
+                            Button {
+                                shareURL = CountdownShareService.exportURL(for: existing)
+                                showShareSheet = shareURL != nil
+                            } label: {
                                 Image(systemName: "square.and.arrow.up")
                             }
                         }
@@ -292,6 +297,11 @@ struct AddEditCountdownView: View {
             }
             .sheet(isPresented: $showPhotoPicker) { PhotoPicker(imageData: $imageData) }
             .sheet(isPresented: $showCamera) { CameraPicker(imageData: $imageData) }
+            .sheet(isPresented: $showShareSheet) {
+                if let shareURL {
+                    ShareSheet(activityItems: [shareURL])
+                }
+            }
             .onAppear {
                 if let existing {
                     title = existing.title

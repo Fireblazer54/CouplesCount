@@ -11,7 +11,8 @@ struct CountdownCardView: View {
     let colorHex: String?
     let imageData: Data?
     let shared: Bool
-    let shareURL: URL?
+    let shareAction: (() -> Void)?
+
 
     private let corner: CGFloat = 22
     private let height: CGFloat = 120
@@ -62,8 +63,9 @@ struct CountdownCardView: View {
                 if shared {
                     Image(systemName: "person.2.fill")
                 }
-                if let url = shareURL {
-                    ShareLink(item: url) {
+                if let shareAction {
+                    Button(action: shareAction) {
+
                         Image(systemName: "square.and.arrow.up")
                     }
                 }

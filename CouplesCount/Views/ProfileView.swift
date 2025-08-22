@@ -106,7 +106,8 @@ struct ProfileView: View {
                             colorHex: item.backgroundColorHex,
                             imageData: item.backgroundImageData,
                             shared: item.isShared,
-                            shareURL: nil
+                            shareAction: nil
+
                         )
                         .environmentObject(theme)
                         .contextMenu {
