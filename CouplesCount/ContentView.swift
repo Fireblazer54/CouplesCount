@@ -88,17 +88,18 @@ struct CountdownListView: View {
                         }
                         Spacer()
                     } else {
-                          List {
-                              ForEach(items) { item in
-                                  // Compute per-item display values
-                                  let days = DateUtils.daysUntil(
-                                      target: item.targetDate,
-                                      in: item.timeZoneID
-                                  )
-                                  let dateText = DateUtils.readableDate.string(from: item.targetDate)
-                                  let exportURL = CountdownShareService.exportURL(for: item)
+                        List {
+                            ForEach(items) { item in
+                                // Compute per-item display values
+                                let days = DateUtils.daysUntil(
+                                    target: item.targetDate,
+                                    in: item.timeZoneID
+                                )
+                                let dateText = DateUtils.readableDate.string(from: item.targetDate)
+                                let exportURL = CountdownShareService.exportURL(for: item)
 
-                                CountdownCardView(
+                                // Build the countdown card separately to reduce type-checking complexity
+                                let card = CountdownCardView(
                                     title: item.title,
                                     daysLeft: days,
                                     dateText: dateText,
@@ -112,55 +113,56 @@ struct CountdownListView: View {
                                         shareURL = exportURL
                                         showShareSheet = shareURL != nil
                                     }
-
                                 )
-                                .environmentObject(theme)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    editing = item
-                                    showAddEdit = true
-                                }
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                .listRowBackground(theme.theme.background)
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button {
-                                        withAnimation(.easeInOut) {
-                                            modelContext.delete(item)
-                                            try? modelContext.save()
-                                          }
-                                      } label: {
-                                          Image(systemName: "trash")
-                                              .font(.system(size: 16, weight: .bold))
-                                              .padding(12)
-                                              .background(Circle().fill(Color.red))
-                                              .foregroundStyle(.white)
-                                      }
-                                      .tint(.clear)
-                                  }
-                                  .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                      Button {
-                                          withAnimation(.easeInOut) {
-                                              item.isArchived.toggle()
-                                              try? modelContext.save()
-                                          }
-                                      } label: {
-                                          Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
-                                              .font(.system(size: 16, weight: .bold))
-                                              .padding(12)
-                                              .background(Circle().fill(Color.blue))
-                                              .foregroundStyle(.white)
-                                      }
-                                      .tint(.clear)
-                                  }
+
+                                card
+                                    .environmentObject(theme)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        editing = item
+                                        showAddEdit = true
+                                    }
+                                    .listRowSeparator(.hidden)
+                                    .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+                                    .listRowBackground(theme.theme.background)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                        Button {
+                                            withAnimation(.easeInOut) {
+                                                modelContext.delete(item)
+                                                try? modelContext.save()
+                                            }
+                                        } label: {
+                                            Image(systemName: "trash")
+                                                .font(.system(size: 16, weight: .bold))
+                                                .padding(12)
+                                                .background(Circle().fill(Color.red))
+                                                .foregroundStyle(.white)
+                                        }
+                                        .tint(.clear)
+                                    }
+                                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                        Button {
+                                            withAnimation(.easeInOut) {
+                                                item.isArchived.toggle()
+                                                try? modelContext.save()
+                                            }
+                                        } label: {
+                                            Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
+                                                .font(.system(size: 16, weight: .bold))
+                                                .padding(12)
+                                                .background(Circle().fill(Color.blue))
+                                                .foregroundStyle(.white)
+                                        }
+                                        .tint(.clear)
+                                    }
                             }
                         }
-                          .listStyle(.plain)
-                          .listRowSpacing(16)
-                          .padding(.top, 28)
-                          .scrollContentBackground(.hidden)
-                          .animation(.easeInOut, value: items)
-                      }
+                        .listStyle(.plain)
+                        .listRowSpacing(16)
+                        .padding(.top, 28)
+                        .scrollContentBackground(.hidden)
+                        .animation(.easeInOut, value: items)
+                    }
                 }
 
                 // Centered bottom +
