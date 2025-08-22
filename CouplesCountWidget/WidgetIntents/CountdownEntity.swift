@@ -1,6 +1,7 @@
 import AppIntents
 import Foundation
 import SwiftData
+import SwiftUI
 
 // MARK: - Storage bridge (works now without App Group; reads real data later)
 enum WidgetStoreBridge {
@@ -47,6 +48,7 @@ struct CountdownEntity: AppEntity, Identifiable, Hashable {
     var title: String
     var targetDate: Date
     var timeZoneID: String
+    var titleFontName: String
 
     // How each item shows up in the picker
     var displayRepresentation: DisplayRepresentation {
@@ -58,7 +60,8 @@ struct CountdownEntity: AppEntity, Identifiable, Hashable {
         id: UUID(),
         title: "Anniversary",
         targetDate: Calendar.current.date(byAdding: .day, value: 30, to: .now)!,
-        timeZoneID: TimeZone.current.identifier
+        timeZoneID: TimeZone.current.identifier,
+        titleFontName: TitleFont.default.rawValue
     )
 }
 
@@ -80,7 +83,8 @@ struct CountdownQuery: EntityQuery {
             CountdownEntity(id: $0.id,
                             title: $0.title,
                             targetDate: $0.targetDate,
-                            timeZoneID: $0.timeZoneID)
+                            timeZoneID: $0.timeZoneID,
+                            titleFontName: $0.titleFontName)
         }
     }
 }

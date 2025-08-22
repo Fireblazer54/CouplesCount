@@ -10,6 +10,7 @@ struct CountdownCardView: View {
     let backgroundStyle: String
     let colorHex: String?
     let imageData: Data?
+    let titleFontName: String = TitleFont.default.rawValue
     let shared: Bool
     let shareAction: (() -> Void)?
 
@@ -45,7 +46,7 @@ struct CountdownCardView: View {
             // Content
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.headline)
+                    .font(.system(.headline, design: TitleFont(rawValue: titleFontName)?.design ?? .default))
                     .lineLimit(1)
 
                 Text("\(daysLeft) days")
