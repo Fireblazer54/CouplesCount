@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import AVFoundation
+import UIKit
 
 // MARK: - Reminder presets
 
@@ -51,6 +52,12 @@ struct AddEditCountdownView: View {
     @State private var showPhotoPicker = false
     @State private var showCamera = false
 
+    // Live preview values
+    @State private var previewTitle: String = "Countdown"
+    @State private var previewDate: Date = Date().addingTimeInterval(86_400)
+    @State private var previewColorHex: String = "#0A84FF"
+    @State private var previewImageData: Data? = nil
+
     // Reminder
     @State private var preset: ReminderPreset = .none
 
@@ -76,12 +83,12 @@ struct AddEditCountdownView: View {
                     TabView {
                         // Square
                         WidgetPreview(
-                            title: title.isEmpty ? "Countdown" : title,
-                            targetDate: date,
+                            title: previewTitle,
+                            targetDate: previewDate,
                             tzID: timeZoneID,
                             backgroundStyle: backgroundStyle,
-                            bgColorHex: colorHex,
-                            imageData: imageData
+                            bgColorHex: previewColorHex,
+                            imageData: previewImageData
                         )
                         .frame(width: 160, height: 160)
                         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
@@ -89,12 +96,12 @@ struct AddEditCountdownView: View {
 
                         // Rectangular
                         WidgetPreview(
-                            title: title.isEmpty ? "Countdown" : title,
-                            targetDate: date,
+                            title: previewTitle,
+                            targetDate: previewDate,
                             tzID: timeZoneID,
                             backgroundStyle: backgroundStyle,
-                            bgColorHex: colorHex,
-                            imageData: imageData
+                            bgColorHex: previewColorHex,
+                            imageData: previewImageData
                         )
                         .frame(height: 140)
                         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
@@ -118,6 +125,7 @@ struct AddEditCountdownView: View {
 
                         TextField("Title (e.g., Anniversary)", text: $title)
                             .textInputAutocapitalization(.words)
+                            .onSubmit { lightHaptic() }
 
                         Toggle("Include time", isOn: $includeTime)
 
@@ -302,6 +310,21 @@ struct AddEditCountdownView: View {
                     ShareSheet(activityItems: [shareURL])
                 }
             }
+            // Live preview & haptics
+            .onChange(of: title) { _, new in
+                previewTitle = new.isEmpty ? "Countdown" : new
+            }
+            .onChange(of: date) { _, new in
+                previewDate = new
+            }
+            .onChange(of: colorHex, initial: false) { _, new in
+                previewColorHex = new
+                lightHaptic()
+            }
+            .onChange(of: imageData, initial: false) { _, new in
+                previewImageData = new
+                if new != nil { lightHaptic() }
+            }
             .onAppear {
                 if let existing {
                     title = existing.title
@@ -314,8 +337,16 @@ struct AddEditCountdownView: View {
                     preset = Self.preset(from: existing.reminderOffsetMinutes)
                     isShared = existing.isShared
                     selectedFriends = Set(existing.sharedWith.map { $0.id })
+                    previewTitle = existing.title
+                    previewDate = existing.targetDate
+                    previewColorHex = existing.backgroundColorHex ?? colorHex
+                    previewImageData = existing.backgroundImageData
                 } else {
                     NotificationManager.requestAuthorizationIfNeeded()
+                    previewTitle = title
+                    previewDate = date
+                    previewColorHex = colorHex
+                    previewImageData = imageData
                 }
             }
         }
@@ -396,5 +427,9 @@ struct AddEditCountdownView: View {
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
             .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.tint.opacity(0.15)))
+    }
+
+    private func lightHaptic() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 }
