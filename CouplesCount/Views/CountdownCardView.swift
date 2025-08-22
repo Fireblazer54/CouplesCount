@@ -65,9 +65,14 @@ struct CountdownCardView: View {
                 }
                 if let shareAction {
                     Button(action: shareAction) {
-
                         Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 18, weight: .semibold))
+                            .padding(8)
+                            .background(
+                                Circle().fill(Color.white.opacity(0.25))
+                            )
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(8)
