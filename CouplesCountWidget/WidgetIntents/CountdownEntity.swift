@@ -31,7 +31,7 @@ enum WidgetStoreBridge {
         let context = ModelContext(container)
         let descriptor = FetchDescriptor<Countdown>(
             predicate: #Predicate { !$0.isArchived },
-            sortBy: [.init(\.targetDate, order: .forward)]
+            sortBy: [.init(\.targetUTC, order: .forward)]
         )
         return (try? context.fetch(descriptor)) ?? []
     }

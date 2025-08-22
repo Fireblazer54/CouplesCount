@@ -5,27 +5,49 @@ import SwiftData
 final class Countdown {
     var id: UUID
     var title: String
-    var targetDate: Date
+    @Attribute(originalName: "targetDate") var targetUTC: Date
     var timeZoneID: String
-    var isArchived: Bool
+    var includeTime: Bool
+    @Attribute(originalName: "backgroundColorHex") var colorTheme: String
+    var hasImage: Bool
+    @Attribute(originalName: "backgroundImageData") var imageData: Data?
+    @Attribute(originalName: "titleFontName") var fontStyle: String
+    @Attribute(originalName: "reminderOffsets") var reminderOffsetsMinutes: [Int]
+    var lastEdited: Date
+    var version: Int
+    var ownerUserID: String?
 
-    // Title font style ("default", "rounded", etc.)
-    var titleFontName: String
-
-    // Background
-    // "color" or "image"
+    // Legacy fields
     var backgroundStyle: String
-    // HEX like "#3871FF" when style == "color"
-    var backgroundColorHex: String?
-    // Raw image data (jpeg) when style == "image"
-    var backgroundImageData: Data?
-
-    // Reminder offsets in minutes relative to target (e.g. -60 = 1h before)
-    var reminderOffsets: [Int]
-
-    // Sharing
+    var isArchived: Bool
     var isShared: Bool
     @Relationship(deleteRule: .cascade) var sharedWith: [Friend]
+
+    // Backwards-compatible accessors
+    var targetDate: Date {
+        get { targetUTC }
+        set { targetUTC = newValue }
+    }
+
+    var titleFontName: String {
+        get { fontStyle }
+        set { fontStyle = newValue }
+    }
+
+    var backgroundColorHex: String? {
+        get { colorTheme }
+        set { colorTheme = newValue ?? colorTheme }
+    }
+
+    var backgroundImageData: Data? {
+        get { imageData }
+        set { imageData = newValue }
+    }
+
+    var reminderOffsets: [Int] {
+        get { reminderOffsetsMinutes }
+        set { reminderOffsetsMinutes = newValue }
+    }
 
     init(id: UUID = UUID(),
          title: String,
@@ -41,14 +63,19 @@ final class Countdown {
          sharedWith: [Friend] = []) {
         self.id = id
         self.title = title
-        self.targetDate = targetDate
+        self.targetUTC = targetDate
         self.timeZoneID = timeZoneID
-        self.isArchived = isArchived
-        self.titleFontName = titleFontName
+        self.includeTime = true
+        self.colorTheme = backgroundColorHex ?? "#0A84FF"
+        self.hasImage = backgroundStyle == "image"
+        self.imageData = backgroundImageData
+        self.fontStyle = titleFontName
+        self.reminderOffsetsMinutes = reminderOffsets
+        self.lastEdited = .now
+        self.version = 1
+        self.ownerUserID = nil
         self.backgroundStyle = backgroundStyle
-        self.backgroundColorHex = backgroundColorHex
-        self.backgroundImageData = backgroundImageData
-        self.reminderOffsets = reminderOffsets
+        self.isArchived = isArchived
         self.isShared = isShared
         self.sharedWith = sharedWith
     }

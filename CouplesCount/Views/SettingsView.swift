@@ -176,7 +176,7 @@ struct ArchiveView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var theme: ThemeManager
     @Query(filter: #Predicate<Countdown> { $0.isArchived },
-           sort: \Countdown.targetDate, order: .forward)
+           sort: \Countdown.targetUTC, order: .forward)
     private var items: [Countdown]
 
     var body: some View {

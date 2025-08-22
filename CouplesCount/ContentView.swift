@@ -39,7 +39,7 @@ struct CountdownListView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
-           sort: \.targetDate, order: .forward)
+           sort: \.targetUTC, order: .forward)
     private var items: [Countdown]
 
     @State private var showAddEdit = false
