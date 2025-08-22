@@ -2,8 +2,8 @@ import Foundation
 import SwiftData
 
 enum Persistence {
-    // When you join the paid program, set this to your App Group id and use groupURL() below
-    private static let appGroupID: String? = nil
+    // App Group identifier used for shared storage
+    private static let appGroupID: String? = "group.com.fireblazer.CouplesCount"
 
     static var container: ModelContainer = {
         let url: URL
