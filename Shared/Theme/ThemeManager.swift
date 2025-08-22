@@ -3,8 +3,8 @@ import WidgetKit
 
 @MainActor
 final class ThemeManager: ObservableObject {
-    // When you join the paid program, change nil -> "group.com.fireblazer.CouplesCount"
-    private let appGroupSuite: String? = nil
+    // App Group identifier used for shared user defaults
+    private let appGroupSuite: String? = "group.com.fireblazer.CouplesCount"
     private let key = "global_color_theme"
 
     // Stored defaults, initialized before anything else is used.

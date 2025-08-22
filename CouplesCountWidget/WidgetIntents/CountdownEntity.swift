@@ -1,39 +1,36 @@
 import AppIntents
 import Foundation
-import SwiftData
 import SwiftUI
 
-// MARK: - Storage bridge (works now without App Group; reads real data later)
+// MARK: - Storage bridge reading snapshot JSON from the shared App Group
 enum WidgetStoreBridge {
-    // After you enroll in the Apple Developer Program, set this to your App Group id.
-    // Example: "group.com.fireblazer.CouplesCount"
-    static let appGroupID: String? = nil
+    static let appGroupID: String = "group.com.fireblazer.CouplesCount"
+    private static let fileName = "countdowns.json"
 
-    static func modelContainerIfAvailable() -> ModelContainer? {
-        // Widgets can only read the app’s data via an App Group.
-        guard let group = appGroupID,
-              let base = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group)
-        else { return nil }
-
-        let url = base.appendingPathComponent("CouplesCount.store")
-        let config = ModelConfiguration(url: url)
-
-        do {
-            let schema = Schema([Countdown.self, Friend.self])
-            return try ModelContainer(for: schema, configurations: [config])
-        } catch {
-            return nil
-        }
+    private struct CountdownDTO: Decodable {
+        var id: UUID
+        var title: String
+        var targetDate: Date
+        var timeZoneID: String
+        var titleFontName: String
     }
 
-    static func fetchCountdowns() -> [Countdown] {
-        guard let container = modelContainerIfAvailable() else { return [] }
-        let context = ModelContext(container)
-        let descriptor = FetchDescriptor<Countdown>(
-            predicate: #Predicate { !$0.isArchived },
-            sortBy: [.init(\.targetUTC, order: .forward)]
-        )
-        return (try? context.fetch(descriptor)) ?? []
+    static func fetchCountdowns() -> [CountdownEntity] {
+        guard let base = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            return []
+        }
+        let url = base.appendingPathComponent(fileName)
+        guard let data = try? Data(contentsOf: url),
+              let dtos = try? JSONDecoder().decode([CountdownDTO].self, from: data) else {
+            return []
+        }
+        return dtos.map {
+            CountdownEntity(id: $0.id,
+                            title: $0.title,
+                            targetDate: $0.targetDate,
+                            timeZoneID: $0.timeZoneID,
+                            titleFontName: $0.titleFontName)
+        }
     }
 }
 
@@ -74,17 +71,11 @@ struct CountdownQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [CountdownEntity] {
-        // If you’re on a free account (no App Group), this returns [] and we fall back to preview.
+        // Read countdowns from the shared App Group; fall back to preview when missing.
         let items = WidgetStoreBridge.fetchCountdowns()
         guard !items.isEmpty else {
             return [CountdownEntity.preview]
         }
-        return items.map {
-            CountdownEntity(id: $0.id,
-                            title: $0.title,
-                            targetDate: $0.targetDate,
-                            timeZoneID: $0.timeZoneID,
-                            titleFontName: $0.titleFontName)
-        }
+        return items
     }
 }
