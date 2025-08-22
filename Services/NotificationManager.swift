@@ -9,21 +9,22 @@ enum NotificationManager {
         }
     }
 
-    static func scheduleReminder(for cd: Countdown) {
-        guard let minutes = cd.reminderOffsetMinutes else { return }
-        let content = UNMutableNotificationContent()
-        content.title = "Upcoming: \(cd.title)"
-        content.body = "Happening \(minutes >= 60 ? "soon" : "very soon")."
-        content.sound = .default
+    static func scheduleReminders(for cd: Countdown) {
+        for offset in cd.reminderOffsets {
+            let content = UNMutableNotificationContent()
+            content.title = "Upcoming: \(cd.title)"
+            content.body = "Happening soon."
+            content.sound = .default
 
-        // Fire at targetDate - minutes
-        let fire = cd.targetDate.addingTimeInterval(TimeInterval(-minutes * 60))
-        guard fire > Date() else { return }
+            // Fire at targetDate + offset (offset negative = before event)
+            let fire = cd.targetDate.addingTimeInterval(TimeInterval(offset * 60))
+            guard fire > Date() else { continue }
 
-        let comps = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute], from: fire)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-        let req = UNNotificationRequest(identifier: "cd-\(cd.id)-\(minutes)", content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(req)
+            let comps = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute], from: fire)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
+            let req = UNNotificationRequest(identifier: "cd-\(cd.id)-\(offset)", content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(req)
+        }
     }
 
     static func cancelAll(for id: UUID) {
