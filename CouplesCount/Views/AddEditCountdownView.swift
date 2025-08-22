@@ -4,29 +4,31 @@ import PhotosUI
 import AVFoundation
 import UIKit
 
-// MARK: - Reminder presets
+// MARK: - Reminder options
 
-enum ReminderPreset: String, CaseIterable, Identifiable {
-    case none, h1, h2, d1, d2, d3
-    var id: String { rawValue }
-    var title: String {
+enum ReminderOption: Int, CaseIterable, Identifiable {
+    case h1 = -60
+    case h2 = -120
+    case h3 = -180
+    case h6 = -360
+    case h12 = -720
+    case d1 = -1440
+    case d2 = -2880
+    case d3 = -4320
+    case d7 = -10080
+
+    var id: Int { rawValue }
+    var label: String {
         switch self {
-        case .none: return "No reminder"
-        case .h1:   return "1 hour before"
-        case .h2:   return "2 hours before"
-        case .d1:   return "1 day before"
-        case .d2:   return "2 days before"
-        case .d3:   return "3 days before"
-        }
-    }
-    var minutes: Int? {
-        switch self {
-        case .none: return nil
-        case .h1:   return 60
-        case .h2:   return 120
-        case .d1:   return 60*24
-        case .d2:   return 60*48
-        case .d3:   return 60*72
+        case .h1: return "1h"
+        case .h2: return "2h"
+        case .h3: return "3h"
+        case .h6: return "6h"
+        case .h12: return "12h"
+        case .d1: return "1d"
+        case .d2: return "2d"
+        case .d3: return "3d"
+        case .d7: return "7d"
         }
     }
 }
@@ -58,8 +60,9 @@ struct AddEditCountdownView: View {
     @State private var previewColorHex: String = "#0A84FF"
     @State private var previewImageData: Data? = nil
 
-    // Reminder
-    @State private var preset: ReminderPreset = .none
+    // Reminders
+    @State private var selectedReminders: Set<ReminderOption> = []
+    @State private var showReminderSheet = false
 
     // UX
     @State private var showValidation = false
@@ -226,21 +229,39 @@ struct AddEditCountdownView: View {
                         }
                     }
 
-                    // MARK: Reminder
+                    // MARK: Reminders
                     SettingsCard {
-                        Text("Reminder")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-
-                        Picker("Notify me", selection: $preset) {
-                            ForEach(ReminderPreset.allCases) { p in
-                                Text(p.title).tag(p)
+                        HStack {
+                            Text("Reminders")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Button("+ Add Reminder") {
+                                NotificationManager.requestAuthorizationIfNeeded()
+                                showReminderSheet = true
                             }
                         }
-                        .pickerStyle(.menu)
-                        .onChange(of: preset, initial: false) { _, _ in
-                            NotificationManager.requestAuthorizationIfNeeded()
+
+                        if !selectedReminders.isEmpty {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 60), spacing: 8)], alignment: .leading, spacing: 8) {
+                                ForEach(Array(selectedReminders).sorted { $0.rawValue < $1.rawValue }, id: \.self) { opt in
+                                    HStack(spacing: 4) {
+                                        Text(opt.label)
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.secondary)
+                                            .onTapGesture { selectedReminders.remove(opt) }
+                                    }
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color(.systemGray5))
+                                    .clipShape(Capsule())
+                                }
+                            }
+                            .padding(.top, 4)
                         }
+                    }
+                    .sheet(isPresented: $showReminderSheet) {
+                        ReminderPicker(selections: $selectedReminders)
                     }
 
                     if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -340,7 +361,7 @@ struct AddEditCountdownView: View {
                     backgroundStyle = existing.backgroundStyle
                     colorHex = existing.backgroundColorHex ?? colorHex
                     imageData = existing.backgroundImageData
-                    preset = Self.preset(from: existing.reminderOffsetMinutes)
+                    selectedReminders = Set(existing.reminderOffsets.compactMap { ReminderOption(rawValue: $0) })
                     isShared = existing.isShared
                     selectedFriends = Set(existing.sharedWith.map { $0.id })
                     previewTitle = existing.title
@@ -381,11 +402,11 @@ struct AddEditCountdownView: View {
                 existing.backgroundStyle = backgroundStyle
                 existing.backgroundColorHex = colorHex
                 existing.backgroundImageData = imageData
-                existing.reminderOffsetMinutes = preset.minutes
+                existing.reminderOffsets = selectedReminders.map { $0.rawValue }
                 existing.isShared = isShared
                 existing.sharedWith = friends.filter { selectedFriends.contains($0.id) }
                 NotificationManager.cancelAll(for: existing.id)
-                if preset.minutes != nil { NotificationManager.scheduleReminder(for: existing) }
+                if !selectedReminders.isEmpty { NotificationManager.scheduleReminders(for: existing) }
             } else {
                 let cd = Countdown(
                     title: trimmed,
@@ -395,32 +416,18 @@ struct AddEditCountdownView: View {
                     backgroundStyle: backgroundStyle,
                     backgroundColorHex: colorHex,
                     backgroundImageData: imageData,
-                    reminderOffsetMinutes: preset.minutes,
+                    reminderOffsets: selectedReminders.map { $0.rawValue },
                     isShared: isShared,
                     sharedWith: friends.filter { selectedFriends.contains($0.id) }
                 )
                 modelContext.insert(cd)
-                if preset.minutes != nil { NotificationManager.scheduleReminder(for: cd) }
+                if !selectedReminders.isEmpty { NotificationManager.scheduleReminders(for: cd) }
             }
 
             try modelContext.save()
             dismiss()
         } catch {
             saveError = error.localizedDescription
-        }
-    }
-
-    // MARK: Helpers
-
-    private static func preset(from minutes: Int?) -> ReminderPreset {
-        switch minutes {
-        case nil: return .none
-        case 60:  return .h1
-        case 120: return .h2
-        case 1440: return .d1
-        case 2880: return .d2
-        case 4320: return .d3
-        default:  return .none
         }
     }
 
@@ -434,5 +441,51 @@ struct AddEditCountdownView: View {
 
     private func lightHaptic() {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+}
+
+// MARK: - Reminder Picker Sheet
+
+struct ReminderPicker: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var selections: Set<ReminderOption>
+    @State private var temp: Set<ReminderOption>
+
+    init(selections: Binding<Set<ReminderOption>>) {
+        self._selections = selections
+        self._temp = State(initialValue: selections.wrappedValue)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 60), spacing: 12)], spacing: 12) {
+                    ForEach(ReminderOption.allCases) { option in
+                        let isSel = temp.contains(option)
+                        Text(option.label)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(isSel ? Color.accentColor.opacity(0.2) : Color(.systemGray5))
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(isSel ? Color.accentColor : .clear, lineWidth: 2)
+                            )
+                            .onTapGesture {
+                                if isSel { temp.remove(option) } else { temp.insert(option) }
+                            }
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Reminders")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        selections = temp
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }

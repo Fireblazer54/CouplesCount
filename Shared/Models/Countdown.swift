@@ -20,8 +20,8 @@ final class Countdown {
     // Raw image data (jpeg) when style == "image"
     var backgroundImageData: Data?
 
-    // Reminder offset in minutes before target (nil = no reminder)
-    var reminderOffsetMinutes: Int?
+    // Reminder offsets in minutes relative to target (e.g. -60 = 1h before)
+    var reminderOffsets: [Int]
 
     // Sharing
     var isShared: Bool
@@ -36,7 +36,7 @@ final class Countdown {
          backgroundStyle: String = "color",
          backgroundColorHex: String? = "#0A84FF",
          backgroundImageData: Data? = nil,
-         reminderOffsetMinutes: Int? = nil,
+         reminderOffsets: [Int] = [],
          isShared: Bool = false,
          sharedWith: [Friend] = []) {
         self.id = id
@@ -48,7 +48,7 @@ final class Countdown {
         self.backgroundStyle = backgroundStyle
         self.backgroundColorHex = backgroundColorHex
         self.backgroundImageData = backgroundImageData
-        self.reminderOffsetMinutes = reminderOffsetMinutes
+        self.reminderOffsets = reminderOffsets
         self.isShared = isShared
         self.sharedWith = sharedWith
     }
