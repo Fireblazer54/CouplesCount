@@ -6,6 +6,7 @@ struct CountdownShareData: Codable {
     let title: String
     let targetDate: Date
     let timeZoneID: String
+    let titleFontName: String
     let backgroundStyle: String
     let backgroundColorHex: String?
     let backgroundImageData: Data?
@@ -33,6 +34,7 @@ enum CountdownShareService {
             title: countdown.title,
             targetDate: countdown.targetDate,
             timeZoneID: countdown.timeZoneID,
+            titleFontName: countdown.titleFontName,
             backgroundStyle: countdown.backgroundStyle,
             backgroundColorHex: countdown.backgroundColorHex,
             backgroundImageData: countdown.backgroundImageData
@@ -77,6 +79,7 @@ enum CountdownShareService {
             title: payload.title,
             targetDate: payload.targetDate,
             timeZoneID: payload.timeZoneID,
+            titleFontName: payload.titleFontName,
             backgroundStyle: payload.backgroundStyle,
             backgroundColorHex: payload.backgroundColorHex,
             backgroundImageData: payload.backgroundImageData

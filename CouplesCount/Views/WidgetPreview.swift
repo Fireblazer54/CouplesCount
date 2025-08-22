@@ -4,6 +4,7 @@ struct WidgetPreview: View {
     let title: String
     let targetDate: Date
     let tzID: String
+    let titleFontName: String
     let backgroundStyle: String
     let bgColorHex: String?
     let imageData: Data?
@@ -27,7 +28,7 @@ struct WidgetPreview: View {
 
             VStack(spacing: 6) {
                 Text(title)
-                    .font(.headline)
+                    .font(.system(.headline, design: TitleFont(rawValue: titleFontName)?.design ?? .default))
                     .foregroundStyle(.white)
                     .lineLimit(1)
 
