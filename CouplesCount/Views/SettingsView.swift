@@ -196,16 +196,17 @@ struct ArchiveView: View {
                             let days = DateUtils.daysUntil(target: item.targetDate, in: item.timeZoneID)
                             let dateText = DateUtils.readableDate.string(from: item.targetDate)
 
-                            CountdownCardView(
-                                title: item.title,
-                                daysLeft: days,
-                                dateText: dateText,
-                                archived: item.isArchived,
-                                backgroundStyle: item.backgroundStyle,
-                                colorHex: item.backgroundColorHex,
-                                imageData: item.backgroundImageData,
-                                shared: item.isShared
-                            )
+                                CountdownCardView(
+                                    title: item.title,
+                                    daysLeft: days,
+                                    dateText: dateText,
+                                    archived: item.isArchived,
+                                    backgroundStyle: item.backgroundStyle,
+                                    colorHex: item.backgroundColorHex,
+                                    imageData: item.backgroundImageData,
+                                    shared: item.isShared,
+                                    shareAction: nil
+                                )
                             .environmentObject(theme)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))

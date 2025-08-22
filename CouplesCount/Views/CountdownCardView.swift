@@ -11,6 +11,7 @@ struct CountdownCardView: View {
     let colorHex: String?
     let imageData: Data?
     let shared: Bool
+    let shareAction: (() -> Void)?
 
     private let corner: CGFloat = 22
     private let height: CGFloat = 120
@@ -55,17 +56,20 @@ struct CountdownCardView: View {
             }
             .padding(18)
             .foregroundStyle(.white)
-            if shared {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "person.2.fill")
-                            .foregroundStyle(.white)
-                            .padding(8)
+        }
+        .overlay(alignment: .topTrailing) {
+            HStack(spacing: 4) {
+                if shared {
+                    Image(systemName: "person.2.fill")
+                }
+                if let shareAction {
+                    Button(action: shareAction) {
+                        Image(systemName: "square.and.arrow.up")
                     }
-                    Spacer()
                 }
             }
+            .padding(8)
+            .foregroundStyle(.white)
         }
         .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
         .saturation(archived ? 0 : 1)
