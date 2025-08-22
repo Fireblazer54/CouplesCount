@@ -53,7 +53,7 @@ struct CouplesCountWidgetView: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(entry.entity.title)
-                .font(.headline)
+                .font(.system(.headline, design: TitleFont(rawValue: entry.entity.titleFontName)?.design ?? .default))
                 .lineLimit(1)
 
             Text(daysText(to: entry.entity.targetDate, tzID: entry.entity.timeZoneID))

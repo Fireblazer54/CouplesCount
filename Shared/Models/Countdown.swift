@@ -9,6 +9,9 @@ final class Countdown {
     var timeZoneID: String
     var isArchived: Bool
 
+    // Title font style ("default", "rounded", etc.)
+    var titleFontName: String
+
     // Background
     // "color" or "image"
     var backgroundStyle: String
@@ -29,6 +32,7 @@ final class Countdown {
          targetDate: Date,
          timeZoneID: String,
          isArchived: Bool = false,
+         titleFontName: String = TitleFont.default.rawValue,
          backgroundStyle: String = "color",
          backgroundColorHex: String? = "#0A84FF",
          backgroundImageData: Data? = nil,
@@ -40,6 +44,7 @@ final class Countdown {
         self.targetDate = targetDate
         self.timeZoneID = timeZoneID
         self.isArchived = isArchived
+        self.titleFontName = titleFontName
         self.backgroundStyle = backgroundStyle
         self.backgroundColorHex = backgroundColorHex
         self.backgroundImageData = backgroundImageData
