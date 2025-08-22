@@ -103,7 +103,8 @@ struct CountdownListView: View {
                                     backgroundStyle: item.backgroundStyle,
                                     colorHex: item.backgroundColorHex,
                                     imageData: item.backgroundImageData,
-                                    shared: item.isShared
+                                    shared: item.isShared,
+                                    shareURL: CountdownShareService.exportURL(for: item)
                                 )
                                 .environmentObject(theme)
                                 .contentShape(Rectangle())
