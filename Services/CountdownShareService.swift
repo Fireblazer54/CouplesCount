@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import Compression
 
 struct CountdownShareData: Codable {
     let title: String
@@ -23,6 +24,10 @@ enum CountdownShareError: LocalizedError {
 }
 
 enum CountdownShareService {
+    /// Encodes a countdown into a compact shareable URL.
+    /// The payload is encoded as a binary property list, compressed,
+    /// then base64 encoded so the resulting link is much shorter than
+    /// the previous JSON-only approach.
     static func exportURL(for countdown: Countdown) -> URL? {
         let payload = CountdownShareData(
             title: countdown.title,
@@ -32,23 +37,37 @@ enum CountdownShareService {
             backgroundColorHex: countdown.backgroundColorHex,
             backgroundImageData: countdown.backgroundImageData
         )
-        guard let json = try? JSONEncoder().encode(payload) else { return nil }
-        let base64 = json.base64EncodedString()
-        guard let escaped = base64.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }
-        return URL(string: "couplescount://import?data=\(escaped)")
+
+        // Encode using a binary property list to avoid the inherent base64
+        // expansion that JSON introduces for `Data` properties.
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        guard
+            let plist = try? encoder.encode(payload),
+            let compressed = try? plist.compressed(using: .lzfse)
+        else { return nil }
+
+        let base64 = compressed.base64EncodedString()
+        var components = URLComponents()
+        components.scheme = "couplescount"
+        components.host = "import"
+        components.queryItems = [URLQueryItem(name: "data", value: base64)]
+        return components.url
     }
 
+    /// Imports a countdown from a previously generated share URL.
     static func importCountdown(from url: URL, context: ModelContext) throws {
         guard
             url.scheme == "couplescount",
             url.host == "import",
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let dataItem = components.queryItems?.first(where: { $0.name == "data" })?.value,
-            let decodedBase64 = dataItem.removingPercentEncoding,
-            let data = Data(base64Encoded: decodedBase64)
+            let data = Data(base64Encoded: dataItem),
+            let decompressed = try? data.decompressed(using: .lzfse)
         else { throw CountdownShareError.invalidURL }
 
-        guard let payload = try? JSONDecoder().decode(CountdownShareData.self, from: data) else {
+        let decoder = PropertyListDecoder()
+        guard let payload = try? decoder.decode(CountdownShareData.self, from: decompressed) else {
             throw CountdownShareError.decodeFailed
         }
 
