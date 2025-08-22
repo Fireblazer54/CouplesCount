@@ -6,7 +6,7 @@ struct ProfileView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<Countdown> { $0.isShared && !$0.isArchived },
-           sort: \Countdown.targetDate, order: .forward)
+           sort: \Countdown.targetUTC, order: .forward)
     private var shared: [Countdown]
 
     @AppStorage("profileImageData") private var profileImageData: Data?

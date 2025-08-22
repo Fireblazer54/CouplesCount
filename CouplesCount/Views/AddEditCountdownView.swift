@@ -402,7 +402,9 @@ struct AddEditCountdownView: View {
                 existing.backgroundStyle = backgroundStyle
                 existing.backgroundColorHex = colorHex
                 existing.backgroundImageData = imageData
+                existing.hasImage = backgroundStyle == "image"
                 existing.reminderOffsets = selectedReminders.map { $0.rawValue }
+                existing.lastEdited = .now
                 existing.isShared = isShared
                 existing.sharedWith = friends.filter { selectedFriends.contains($0.id) }
                 NotificationManager.cancelAll(for: existing.id)
