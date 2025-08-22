@@ -10,9 +10,34 @@ struct CountdownCardView: View {
     let backgroundStyle: String
     let colorHex: String?
     let imageData: Data?
-    let titleFontName: String = TitleFont.default.rawValue
+    let titleFontName: String
+
     let shared: Bool
     let shareAction: (() -> Void)?
+
+    init(
+        title: String,
+        daysLeft: Int,
+        dateText: String,
+        archived: Bool,
+        backgroundStyle: String,
+        colorHex: String?,
+        imageData: Data?,
+        titleFontName: String = TitleFont.default.rawValue,
+        shared: Bool,
+        shareAction: (() -> Void)? = nil
+    ) {
+        self.title = title
+        self.daysLeft = daysLeft
+        self.dateText = dateText
+        self.archived = archived
+        self.backgroundStyle = backgroundStyle
+        self.colorHex = colorHex
+        self.imageData = imageData
+        self.titleFontName = titleFontName
+        self.shared = shared
+        self.shareAction = shareAction
+    }
 
 
     private let corner: CGFloat = 22
