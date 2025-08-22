@@ -44,7 +44,8 @@ enum CountdownShareService {
         encoder.outputFormat = .binary
         guard
             let plist = try? encoder.encode(payload),
-            let compressed = try? plist.compressed(using: .lzfse)
+            let compressed = try? plist.compressed(using: COMPRESSION_LZFSE)
+
         else { return nil }
 
         let base64 = compressed.base64EncodedString()
@@ -63,7 +64,8 @@ enum CountdownShareService {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let dataItem = components.queryItems?.first(where: { $0.name == "data" })?.value,
             let data = Data(base64Encoded: dataItem),
-            let decompressed = try? data.decompressed(using: .lzfse)
+            let decompressed = try? data.decompressed(using: COMPRESSION_LZFSE)
+
         else { throw CountdownShareError.invalidURL }
 
         let decoder = PropertyListDecoder()
