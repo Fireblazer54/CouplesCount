@@ -276,11 +276,18 @@ struct AddEditCountdownView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: save) {
-                        Image(systemName: "checkmark")
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack {
+                        if let existing, let url = CountdownShareService.exportURL(for: existing) {
+                            ShareLink(item: url) {
+                                Image(systemName: "square.and.arrow.up")
+                            }
+                        }
+                        Button(action: save) {
+                            Image(systemName: "checkmark")
+                        }
+                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .sheet(isPresented: $showPhotoPicker) { PhotoPicker(imageData: $imageData) }
