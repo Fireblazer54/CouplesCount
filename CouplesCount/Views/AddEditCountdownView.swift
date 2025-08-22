@@ -42,7 +42,6 @@ struct AddEditCountdownView: View {
 
     @State private var title: String = ""
     @State private var date: Date = Date().addingTimeInterval(86_400)
-    @State private var includeTime: Bool = false
     @State private var timeZoneID: String = TimeZone.current.identifier
 
     // Background selection
@@ -119,30 +118,26 @@ struct AddEditCountdownView: View {
 
                     // MARK: Details
                     SettingsCard {
-                        Text("Details")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-
                         TextField("Title (e.g., Anniversary)", text: $title)
                             .textInputAutocapitalization(.words)
                             .onSubmit { lightHaptic() }
 
-                        Toggle("Include time", isOn: $includeTime)
-
-                        DatePicker(
-                            "Date",
-                            selection: $date,
-                            displayedComponents: includeTime ? [.date, .hourAndMinute] : [.date]
-                        )
-
                         HStack {
-                            Text("Time Zone")
-                            Spacer()
-                            Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
-                                .foregroundStyle(.secondary)
+                            DatePicker("Date", selection: $date, displayedComponents: .date)
+                            DatePicker("", selection: $date, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture { timeZoneID = TimeZone.current.identifier }
+
+                        NavigationLink {
+                            TimeZonePickerView(selectedID: $timeZoneID)
+                        } label: {
+                            HStack {
+                                Text("Time Zone")
+                                Spacer()
+                                Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
 
                     // MARK: Background
@@ -330,7 +325,6 @@ struct AddEditCountdownView: View {
                     title = existing.title
                     date = existing.targetDate
                     timeZoneID = existing.timeZoneID
-                    includeTime = hasTime(existing.targetDate)
                     backgroundStyle = existing.backgroundStyle
                     colorHex = existing.backgroundColorHex ?? colorHex
                     imageData = existing.backgroundImageData
@@ -414,11 +408,6 @@ struct AddEditCountdownView: View {
         case 4320: return .d3
         default:  return .none
         }
-    }
-
-    private func hasTime(_ d: Date) -> Bool {
-        let c = Calendar.current.dateComponents([.hour,.minute,.second], from: d)
-        return (c.hour ?? 0) != 0 || (c.minute ?? 0) != 0 || (c.second ?? 0) != 0
     }
 
     @ViewBuilder
