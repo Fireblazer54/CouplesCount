@@ -1,68 +1,104 @@
 import Foundation
 import Compression
 
+/// Errors that can occur while compressing or decompressing `Data` values.
+
 enum DataCompressionError: Error {
     case compressionFailed
     case decompressionFailed
 }
 
 extension Data {
+    /// Returns a compressed representation of the data using the specified
+    /// algorithm. The output buffer grows automatically if the initial
+    /// capacity is insufficient.
     func compressed(using algorithm: compression_algorithm) throws -> Data {
-        try perform(operation: COMPRESSION_STREAM_ENCODE, algorithm: algorithm)
-    }
-
-    func decompressed(using algorithm: compression_algorithm) throws -> Data {
-        try perform(operation: COMPRESSION_STREAM_DECODE, algorithm: algorithm)
-    }
-
-    private func perform(operation: compression_stream_operation, algorithm: compression_algorithm) throws -> Data {
         guard !isEmpty else { return self }
 
-        var stream = compression_stream()
-        var status = compression_stream_init(&stream, operation, algorithm)
-        guard status != COMPRESSION_STATUS_ERROR else {
-            throw operation == COMPRESSION_STREAM_ENCODE ? DataCompressionError.compressionFailed : DataCompressionError.decompressionFailed
+        return try withUnsafeBytes { (srcBuffer: UnsafeRawBufferPointer) -> Data in
+            guard let srcPtr = srcBuffer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                throw DataCompressionError.compressionFailed
+            }
+
+            var dstSize = Swift.max(count, 64)
+            var dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstSize)
+            var outputSize = compression_encode_buffer(
+                dstBuffer,
+                dstSize,
+                srcPtr,
+                count,
+                nil,
+                algorithm
+            )
+
+            while outputSize == 0 {
+                dstBuffer.deallocate()
+                dstSize *= 2
+                dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstSize)
+                outputSize = compression_encode_buffer(
+                    dstBuffer,
+                    dstSize,
+                    srcPtr,
+                    count,
+                    nil,
+                    algorithm
+                )
+            }
+
+            guard outputSize != 0 else {
+                dstBuffer.deallocate()
+                throw DataCompressionError.compressionFailed
+            }
+
+            let data = Data(bytes: dstBuffer, count: outputSize)
+            dstBuffer.deallocate()
+            return data
         }
-        defer { compression_stream_destroy(&stream) }
+    }
 
-        let bufferSize = Swift.max(count, 64 * 1024)
-        let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
-        defer { dstBuffer.deallocate() }
-
-        var output = Data()
+    /// Decompresses the data using the supplied algorithm.
+    func decompressed(using algorithm: compression_algorithm) throws -> Data {
+        guard !isEmpty else { return self }
 
         return try withUnsafeBytes { (srcBuffer: UnsafeRawBufferPointer) -> Data in
-            guard let srcPointer = srcBuffer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
-                throw operation == COMPRESSION_STREAM_ENCODE ? DataCompressionError.compressionFailed : DataCompressionError.decompressionFailed
+            guard let srcPtr = srcBuffer.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                throw DataCompressionError.decompressionFailed
             }
 
-            stream.src_ptr = srcPointer
-            stream.src_size = count
-            stream.dst_ptr = dstBuffer
-            stream.dst_size = bufferSize
+            var dstSize = count * 4
+            var dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstSize)
+            var outputSize = compression_decode_buffer(
+                dstBuffer,
+                dstSize,
+                srcPtr,
+                count,
+                nil,
+                algorithm
+            )
 
-            let flags: Int32 = Int32(COMPRESSION_STREAM_FINALIZE.rawValue)
-
-            repeat {
-                status = compression_stream_process(&stream, flags)
-                switch status {
-                case COMPRESSION_STATUS_OK, COMPRESSION_STATUS_END:
-                    let produced = bufferSize - stream.dst_size
-                    if produced > 0 {
-                        output.append(dstBuffer, count: produced)
-                    }
-                    stream.dst_ptr = dstBuffer
-                    stream.dst_size = bufferSize
-                default:
-                    throw operation == COMPRESSION_STREAM_ENCODE ? DataCompressionError.compressionFailed : DataCompressionError.decompressionFailed
-                }
-            } while status == COMPRESSION_STATUS_OK
-
-            if status == COMPRESSION_STATUS_END {
-                return output
-            } else {
-                throw operation == COMPRESSION_STREAM_ENCODE ? DataCompressionError.compressionFailed : DataCompressionError.decompressionFailed
+            while outputSize == 0 {
+                dstBuffer.deallocate()
+                dstSize *= 2
+                dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstSize)
+                outputSize = compression_decode_buffer(
+                    dstBuffer,
+                    dstSize,
+                    srcPtr,
+                    count,
+                    nil,
+                    algorithm
+                )
             }
+
+            guard outputSize != 0 else {
+                dstBuffer.deallocate()
+                throw DataCompressionError.decompressionFailed
+            }
+
+            let data = Data(bytes: dstBuffer, count: outputSize)
+            dstBuffer.deallocate()
+            return data
+
         }
     }
 }
