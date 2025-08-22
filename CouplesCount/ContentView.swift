@@ -115,13 +115,6 @@ struct CountdownListView: View {
                                 )
                                 .environmentObject(theme)
                                 .contentShape(Rectangle())
-                                .contextMenu {
-                                    if let url = CountdownShareService.exportURL(for: item) {
-                                        ShareLink(item: url) {
-                                            Label("Share", systemImage: "square.and.arrow.up")
-                                        }
-                                    }
-                                }
                                 .onTapGesture {
                                     editing = item
                                     showAddEdit = true
@@ -129,16 +122,6 @@ struct CountdownListView: View {
                                 .listRowSeparator(.hidden)
                                 .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                 .listRowBackground(theme.theme.background)
-                                .contextMenu {
-                                    if let exportURL {
-                                        Button {
-                                            shareURL = exportURL
-                                            showShareSheet = true
-                                        } label: {
-                                            Label("Share", systemImage: "square.and.arrow.up")
-                                        }
-                                    }
-                                }
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                     Button {
                                         withAnimation(.easeInOut) {
