@@ -2,6 +2,7 @@ import Foundation
 import Compression
 
 /// Errors that can occur while compressing or decompressing `Data` values.
+
 enum DataCompressionError: Error {
     case compressionFailed
     case decompressionFailed
@@ -97,6 +98,7 @@ extension Data {
             let data = Data(bytes: dstBuffer, count: outputSize)
             dstBuffer.deallocate()
             return data
+
         }
     }
 }
