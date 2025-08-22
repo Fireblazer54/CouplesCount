@@ -10,7 +10,7 @@ struct CountdownCardView: View {
     let backgroundStyle: String
     let colorHex: String?
     let imageData: Data?
-    let titleFontName: String
+    let titleFontName: String = TitleFont.default.rawValue
     let shared: Bool
     let shareAction: (() -> Void)?
 
