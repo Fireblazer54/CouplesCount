@@ -11,6 +11,7 @@ struct CountdownCardView: View {
     let colorHex: String?
     let imageData: Data?
     let titleFontName: String
+
     let shared: Bool
     let shareAction: (() -> Void)?
 
