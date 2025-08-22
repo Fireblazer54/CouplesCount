@@ -3,6 +3,8 @@ import SwiftData
 
 struct ContentView: View {
     @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.modelContext) private var modelContext
+    @State private var importError: String?
 
     var body: some View {
         TabView {
@@ -17,6 +19,18 @@ struct ContentView: View {
                 }
         }
         .tint(theme.theme.accent)
+        .onOpenURL { url in
+            do {
+                try CountdownShareService.importCountdown(from: url, context: modelContext)
+            } catch {
+                importError = error.localizedDescription
+            }
+        }
+        .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importError ?? "")
+        }
     }
 }
 
@@ -93,6 +107,13 @@ struct CountdownListView: View {
                                 )
                                 .environmentObject(theme)
                                 .contentShape(Rectangle())
+                                .contextMenu {
+                                    if let url = CountdownShareService.exportURL(for: item) {
+                                        ShareLink(item: url) {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+                                    }
+                                }
                                 .onTapGesture {
                                     editing = item
                                     showAddEdit = true
