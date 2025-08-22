@@ -111,9 +111,17 @@ struct CountdownListView: View {
                                         shareURL = exportURL
                                         showShareSheet = shareURL != nil
                                     }
+
                                 )
                                 .environmentObject(theme)
                                 .contentShape(Rectangle())
+                                .contextMenu {
+                                    if let url = CountdownShareService.exportURL(for: item) {
+                                        ShareLink(item: url) {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+                                    }
+                                }
                                 .onTapGesture {
                                     editing = item
                                     showAddEdit = true

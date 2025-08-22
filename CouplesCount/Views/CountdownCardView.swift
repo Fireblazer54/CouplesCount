@@ -13,6 +13,7 @@ struct CountdownCardView: View {
     let shared: Bool
     let shareAction: (() -> Void)?
 
+
     private let corner: CGFloat = 22
     private let height: CGFloat = 120
 
@@ -64,6 +65,7 @@ struct CountdownCardView: View {
                 }
                 if let shareAction {
                     Button(action: shareAction) {
+
                         Image(systemName: "square.and.arrow.up")
                     }
                 }

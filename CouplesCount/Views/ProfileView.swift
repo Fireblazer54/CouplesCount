@@ -107,6 +107,7 @@ struct ProfileView: View {
                             imageData: item.backgroundImageData,
                             shared: item.isShared,
                             shareAction: nil
+
                         )
                         .environmentObject(theme)
                         .contextMenu {
