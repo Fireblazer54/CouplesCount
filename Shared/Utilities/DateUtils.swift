@@ -9,6 +9,31 @@ enum DateUtils {
         return cal.dateComponents([.day], from: s, to: e).day ?? 0
     }
 
+    static func remainingText(to target: Date, from now: Date = .now, in tzID: String) -> String {
+        let tz = TimeZone(identifier: tzID) ?? .current
+        var cal = Calendar.current; cal.timeZone = tz
+
+        if now >= target { return "Today" }
+
+        let comps = cal.dateComponents([.day, .hour, .minute], from: now, to: target)
+        let d = comps.day ?? 0
+        if d >= 1 {
+            return "\(d) day" + (d == 1 ? "" : "s")
+        }
+
+        let h = comps.hour ?? 0
+        if h >= 1 {
+            return "\(h) hour" + (h == 1 ? "" : "s")
+        }
+
+        let m = comps.minute ?? 0
+        if m >= 1 {
+            return "\(m) minute" + (m == 1 ? "" : "s")
+        }
+
+        return "Today"
+    }
+
     static let readableDate: DateFormatter = {
         let df = DateFormatter()
         df.dateStyle = .medium

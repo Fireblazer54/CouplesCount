@@ -91,17 +91,14 @@ struct CountdownListView: View {
                         List {
                             ForEach(items) { item in
                                 // Compute per-item display values
-                                let days = DateUtils.daysUntil(
-                                    target: item.targetDate,
-                                    in: item.timeZoneID
-                                )
                                 let dateText = DateUtils.readableDate.string(from: item.targetDate)
                                 let exportURL = CountdownShareService.exportURL(for: item)
 
                                 // Build the countdown card separately to reduce type-checking complexity
                                 let card = CountdownCardView(
                                     title: item.title,
-                                    daysLeft: days,
+                                    targetDate: item.targetDate,
+                                    timeZoneID: item.timeZoneID,
                                     dateText: dateText,
                                     archived: item.isArchived,
                                     backgroundStyle: item.backgroundStyle,

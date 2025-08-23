@@ -56,7 +56,7 @@ struct CouplesCountWidgetView: View {
                 .font(.system(.headline, design: TitleFont(rawValue: entry.entity.titleFontName)?.design ?? .default))
                 .lineLimit(1)
 
-            Text(daysText(to: entry.entity.targetDate, tzID: entry.entity.timeZoneID))
+            Text(DateUtils.remainingText(to: entry.entity.targetDate, from: entry.date, in: entry.entity.timeZoneID))
                 .font(.system(size: 28, weight: .bold, design: .rounded))
 
             Text(entry.entity.targetDate, style: .date)
@@ -65,15 +65,6 @@ struct CouplesCountWidgetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .containerBackground(.fill.tertiary, for: .widget)
-    }
-
-    private func daysText(to date: Date, tzID: String) -> String {
-        let tz = TimeZone(identifier: tzID) ?? .current
-        var cal = Calendar.current; cal.timeZone = tz
-        let start = cal.startOfDay(for: .now)
-        let end = cal.startOfDay(for: date)
-        let d = cal.dateComponents([.day], from: start, to: end).day ?? 0
-        return "\(d) days"
     }
 }
 
