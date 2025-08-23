@@ -111,7 +111,7 @@ struct CountdownCardView: View {
         .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
         .saturation(archived ? 0 : 1)
         .opacity(archived ? 0.55 : 1)
-        .animation(.easeInOut(duration: 0.2), value: archived)
+        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: archived)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(title), \(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)), \(dateText)")
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }

@@ -213,10 +213,13 @@ struct ArchiveView: View {
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
-                                    modelContext.delete(item)
-                                    try? modelContext.save()
-                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                    updateWidgetSnapshot(afterSaving: all)
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                        modelContext.delete(item)
+                                        try? modelContext.save()
+                                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                        updateWidgetSnapshot(afterSaving: all)
+                                    }
+                                    Haptics.warning()
                                 } label: {
                                     Image(systemName: "trash")
                                         .font(.system(size: 16, weight: .bold))
@@ -228,10 +231,12 @@ struct ArchiveView: View {
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 Button {
-                                    item.isArchived = false
-                                    try? modelContext.save()
-                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                    updateWidgetSnapshot(afterSaving: all)
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                        item.isArchived = false
+                                        try? modelContext.save()
+                                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                        updateWidgetSnapshot(afterSaving: all)
+                                    }
                                 } label: {
                                     Image(systemName: "arrow.uturn.backward")
                                         .font(.system(size: 16, weight: .bold))
@@ -245,6 +250,7 @@ struct ArchiveView: View {
                     }
                     .listStyle(.plain)
                     .padding(.top, 12)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
                 }
             }
             .navigationTitle("Archive")
