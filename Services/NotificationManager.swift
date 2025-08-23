@@ -75,4 +75,20 @@ enum NotificationManager {
             center.removePendingNotificationRequests(withIdentifiers: toRemove)
         }
     }
+
+    static func scheduleCheckInReminder() {
+        let content = UNMutableNotificationContent()
+        content.title = "Check in"
+        content.body = "See how your countdowns are doing."
+        content.sound = .default
+
+        var cal = Calendar.current
+        cal.timeZone = .current
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        var comps = cal.dateComponents([.year, .month, .day], from: tomorrow)
+        comps.hour = 9
+        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
+        let req = UNNotificationRequest(identifier: "checkin-\(UUID().uuidString)", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(req)
+    }
 }

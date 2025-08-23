@@ -15,6 +15,7 @@ struct CountdownCardView: View {
 
     let shared: Bool
     let shareAction: (() -> Void)?
+    let height: CGFloat
 
     init(
         title: String,
@@ -27,7 +28,8 @@ struct CountdownCardView: View {
         imageData: Data?,
         titleFontName: String = TitleFont.default.rawValue,
         shared: Bool,
-        shareAction: (() -> Void)? = nil
+        shareAction: (() -> Void)? = nil,
+        height: CGFloat = 120
     ) {
         self.title = title
         self.targetDate = targetDate
@@ -40,11 +42,11 @@ struct CountdownCardView: View {
         self.titleFontName = titleFontName
         self.shared = shared
         self.shareAction = shareAction
+        self.height = height
     }
 
 
     private let corner: CGFloat = 22
-    private let height: CGFloat = 120
     @State private var now = Date()
 
     var body: some View {
