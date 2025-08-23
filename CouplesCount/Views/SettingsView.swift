@@ -10,96 +10,79 @@ struct SettingsView: View {
 
     private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
     private let supportEmail = "support@couplescount.app"
+    private let privacyURL = URL(string: "https://example.com/privacy")!
+    private let termsURL = URL(string: "https://example.com/terms")!
+
     @State private var activeAlert: ActiveAlert?
-    @State private var showEnjoyPrompt = false
-    @State private var showFeedbackForm = false
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
-                    SettingsCard {
-                        LazyVGrid(
-                            columns: [GridItem(.flexible(), spacing: 12),
-                                      GridItem(.flexible(), spacing: 12)],
-                            spacing: 12
-                        ) {
-                            ForEach(themes, id: \.self) { t in
-                                ThemeSwatch(theme: t, isSelected: t == theme.theme) {
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                    theme.setTheme(t)   // instant global update
-                                }
-                                .environmentObject(theme)
-                            }
-                        }
+            List {
+                Section("Support") {
+                    Button {
+                        rateApp()
+                    } label: {
+                        Label("Rate CouplesCount", systemImage: "star.fill")
                     }
+                    .accessibilityHint("Opens App Store review prompt")
 
-                    // NOTIFICATIONS
-                    SettingsCard {
-                        buttonRow(icon: "bell.badge.fill", title: "Reminders") {
-                            activeAlert = .reminders
-                        }
+                    Button {
+                        contactSupport()
+                    } label: {
+                        Label("Contact Support", systemImage: "envelope.fill")
                     }
-
-                    // ARCHIVE
-                    SettingsCard {
-                        NavigationLink {
-                            ArchiveView()
-                                .environmentObject(theme)
-                        } label: {
-                              HStack(spacing: 12) {
-                                  Image(systemName: "archivebox.fill")
-                                      .font(.title3)
-                                      .foregroundStyle(theme.theme.background)
-                                      .frame(width: 30, height: 30)
-                                      .background(
-                                          RoundedRectangle(cornerRadius: 8)
-                                              .fill(theme.theme.accent)
-                                      )
-                                  Text("Manage Archive")
-                                      .font(.body)
-                                  Spacer()
-                              }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    // SUPPORT
-                    SectionHeader(text: "Support")
-                    SettingsCard {
-                        buttonRow(icon: "envelope.fill", title: "Contact Support") {
-                            if let url = URL(string: "mailto:\(supportEmail)") {
-                                openURL(url)
-                            }
-                        }
-                        Divider().opacity(0.1)
-                        buttonRow(icon: "star.fill", title: "Rate CouplesCount") {
-                            showEnjoyPrompt = true
-                        }
-                    }
-
-                    // ABOUT
-                    SectionHeader(text: "About")
-                    SettingsCard {
-                        keyValueRow(
-                            key: "Version",
-                            value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-                        )
-                        Divider().opacity(0.08)
-                        keyValueRow(
-                            key: "Build",
-                            value: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-                        )
-                    }
-
-                    Spacer(minLength: 20)
+                    .accessibilityHint("Opens Mail with pre-filled app and iOS version")
                 }
-                .padding(.top, 8)
+
+                Section("Appearance") {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12),
+                                        GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        ForEach(themes, id: \.self) { t in
+                            ThemeSwatch(theme: t, isSelected: t == theme.theme) {
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                theme.setTheme(t)
+                            }
+                            .environmentObject(theme)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                    .listRowInsets(EdgeInsets())
+                }
+
+                Section("Notifications") {
+                    Button {
+                        activeAlert = .reminders
+                    } label: {
+                        Label("Reminders", systemImage: "bell.badge.fill")
+                    }
+                }
+
+                Section("Archive") {
+                    NavigationLink {
+                        ArchiveView()
+                            .environmentObject(theme)
+                    } label: {
+                        Label("Manage Archive", systemImage: "archivebox.fill")
+                    }
+                }
+
+                Section("Legal") {
+                    Link(destination: privacyURL) {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                    }
+
+                    NavigationLink {
+                        AboutLegalView(privacyURL: privacyURL, termsURL: termsURL)
+                            .environmentObject(theme)
+                    } label: {
+                        Label("About & Legal", systemImage: "info.circle.fill")
+                    }
+                }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)            // accent flows everywhere
-            .scrollIndicators(.hidden)
+            .tint(theme.theme.accent)
             .navigationTitle("Settings")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
@@ -115,59 +98,28 @@ struct SettingsView: View {
                 )
             }
         }
-        .confirmationDialog(
-            "Are you enjoying the app so far?",
-            isPresented: $showEnjoyPrompt,
-            titleVisibility: .visible
-        ) {
-            Button("Yes") {
-                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                    SKStoreReviewController.requestReview(in: scene)
-                }
-            }
-            Button("No") { showFeedbackForm = true }
-            Button("Cancel", role: .cancel) {}
-        }
-        .sheet(isPresented: $showFeedbackForm) {
-            FeedbackFormView()
-                .environmentObject(theme)
+    }
+
+    private func rateApp() {
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
         }
     }
 
-    // MARK: - Row helpers
+    private func contactSupport() {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+        let iosVersion = UIDevice.current.systemVersion
+        let subject = "CouplesCount Support"
+        let body = "App Version: \(appVersion) (\(build))\niOS Version: \(iosVersion)"
 
-    @ViewBuilder
-    private func buttonRow(icon: String, title: String, action: @escaping () -> Void) -> some View {
-        Button(action: {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            action()
-        }) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(theme.theme.background)
-                    .frame(width: 30, height: 30)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(theme.theme.accent)
-                    )
-                Text(title).font(.body)
-                Spacer()
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "mailto:\(supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)"
 
-    @ViewBuilder
-    private func keyValueRow(key: String, value: String) -> some View {
-        HStack {
-            Text(key)
-            Spacer()
-            Text(value)
-                .foregroundStyle(.secondary)
+        if let url = URL(string: urlString) {
+            openURL(url)
         }
-        .font(.body)
     }
 }
 
