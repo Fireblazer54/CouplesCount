@@ -4,7 +4,7 @@ import UserNotifications
 enum NotificationManager {
     private static let defaultsKey = "notificationsAuthorized"
 
-    private static func requestAuthorization() {
+    static func requestAuthorization(completion: @escaping (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             AppGroup.defaults.set(granted, forKey: defaultsKey)
             #if DEBUG
@@ -14,6 +14,9 @@ enum NotificationManager {
                 print("Notification authorization denied")
             }
             #endif
+            DispatchQueue.main.async {
+                completion(granted)
+            }
         }
     }
 
@@ -21,7 +24,7 @@ enum NotificationManager {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .notDetermined:
-                requestAuthorization()
+                requestAuthorization { _ in }
             case .authorized:
                 AppGroup.defaults.set(true, forKey: defaultsKey)
             default:
