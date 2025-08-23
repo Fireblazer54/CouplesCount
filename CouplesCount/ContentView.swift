@@ -48,6 +48,9 @@ struct CountdownListView: View {
     @State private var showPremium = false
     @State private var shareURL: URL? = nil
     @State private var showShareSheet = false
+    @State private var selected: Countdown? = nil
+    @State private var didLongPress = false
+    @State private var pressingID: UUID? = nil
 
     var body: some View {
         NavigationStack {
@@ -115,9 +118,25 @@ struct CountdownListView: View {
                                 card
                                     .environmentObject(theme)
                                     .contentShape(Rectangle())
+                                    .scaleEffect(pressingID == item.id ? 0.97 : 1)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
                                     .onTapGesture {
+                                        if !didLongPress {
+                                            selected = item
+                                        }
+                                    }
+                                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            pressingID = pressing ? item.id : nil
+                                        }
+                                    }) {
+                                        didLongPress = true
+                                        Haptics.light()
                                         editing = item
                                         showAddEdit = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            didLongPress = false
+                                        }
                                     }
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
@@ -205,6 +224,10 @@ struct CountdownListView: View {
                 if let shareURL {
                     ShareSheet(activityItems: [shareURL])
                 }
+            }
+            .navigationDestination(item: $selected) { countdown in
+                CountdownDetailView(countdown: countdown)
+                    .environmentObject(theme)
             }
         }
         .tint(theme.theme.accent)
