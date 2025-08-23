@@ -27,7 +27,9 @@ struct TreeGrowthView: View {
             .animation(.easeInOut(duration: 1.0), value: animated)
         }
         .onAppear { animated = progress }
-        .onChange(of: progress) { animated = $0 }
+        .onChange(of: progress) { _, newValue in
+            animated = newValue
+        }
     }
 }
 
