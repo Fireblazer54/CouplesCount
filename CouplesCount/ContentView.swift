@@ -124,12 +124,13 @@ struct CountdownListView: View {
                                     .listRowBackground(theme.theme.background)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                         Button {
-                                            withAnimation(.easeInOut) {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                                 modelContext.delete(item)
                                                 try? modelContext.save()
                                                 let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
                                                 updateWidgetSnapshot(afterSaving: all)
                                             }
+                                            Haptics.warning()
                                         } label: {
                                             Image(systemName: "trash")
                                                 .font(.system(size: 16, weight: .bold))
@@ -141,12 +142,13 @@ struct CountdownListView: View {
                                     }
                                     .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                         Button {
-                                            withAnimation(.easeInOut) {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                                 item.isArchived.toggle()
                                                 try? modelContext.save()
                                                 let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
                                                 updateWidgetSnapshot(afterSaving: all)
                                             }
+                                            if item.isArchived { Haptics.light() }
                                         } label: {
                                             Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
                                                 .font(.system(size: 16, weight: .bold))
@@ -162,7 +164,7 @@ struct CountdownListView: View {
                         .listRowSpacing(16)
                         .padding(.top, 28)
                         .scrollContentBackground(.hidden)
-                        .animation(.easeInOut, value: items)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
                     }
                 }
 

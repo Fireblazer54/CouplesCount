@@ -273,13 +273,16 @@ struct AddEditCountdownView: View {
                     if let existing {
                         SettingsCard {
                             Button {
-                                existing.isArchived.toggle()
-                                if existing.isArchived {
-                                    NotificationManager.cancelReminders(for: existing.id)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                    existing.isArchived.toggle()
+                                    if existing.isArchived {
+                                        NotificationManager.cancelReminders(for: existing.id)
+                                    }
+                                    try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
                                 }
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
+                                if existing.isArchived { Haptics.light() }
                                 dismiss()
                             } label: {
                                 Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
@@ -289,11 +292,14 @@ struct AddEditCountdownView: View {
 
                         SettingsCard {
                             Button(role: .destructive) {
-                                NotificationManager.cancelAll(for: existing.id)
-                                modelContext.delete(existing)
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                    NotificationManager.cancelAll(for: existing.id)
+                                    modelContext.delete(existing)
+                                    try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
+                                }
+                                Haptics.warning()
                                 dismiss()
                             } label: {
                                 Label("Delete Countdown", systemImage: "trash")
@@ -429,7 +435,9 @@ struct AddEditCountdownView: View {
                     isShared: isShared,
                     sharedWith: friends.filter { selectedFriends.contains($0.id) }
                 )
-                modelContext.insert(cd)
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                    modelContext.insert(cd)
+                }
                 if !selectedReminders.isEmpty { NotificationManager.scheduleReminders(for: cd) }
             }
 

@@ -112,20 +112,26 @@ struct ProfileView: View {
                         .environmentObject(theme)
                         .contextMenu {
                             Button(role: .destructive) {
-                                modelContext.delete(item)
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                    modelContext.delete(item)
+                                    try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
+                                }
+                                Haptics.warning()
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                             .tint(.red)
 
                             Button {
-                                item.isArchived = true
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                    item.isArchived = true
+                                    try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
+                                }
+                                Haptics.light()
                             } label: {
                                 Label("Archive", systemImage: "archivebox")
                             }
@@ -134,6 +140,7 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
+                .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
         .background(theme.theme.background.ignoresSafeArea())
