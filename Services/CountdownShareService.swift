@@ -86,6 +86,7 @@ enum CountdownShareService {
         )
         context.insert(cd)
         try context.save()
+        NotificationManager.scheduleReminders(for: cd)
         let all = try context.fetch(FetchDescriptor<Countdown>())
         updateWidgetSnapshot(afterSaving: all)
     }
