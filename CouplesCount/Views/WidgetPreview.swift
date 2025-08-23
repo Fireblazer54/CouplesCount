@@ -9,6 +9,8 @@ struct WidgetPreview: View {
     let bgColorHex: String?
     let imageData: Data?
 
+    @State private var now = Date()
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
@@ -32,7 +34,7 @@ struct WidgetPreview: View {
                     .foregroundStyle(.white)
                     .lineLimit(1)
 
-                Text("\(DateUtils.daysUntil(target: targetDate, in: tzID)) days")
+                Text(DateUtils.remainingText(to: targetDate, from: now, in: tzID))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
 
@@ -43,6 +45,7 @@ struct WidgetPreview: View {
             .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
             .padding()
         }
+        .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
     }
 
     private var backgroundFill: some ShapeStyle {

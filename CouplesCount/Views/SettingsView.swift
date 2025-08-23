@@ -193,12 +193,12 @@ struct ArchiveView: View {
                 } else {
                     List {
                         ForEach(items) { item in
-                            let days = DateUtils.daysUntil(target: item.targetDate, in: item.timeZoneID)
                             let dateText = DateUtils.readableDate.string(from: item.targetDate)
 
                                 CountdownCardView(
                                     title: item.title,
-                                    daysLeft: days,
+                                    targetDate: item.targetDate,
+                                    timeZoneID: item.timeZoneID,
                                     dateText: dateText,
                                     archived: item.isArchived,
                                     backgroundStyle: item.backgroundStyle,

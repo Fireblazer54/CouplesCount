@@ -4,7 +4,8 @@ struct CountdownCardView: View {
     @EnvironmentObject private var theme: ThemeManager
 
     let title: String
-    let daysLeft: Int
+    let targetDate: Date
+    let timeZoneID: String
     let dateText: String
     let archived: Bool
     let backgroundStyle: String
@@ -17,7 +18,8 @@ struct CountdownCardView: View {
 
     init(
         title: String,
-        daysLeft: Int,
+        targetDate: Date,
+        timeZoneID: String,
         dateText: String,
         archived: Bool,
         backgroundStyle: String,
@@ -28,7 +30,8 @@ struct CountdownCardView: View {
         shareAction: (() -> Void)? = nil
     ) {
         self.title = title
-        self.daysLeft = daysLeft
+        self.targetDate = targetDate
+        self.timeZoneID = timeZoneID
         self.dateText = dateText
         self.archived = archived
         self.backgroundStyle = backgroundStyle
@@ -42,6 +45,7 @@ struct CountdownCardView: View {
 
     private let corner: CGFloat = 22
     private let height: CGFloat = 120
+    @State private var now = Date()
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -74,7 +78,7 @@ struct CountdownCardView: View {
                     .font(.system(.headline, design: TitleFont(rawValue: titleFontName)?.design ?? .default))
                     .lineLimit(1)
 
-                Text("\(daysLeft) days")
+                Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
 
                 Text(dateText)
@@ -109,7 +113,8 @@ struct CountdownCardView: View {
         .opacity(archived ? 0.55 : 1)
         .animation(.easeInOut(duration: 0.2), value: archived)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title), \(daysLeft) days, \(dateText)")
+        .accessibilityLabel("\(title), \(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)), \(dateText)")
+        .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
     }
 
     private var accent: Color { theme.theme.accent }
