@@ -2,10 +2,31 @@ import Foundation
 import UserNotifications
 
 enum NotificationManager {
+    private static let defaultsKey = "notificationsAuthorized"
+
+    private static func requestAuthorization() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            AppGroup.defaults.set(granted, forKey: defaultsKey)
+            #if DEBUG
+            if let error = error {
+                print("Notification authorization error: \(error)")
+            } else if !granted {
+                print("Notification authorization denied")
+            }
+            #endif
+        }
+    }
+
     static func requestAuthorizationIfNeeded() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .notDetermined else { return }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                requestAuthorization()
+            case .authorized:
+                AppGroup.defaults.set(true, forKey: defaultsKey)
+            default:
+                AppGroup.defaults.set(false, forKey: defaultsKey)
+            }
         }
     }
 
