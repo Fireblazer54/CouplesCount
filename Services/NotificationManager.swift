@@ -34,27 +34,35 @@ enum NotificationManager {
         let tz = TimeZone(identifier: countdown.timeZoneID) ?? .current
         var cal = Calendar.current; cal.timeZone = tz
 
-        for offset in countdown.reminderOffsets {
+        for offsetMinutes in countdown.reminderOffsets {
             let content = UNMutableNotificationContent()
             content.title = "Upcoming: \(countdown.title)"
             content.body = "Happening soon."
             content.sound = .default
 
             // Fire at target date minus offset minutes
-            guard let fire = cal.date(byAdding: .minute, value: -offset, to: countdown.targetUTC) else { continue }
+            guard let fire = cal.date(byAdding: .minute, value: -offsetMinutes, to: countdown.targetUTC) else { continue }
             guard fire > Date() else { continue }
 
             let comps = cal.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-            let req = UNNotificationRequest(identifier: "cd-\(countdown.id)-\(offset)", content: content, trigger: trigger)
-            UNUserNotificationCenter.current().add(req)
+            let identifier = "cd-\(countdown.id.uuidString)-\(offsetMinutes)"
+            let req = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(req) { error in
+                #if DEBUG
+                if let error = error {
+                    print("Notification scheduling error: \(error)")
+                }
+                #endif
+            }
         }
     }
 
     static func cancelAll(for id: UUID) {
         let center = UNUserNotificationCenter.current()
         center.getPendingNotificationRequests { reqs in
-            let toRemove = reqs.filter { $0.identifier.hasPrefix("cd-\(id)") }.map { $0.identifier }
+            let prefix = "cd-\(id.uuidString)-"
+            let toRemove = reqs.filter { $0.identifier.hasPrefix(prefix) }.map { $0.identifier }
             center.removePendingNotificationRequests(withIdentifiers: toRemove)
         }
     }
