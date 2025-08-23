@@ -11,7 +11,7 @@ final class Countdown {
     @Attribute(originalName: "backgroundColorHex") var colorTheme: String
     var hasImage: Bool
     @Attribute(originalName: "backgroundImageData") var imageData: Data?
-    @Attribute(originalName: "titleFontName") var fontStyle: String
+    @Attribute var cardFontStyleRaw: String = CardFontStyle.classic.rawValue
     @Attribute(originalName: "reminderOffsets") var reminderOffsetsMinutes: [Int]
     var lastEdited: Date
     var version: Int
@@ -29,9 +29,9 @@ final class Countdown {
         set { targetUTC = newValue }
     }
 
-    var titleFontName: String {
-        get { fontStyle }
-        set { fontStyle = newValue }
+    var cardFontStyle: CardFontStyle {
+        get { CardFontStyle(rawValue: cardFontStyleRaw) ?? .classic }
+        set { cardFontStyleRaw = newValue.rawValue }
     }
 
     var backgroundColorHex: String? {
@@ -54,7 +54,7 @@ final class Countdown {
          targetDate: Date,
          timeZoneID: String,
          isArchived: Bool = false,
-         titleFontName: String = TitleFont.default.rawValue,
+         cardFontStyle: CardFontStyle = .classic,
          backgroundStyle: String = "color",
          backgroundColorHex: String? = "#0A84FF",
          backgroundImageData: Data? = nil,
@@ -69,7 +69,7 @@ final class Countdown {
         self.colorTheme = backgroundColorHex ?? "#0A84FF"
         self.hasImage = backgroundStyle == "image"
         self.imageData = backgroundImageData
-        self.fontStyle = titleFontName
+        self.cardFontStyleRaw = cardFontStyle.rawValue
         self.reminderOffsetsMinutes = reminderOffsets
         self.lastEdited = .now
         self.version = 1

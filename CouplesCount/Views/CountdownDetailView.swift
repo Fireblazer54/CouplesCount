@@ -111,7 +111,7 @@ struct CountdownDetailView: View {
             backgroundStyle: countdown.backgroundStyle,
             colorHex: countdown.backgroundColorHex,
             imageData: countdown.backgroundImageData,
-            titleFontName: countdown.titleFontName,
+            fontStyle: countdown.cardFontStyle,
             shared: countdown.isShared,
             shareAction: nil,
             height: width
@@ -123,10 +123,11 @@ struct CountdownDetailView: View {
     private var info: some View {
         VStack(spacing: 8) {
             Text(countdown.title)
-                .font(.title.bold())
+                .font(CardTypography.font(for: countdown.cardFontStyle, role: .title))
             Text(DateUtils.readableDate.string(from: countdown.targetDate))
+                .font(CardTypography.font(for: countdown.cardFontStyle, role: .date))
             Text(DateUtils.remainingText(to: countdown.targetDate, from: now, in: countdown.timeZoneID))
-                .font(.title2.weight(.semibold))
+                .font(CardTypography.font(for: countdown.cardFontStyle, role: .number))
         }
         .multilineTextAlignment(.center)
     }

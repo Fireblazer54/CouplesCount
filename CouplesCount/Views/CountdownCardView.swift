@@ -11,7 +11,7 @@ struct CountdownCardView: View {
     let backgroundStyle: String
     let colorHex: String?
     let imageData: Data?
-    let titleFontName: String
+    let fontStyle: CardFontStyle
 
     let shared: Bool
     let shareAction: (() -> Void)?
@@ -26,7 +26,7 @@ struct CountdownCardView: View {
         backgroundStyle: String,
         colorHex: String?,
         imageData: Data?,
-        titleFontName: String = TitleFont.default.rawValue,
+        fontStyle: CardFontStyle = .classic,
         shared: Bool,
         shareAction: (() -> Void)? = nil,
         height: CGFloat = 120
@@ -39,7 +39,7 @@ struct CountdownCardView: View {
         self.backgroundStyle = backgroundStyle
         self.colorHex = colorHex
         self.imageData = imageData
-        self.titleFontName = titleFontName
+        self.fontStyle = fontStyle
         self.shared = shared
         self.shareAction = shareAction
         self.height = height
@@ -77,14 +77,14 @@ struct CountdownCardView: View {
             // Content
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.system(.headline, design: TitleFont(rawValue: titleFontName)?.design ?? .default))
+                    .font(CardTypography.font(for: fontStyle, role: .title))
                     .lineLimit(1)
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .font(CardTypography.font(for: fontStyle, role: .number))
 
                 Text(dateText)
-                    .font(.footnote)
+                    .font(CardTypography.font(for: fontStyle, role: .date))
                     .opacity(0.95)
             }
             .padding(18)

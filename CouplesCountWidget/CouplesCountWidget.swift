@@ -53,14 +53,14 @@ struct CouplesCountWidgetView: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(entry.entity.title)
-                .font(.system(.headline, design: TitleFont(rawValue: entry.entity.titleFontName)?.design ?? .default))
+                .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .title))
                 .lineLimit(1)
 
             Text(DateUtils.remainingText(to: entry.entity.targetDate, from: entry.date, in: entry.entity.timeZoneID))
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .number))
 
             Text(entry.entity.targetDate, style: .date)
-                .font(.footnote)
+                .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .date))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
