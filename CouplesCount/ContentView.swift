@@ -130,6 +130,8 @@ struct CountdownListView: View {
                                             withAnimation(.easeInOut) {
                                                 modelContext.delete(item)
                                                 try? modelContext.save()
+                                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                                updateWidgetSnapshot(afterSaving: all)
                                             }
                                         } label: {
                                             Image(systemName: "trash")
@@ -145,6 +147,8 @@ struct CountdownListView: View {
                                             withAnimation(.easeInOut) {
                                                 item.isArchived.toggle()
                                                 try? modelContext.save()
+                                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                                updateWidgetSnapshot(afterSaving: all)
                                             }
                                         } label: {
                                             Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")

@@ -215,6 +215,8 @@ struct ArchiveView: View {
                                 Button {
                                     modelContext.delete(item)
                                     try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
                                 } label: {
                                     Image(systemName: "trash")
                                         .font(.system(size: 16, weight: .bold))
@@ -228,6 +230,8 @@ struct ArchiveView: View {
                                 Button {
                                     item.isArchived = false
                                     try? modelContext.save()
+                                    let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                    updateWidgetSnapshot(afterSaving: all)
                                 } label: {
                                     Image(systemName: "arrow.uturn.backward")
                                         .font(.system(size: 16, weight: .bold))
