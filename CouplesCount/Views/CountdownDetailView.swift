@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct CountdownDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -9,6 +10,7 @@ struct CountdownDetailView: View {
 
     @State private var showShareSheet = false
     @State private var shareURL: URL? = nil
+    @State private var shareCardImage: UIImage? = nil
     @State private var showEdit = false
     @State private var showDeleteAlert = false
     @State private var now = Date()
@@ -45,7 +47,7 @@ struct CountdownDetailView: View {
                 Button("Close") { dismiss() }
             }
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Button(action: share) {
+                Button(action: shareImage) {
                     Image(systemName: "square.and.arrow.up")
                 }
                 Button(action: { showEdit = true }) {
@@ -62,7 +64,11 @@ struct CountdownDetailView: View {
             }
         }
         .sheet(isPresented: $showShareSheet, onDismiss: { Haptics.success() }) {
-            if let shareURL { ShareSheet(activityItems: [shareURL]) }
+            if let shareCardImage {
+                ShareSheet(activityItems: [shareCardImage])
+            } else if let shareURL {
+                ShareSheet(activityItems: [shareURL])
+            }
         }
         .sheet(isPresented: $showEdit) {
             AddEditCountdownView(existing: countdown)
@@ -136,7 +142,7 @@ struct CountdownDetailView: View {
         let participants = participantsStore.participants(for: countdown)
         return VStack(alignment: .leading, spacing: 8) {
             if participants.isEmpty {
-                Button("Share with partner") { share() }
+                Button("Share with partner") { shareLink() }
                     .font(.subheadline)
             } else {
                 DisclosureGroup("Shared With") {
@@ -167,10 +173,18 @@ struct CountdownDetailView: View {
         Analytics.log("poke_tapped")
     }
 
-    private func share() {
+    private func shareImage() {
+        shareURL = nil
+        shareCardImage = CountdownImageRenderer.render(countdown: countdown, theme: theme)
+        showShareSheet = shareCardImage != nil
+        Analytics.log("share_image_tapped")
+    }
+
+    private func shareLink() {
+        shareCardImage = nil
         shareURL = CountdownShareService.exportURL(for: countdown)
         showShareSheet = shareURL != nil
-        Analytics.log("share_tapped")
+        Analytics.log("share_link_tapped")
     }
 
     private func toggleArchive() {
