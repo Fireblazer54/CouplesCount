@@ -45,7 +45,7 @@ struct AddEditCountdownView: View {
     @State private var title: String = ""
     @State private var date: Date = Date().addingTimeInterval(86_400)
     @State private var timeZoneID: String = TimeZone.current.identifier
-    @State private var titleFont: TitleFont = .default
+    @State private var cardFontStyle: CardFontStyle = .classic
 
     // Background selection
     @State private var backgroundStyle: String = "color" // "color" | "image"
@@ -89,7 +89,7 @@ struct AddEditCountdownView: View {
                             title: previewTitle,
                             targetDate: previewDate,
                             tzID: timeZoneID,
-                            titleFontName: titleFont.rawValue,
+                            style: cardFontStyle,
                             backgroundStyle: backgroundStyle,
                             bgColorHex: previewColorHex,
                             imageData: previewImageData
@@ -103,7 +103,7 @@ struct AddEditCountdownView: View {
                             title: previewTitle,
                             targetDate: previewDate,
                             tzID: timeZoneID,
-                            titleFontName: titleFont.rawValue,
+                            style: cardFontStyle,
                             backgroundStyle: backgroundStyle,
                             bgColorHex: previewColorHex,
                             imageData: previewImageData
@@ -128,13 +128,13 @@ struct AddEditCountdownView: View {
                             .textInputAutocapitalization(.words)
                             .onSubmit { lightHaptic() }
 
-                        Picker("Font", selection: $titleFont) {
-                            ForEach(TitleFont.allCases) { f in
+                        Picker("Font", selection: $cardFontStyle) {
+                            ForEach(CardFontStyle.allCases) { f in
                                 Text(f.displayName).tag(f)
                             }
                         }
                         .pickerStyle(.segmented)
-                        .onChange(of: titleFont, initial: false) { _, _ in lightHaptic() }
+                        .onChange(of: cardFontStyle, initial: false) { _, _ in lightHaptic() }
 
                         HStack {
                             DatePicker("Date", selection: $date, displayedComponents: .date)
@@ -370,7 +370,7 @@ struct AddEditCountdownView: View {
                     title = existing.title
                     date = existing.targetDate
                     timeZoneID = existing.timeZoneID
-                    titleFont = TitleFont(rawValue: existing.titleFontName) ?? .default
+                    cardFontStyle = existing.cardFontStyle
                     backgroundStyle = existing.backgroundStyle
                     colorHex = existing.backgroundColorHex ?? colorHex
                     imageData = existing.backgroundImageData
@@ -411,7 +411,7 @@ struct AddEditCountdownView: View {
                 existing.title = trimmed
                 existing.targetDate = date
                 existing.timeZoneID = timeZoneID
-                existing.titleFontName = titleFont.rawValue
+                existing.cardFontStyle = cardFontStyle
                 existing.backgroundStyle = backgroundStyle
                 existing.backgroundColorHex = colorHex
                 existing.backgroundImageData = imageData
@@ -427,7 +427,7 @@ struct AddEditCountdownView: View {
                     title: trimmed,
                     targetDate: date,
                     timeZoneID: timeZoneID,
-                    titleFontName: titleFont.rawValue,
+                    cardFontStyle: cardFontStyle,
                     backgroundStyle: backgroundStyle,
                     backgroundColorHex: colorHex,
                     backgroundImageData: imageData,

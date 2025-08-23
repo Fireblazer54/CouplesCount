@@ -6,10 +6,36 @@ struct CountdownShareData: Codable {
     let title: String
     let targetDate: Date
     let timeZoneID: String
-    let titleFontName: String
+    let cardFontStyle: CardFontStyle
     let backgroundStyle: String
     let backgroundColorHex: String?
     let backgroundImageData: Data?
+
+    private enum CodingKeys: String, CodingKey {
+        case title, targetDate, timeZoneID, cardFontStyle, backgroundStyle, backgroundColorHex, backgroundImageData
+    }
+
+    init(title: String, targetDate: Date, timeZoneID: String, cardFontStyle: CardFontStyle, backgroundStyle: String, backgroundColorHex: String?, backgroundImageData: Data?) {
+        self.title = title
+        self.targetDate = targetDate
+        self.timeZoneID = timeZoneID
+        self.cardFontStyle = cardFontStyle
+        self.backgroundStyle = backgroundStyle
+        self.backgroundColorHex = backgroundColorHex
+        self.backgroundImageData = backgroundImageData
+    }
+
+    // Backwards compatibility for older payloads that lacked `cardFontStyle`.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        targetDate = try container.decode(Date.self, forKey: .targetDate)
+        timeZoneID = try container.decode(String.self, forKey: .timeZoneID)
+        backgroundStyle = try container.decode(String.self, forKey: .backgroundStyle)
+        backgroundColorHex = try container.decodeIfPresent(String.self, forKey: .backgroundColorHex)
+        backgroundImageData = try container.decodeIfPresent(Data.self, forKey: .backgroundImageData)
+        cardFontStyle = (try? container.decode(CardFontStyle.self, forKey: .cardFontStyle)) ?? .classic
+    }
 }
 
 enum CountdownShareError: LocalizedError {
@@ -34,7 +60,7 @@ enum CountdownShareService {
             title: countdown.title,
             targetDate: countdown.targetDate,
             timeZoneID: countdown.timeZoneID,
-            titleFontName: countdown.titleFontName,
+            cardFontStyle: countdown.cardFontStyle,
             backgroundStyle: countdown.backgroundStyle,
             backgroundColorHex: countdown.backgroundColorHex,
             backgroundImageData: countdown.backgroundImageData
@@ -79,7 +105,7 @@ enum CountdownShareService {
             title: payload.title,
             targetDate: payload.targetDate,
             timeZoneID: payload.timeZoneID,
-            titleFontName: payload.titleFontName,
+            cardFontStyle: payload.cardFontStyle,
             backgroundStyle: payload.backgroundStyle,
             backgroundColorHex: payload.backgroundColorHex,
             backgroundImageData: payload.backgroundImageData

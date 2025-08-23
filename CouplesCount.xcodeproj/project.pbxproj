@@ -80,7 +80,6 @@
 			membershipExceptions = (
 				Models/Countdown.swift,
 				Models/Friend.swift,
-				Models/TitleFont.swift,
 				Theme/ColorTheme.swift,
 				Theme/ThemeManager.swift,
 				Utilities/AppGroup.swift,
