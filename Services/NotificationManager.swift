@@ -66,4 +66,13 @@ enum NotificationManager {
             center.removePendingNotificationRequests(withIdentifiers: toRemove)
         }
     }
+
+    static func cancelReminders(for id: UUID) {
+        let center = UNUserNotificationCenter.current()
+        center.getPendingNotificationRequests { reqs in
+            let prefix = "cd-\(id.uuidString)-"
+            let toRemove = reqs.filter { $0.identifier.hasPrefix(prefix) }.map { $0.identifier }
+            center.removePendingNotificationRequests(withIdentifiers: toRemove)
+        }
+    }
 }
