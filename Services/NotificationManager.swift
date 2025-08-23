@@ -30,20 +30,23 @@ enum NotificationManager {
         }
     }
 
-    static func scheduleReminders(for cd: Countdown) {
-        for offset in cd.reminderOffsets {
+    static func scheduleReminders(for countdown: Countdown) {
+        let tz = TimeZone(identifier: countdown.timeZoneID) ?? .current
+        var cal = Calendar.current; cal.timeZone = tz
+
+        for offset in countdown.reminderOffsets {
             let content = UNMutableNotificationContent()
-            content.title = "Upcoming: \(cd.title)"
+            content.title = "Upcoming: \(countdown.title)"
             content.body = "Happening soon."
             content.sound = .default
 
-            // Fire at targetDate + offset (offset negative = before event)
-            let fire = cd.targetDate.addingTimeInterval(TimeInterval(offset * 60))
+            // Fire at target date minus offset minutes
+            guard let fire = cal.date(byAdding: .minute, value: -offset, to: countdown.targetUTC) else { continue }
             guard fire > Date() else { continue }
 
-            let comps = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute], from: fire)
+            let comps = cal.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-            let req = UNNotificationRequest(identifier: "cd-\(cd.id)-\(offset)", content: content, trigger: trigger)
+            let req = UNNotificationRequest(identifier: "cd-\(countdown.id)-\(offset)", content: content, trigger: trigger)
             UNUserNotificationCenter.current().add(req)
         }
     }
