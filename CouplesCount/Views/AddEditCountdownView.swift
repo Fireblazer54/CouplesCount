@@ -274,6 +274,9 @@ struct AddEditCountdownView: View {
                         SettingsCard {
                             Button {
                                 existing.isArchived.toggle()
+                                if existing.isArchived {
+                                    NotificationManager.cancelReminders(for: existing.id)
+                                }
                                 try? modelContext.save()
                                 let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
                                 updateWidgetSnapshot(afterSaving: all)
