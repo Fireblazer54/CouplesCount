@@ -225,9 +225,11 @@ struct CountdownListView: View {
                     ShareSheet(activityItems: [shareURL])
                 }
             }
-            .navigationDestination(item: $selected) { countdown in
+            .sheet(item: $selected) { countdown in
                 CountdownDetailView(countdown: countdown)
                     .environmentObject(theme)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
         .tint(theme.theme.accent)
