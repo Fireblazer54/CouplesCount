@@ -80,10 +80,13 @@
 			membershipExceptions = (
 				Models/Countdown.swift,
 				Models/Friend.swift,
+				Models/TitleFont.swift,
 				Theme/ColorTheme.swift,
 				Theme/ThemeManager.swift,
+				Utilities/AppGroup.swift,
 				Utilities/DateUtils.swift,
 				Utilities/Persistence.swift,
+				Utilities/WidgetSnapshotStore.swift,
 			);
 			target = 83E9E79A2E53AE3400B99B1D /* CouplesCountWidgetExtension */;
 		};
