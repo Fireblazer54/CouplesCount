@@ -2,38 +2,6 @@ import AppIntents
 import Foundation
 import SwiftUI
 
-// MARK: - Storage bridge reading snapshot JSON from the shared App Group
-enum WidgetStoreBridge {
-    static let appGroupID: String = "group.com.fireblazer.CouplesCount"
-    private static let fileName = "countdowns.json"
-
-    private struct CountdownDTO: Decodable {
-        var id: UUID
-        var title: String
-        var targetDate: Date
-        var timeZoneID: String
-        var titleFontName: String
-    }
-
-    static func fetchCountdowns() -> [CountdownEntity] {
-        guard let base = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
-            return []
-        }
-        let url = base.appendingPathComponent(fileName)
-        guard let data = try? Data(contentsOf: url),
-              let dtos = try? JSONDecoder().decode([CountdownDTO].self, from: data) else {
-            return []
-        }
-        return dtos.map {
-            CountdownEntity(id: $0.id,
-                            title: $0.title,
-                            targetDate: $0.targetDate,
-                            timeZoneID: $0.timeZoneID,
-                            titleFontName: $0.titleFontName)
-        }
-    }
-}
-
 // MARK: - AppEntity used by the widget’s picker
 struct CountdownEntity: AppEntity, Identifiable, Hashable {
     // iOS 18+ API: TypeDisplayRepresentable
@@ -71,11 +39,34 @@ struct CountdownQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [CountdownEntity] {
-        // Read countdowns from the shared App Group; fall back to preview when missing.
-        let items = WidgetStoreBridge.fetchCountdowns()
-        guard !items.isEmpty else {
+        let dtos = WidgetSnapshotStore.read()
+        if dtos.isEmpty {
+#if DEBUG
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1",
+               let url = Bundle.main.url(forResource: "preview-countdowns", withExtension: "json"),
+               let data = try? Data(contentsOf: url),
+               let previews = try? JSONDecoder().decode([CountdownDTO].self, from: data) {
+                return previews.map {
+                    CountdownEntity(
+                        id: $0.id,
+                        title: $0.title,
+                        targetDate: $0.targetUTC,
+                        timeZoneID: $0.timeZoneID,
+                        titleFontName: TitleFont.default.rawValue
+                    )
+                }
+            }
+#endif
             return [CountdownEntity.preview]
         }
-        return items
+        return dtos.map {
+            CountdownEntity(
+                id: $0.id,
+                title: $0.title,
+                targetDate: $0.targetUTC,
+                timeZoneID: $0.timeZoneID,
+                titleFontName: TitleFont.default.rawValue
+            )
+        }
     }
 }

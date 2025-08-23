@@ -114,6 +114,8 @@ struct ProfileView: View {
                             Button(role: .destructive) {
                                 modelContext.delete(item)
                                 try? modelContext.save()
+                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                updateWidgetSnapshot(afterSaving: all)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -122,6 +124,8 @@ struct ProfileView: View {
                             Button {
                                 item.isArchived = true
                                 try? modelContext.save()
+                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                updateWidgetSnapshot(afterSaving: all)
                             } label: {
                                 Label("Archive", systemImage: "archivebox")
                             }

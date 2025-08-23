@@ -1,0 +1,13 @@
+[
+  {
+    "id": "11111111-1111-1111-1111-111111111111",
+    "title": "Preview",
+    "targetUTC": "2025-01-01T00:00:00Z",
+    "timeZoneID": "UTC",
+    "includeTime": false,
+    "colorTheme": "#0A84FF",
+    "hasImage": false,
+    "thumbnailBase64": null,
+    "lastEdited": "2024-01-01T00:00:00Z"
+  }
+]

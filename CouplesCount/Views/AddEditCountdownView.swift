@@ -275,6 +275,8 @@ struct AddEditCountdownView: View {
                             Button {
                                 existing.isArchived.toggle()
                                 try? modelContext.save()
+                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                updateWidgetSnapshot(afterSaving: all)
                                 dismiss()
                             } label: {
                                 Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
@@ -287,6 +289,8 @@ struct AddEditCountdownView: View {
                                 NotificationManager.cancelAll(for: existing.id)
                                 modelContext.delete(existing)
                                 try? modelContext.save()
+                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                updateWidgetSnapshot(afterSaving: all)
                                 dismiss()
                             } label: {
                                 Label("Delete Countdown", systemImage: "trash")
@@ -427,6 +431,8 @@ struct AddEditCountdownView: View {
             }
 
             try modelContext.save()
+            let all = try modelContext.fetch(FetchDescriptor<Countdown>())
+            updateWidgetSnapshot(afterSaving: all)
             dismiss()
         } catch {
             saveError = error.localizedDescription

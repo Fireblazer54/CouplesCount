@@ -86,6 +86,8 @@ enum CountdownShareService {
         )
         context.insert(cd)
         try context.save()
+        let all = try context.fetch(FetchDescriptor<Countdown>())
+        updateWidgetSnapshot(afterSaving: all)
     }
 }
 
