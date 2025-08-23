@@ -4,7 +4,7 @@ struct WidgetPreview: View {
     let title: String
     let targetDate: Date
     let tzID: String
-    let titleFontName: String
+    let style: CardFontStyle
     let backgroundStyle: String
     let bgColorHex: String?
     let imageData: Data?
@@ -30,16 +30,16 @@ struct WidgetPreview: View {
 
             VStack(spacing: 6) {
                 Text(title)
-                    .font(.system(.headline, design: TitleFont(rawValue: titleFontName)?.design ?? .default))
+                    .font(CardTypography.font(for: style, role: .title))
                     .foregroundStyle(.white)
                     .lineLimit(1)
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: tzID))
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(CardTypography.font(for: style, role: .number))
                     .foregroundStyle(.white)
 
                 Text(targetDate, style: .date)
-                    .font(.footnote)
+                    .font(CardTypography.font(for: style, role: .date))
                     .foregroundStyle(.white.opacity(0.9))
             }
             .shadow(color: .black.opacity(0.3), radius: 6, y: 3)

@@ -107,7 +107,7 @@ struct CountdownListView: View {
                                     backgroundStyle: item.backgroundStyle,
                                     colorHex: item.backgroundColorHex,
                                     imageData: item.backgroundImageData,
-                                    titleFontName: item.titleFontName,
+                                    fontStyle: item.cardFontStyle,
                                     shared: item.isShared,
                                     shareAction: {
                                         shareURL = exportURL

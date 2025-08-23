@@ -13,7 +13,7 @@ struct CountdownEntity: AppEntity, Identifiable, Hashable {
     var title: String
     var targetDate: Date
     var timeZoneID: String
-    var titleFontName: String
+    var cardFontStyle: CardFontStyle
 
     // How each item shows up in the picker
     var displayRepresentation: DisplayRepresentation {
@@ -26,7 +26,7 @@ struct CountdownEntity: AppEntity, Identifiable, Hashable {
         title: "Anniversary",
         targetDate: Calendar.current.date(byAdding: .day, value: 30, to: .now)!,
         timeZoneID: TimeZone.current.identifier,
-        titleFontName: TitleFont.default.rawValue
+        cardFontStyle: .classic
     )
 }
 
@@ -52,7 +52,7 @@ struct CountdownQuery: EntityQuery {
                         title: $0.title,
                         targetDate: $0.targetUTC,
                         timeZoneID: $0.timeZoneID,
-                        titleFontName: TitleFont.default.rawValue
+                        cardFontStyle: .classic
                     )
                 }
             }
@@ -65,7 +65,7 @@ struct CountdownQuery: EntityQuery {
                 title: $0.title,
                 targetDate: $0.targetUTC,
                 timeZoneID: $0.timeZoneID,
-                titleFontName: TitleFont.default.rawValue
+                cardFontStyle: .classic
             )
         }
     }
