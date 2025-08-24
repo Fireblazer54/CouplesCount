@@ -206,6 +206,7 @@ struct CountdownListView: View {
                         .listStyle(.plain)
                         .listRowSpacing(16)
                         .padding(.top, 24)
+
                         .scrollContentBackground(.hidden)
                         .refreshable { await refreshAction?() }
                         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
