@@ -21,13 +21,14 @@ struct TreeGrowthView: View {
                     Text("🎉")
                         .font(.largeTitle)
                         .offset(y: -geo.size.height * 0.8)
+                        .accessibilityHidden(true)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .animation(.easeInOut(duration: 1.0), value: animated)
         }
         .onAppear { animated = progress }
-        .onChange(of: progress) { _, newValue in
+        .onChange(of: progress, initial: false) { _, newValue in
             animated = newValue
         }
     }

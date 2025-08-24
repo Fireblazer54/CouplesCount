@@ -40,6 +40,8 @@ struct ProfileView: View {
                         .background(Color.gray.opacity(profileImageData == nil ? 0.2 : 0))
                         .clipShape(Circle())
                     }
+                    .accessibilityLabel("Profile photo")
+                    .accessibilityHint("Change your profile picture")
                     .buttonStyle(.plain)
                     .confirmationDialog("Profile Photo", isPresented: $showPhotoOptions) {
                         if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -79,7 +81,7 @@ struct ProfileView: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.top, 12)
+                .safeAreaPadding(.top, 12)
 
                 Text("Username")
                     .font(.title2)
@@ -144,7 +146,6 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .padding(.top)
         .background(theme.theme.background.ignoresSafeArea())
     }
 }

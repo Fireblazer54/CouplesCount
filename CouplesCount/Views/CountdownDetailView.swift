@@ -39,7 +39,7 @@ struct CountdownDetailView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
-            .padding(.bottom, 40)
+            .safeAreaPadding(.bottom, 40)
 
         }
         .background(theme.theme.background.ignoresSafeArea())
@@ -50,9 +50,17 @@ struct CountdownDetailView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button(action: share) {
                     Image(systemName: "square.and.arrow.up")
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .accessibilityLabel("Share")
+                        .accessibilityHint("Share countdown")
                 }
                 Button(action: { showEdit = true }) {
                     Image(systemName: "pencil")
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .accessibilityLabel("Edit")
+                        .accessibilityHint("Edit countdown")
                 }
                 Menu {
                     Button(countdown.isArchived ? "Unarchive" : "Archive") {
@@ -61,6 +69,10 @@ struct CountdownDetailView: View {
                     Button("Delete", role: .destructive) { showDeleteAlert = true }
                 } label: {
                     Image(systemName: "ellipsis.circle")
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .accessibilityLabel("More options")
+                        .accessibilityHint("Show additional actions")
                 }
             }
         }
@@ -88,8 +100,7 @@ struct CountdownDetailView: View {
                     .background(.black.opacity(0.7))
                     .foregroundStyle(.white)
                     .cornerRadius(8)
-                    .padding(.bottom, 40)
-
+                    .safeAreaPadding(.bottom, 40)
                     .transition(.opacity)
             }
         }
