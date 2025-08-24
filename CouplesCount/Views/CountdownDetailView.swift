@@ -28,6 +28,7 @@ struct CountdownDetailView: View {
                 info
                 sharedSection
                 TreeGrowthView(progress: progress)
+                    .environmentObject(theme)
                     .frame(height: 180)
                 Button("Remind me to check in") {
                     NotificationManager.scheduleCheckInReminder()
@@ -42,7 +43,7 @@ struct CountdownDetailView: View {
             .safeAreaPadding(.bottom, 40)
 
         }
-        .background(theme.theme.background.ignoresSafeArea())
+        .background(theme.theme.backgroundGradient.ignoresSafeArea())
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { dismiss() }
@@ -97,7 +98,7 @@ struct CountdownDetailView: View {
             if showPokeToast {
                 Text(toastMessage)
                     .padding()
-                    .background(.black.opacity(0.7))
+                    .background(theme.theme.textPrimary.opacity(0.7))
                     .foregroundStyle(.white)
                     .cornerRadius(8)
                     .safeAreaPadding(.bottom, 40)
