@@ -38,7 +38,8 @@ struct WidgetPreview: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .stroke(isDefaultBackground ? .black.opacity(0.25) : .white.opacity(0.06), lineWidth: 1)
+                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
+
                 )
                 .frame(height: 140)
 

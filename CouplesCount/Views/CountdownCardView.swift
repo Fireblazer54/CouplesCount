@@ -81,7 +81,8 @@ struct CountdownCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(isDefaultBackground ? .black.opacity(0.25) : .white.opacity(0.06), lineWidth: 1)
+                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
+
                 )
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
 
