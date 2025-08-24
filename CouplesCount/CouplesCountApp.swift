@@ -1,8 +1,16 @@
 import SwiftUI
 import SwiftData
+import UIKit
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        .portrait
+    }
+}
 
 @main
 struct CouplesCountApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var theme = ThemeManager()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showDeniedInfo = false
