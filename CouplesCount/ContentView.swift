@@ -203,7 +203,7 @@ struct CountdownListView: View {
                         }
                         .listStyle(.plain)
                         .listRowSpacing(16)
-                        .padding(.top, 28)
+                        .padding(.top, 8)
                         .scrollContentBackground(.hidden)
                         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
                     }
