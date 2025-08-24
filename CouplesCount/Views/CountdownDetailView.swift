@@ -5,6 +5,8 @@ struct CountdownDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+
     let countdown: Countdown
 
     @State private var showShareSheet = false
@@ -39,6 +41,7 @@ struct CountdownDetailView: View {
             .padding(.horizontal)
             .padding(.bottom, 40)
             .safeAreaPadding(.bottom)
+
         }
         .background(theme.theme.background.ignoresSafeArea())
         .toolbar {
@@ -87,6 +90,7 @@ struct CountdownDetailView: View {
                     .cornerRadius(8)
                     .padding(.bottom, 40)
                     .safeAreaPadding(.bottom)
+
                     .transition(.opacity)
             }
         }
