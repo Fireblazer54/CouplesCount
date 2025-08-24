@@ -246,7 +246,8 @@ struct ArchiveView: View {
                                     Haptics.warning()
                                 } label: {
                                     Image(systemName: "trash")
-                                        .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+
                                         .frame(width: 44, height: 44)
                                         .background(Circle().fill(Color.red))
                                         .foregroundStyle(.white)
@@ -266,7 +267,8 @@ struct ArchiveView: View {
                                     }
                                 } label: {
                                     Image(systemName: "arrow.uturn.backward")
-                                        .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+
                                         .frame(width: 44, height: 44)
                                         .background(Circle().fill(Color.blue))
                                         .foregroundStyle(.white)

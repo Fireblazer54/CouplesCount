@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CountdownCardView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -100,7 +101,8 @@ struct CountdownCardView: View {
                 if let shareAction {
                     Button(action: shareAction) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 18), weight: .semibold))
+                            .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 18), weight: .semibold))
+
                             .frame(width: 44, height: 44)
                             .background(
                                 Circle().fill(Color.white.opacity(0.25))

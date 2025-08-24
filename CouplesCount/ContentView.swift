@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct ContentView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -76,7 +77,8 @@ struct CountdownListView: View {
                         }
                         Spacer()
                         Text(Date.now, format: .dateTime.weekday(.wide).month().day())
-                            .font(.system(size: FontMetrics(forTextStyle: .title).scaledValue(for: 28), weight: .semibold))
+                            .font(.system(size: UIFontMetrics(forTextStyle: .title1).scaledValue(for: 28), weight: .semibold))
+
                         Spacer()
                         Button { showSettings = true } label: {
                             Image(systemName: "gearshape.fill")
@@ -164,7 +166,8 @@ struct CountdownListView: View {
                                             Haptics.warning()
                                         } label: {
                                             Image(systemName: "trash")
-                                                .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+
                                                 .frame(width: 44, height: 44)
                                                 .background(Circle().fill(Color.red))
                                                 .foregroundStyle(.white)
@@ -185,7 +188,8 @@ struct CountdownListView: View {
                                             if item.isArchived { Haptics.light() }
                                         } label: {
                                             Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
-                                                .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+
                                                 .frame(width: 44, height: 44)
                                                 .background(Circle().fill(Color.blue))
                                                 .foregroundStyle(.white)
