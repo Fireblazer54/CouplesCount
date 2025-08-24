@@ -79,6 +79,7 @@ struct ProfileView: View {
                     }
                 }
                 .padding(.horizontal)
+                .padding(.top, 12)
 
                 Text("Username")
                     .font(.title2)
@@ -143,6 +144,7 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
+        .safeAreaPadding(.top)
         .background(theme.theme.background.ignoresSafeArea())
     }
 }
