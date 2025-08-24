@@ -67,18 +67,28 @@ struct CountdownListView: View {
                                 showPremium = true
                             }
                         } label: {
-                            Image(systemName: "crown.fill").font(.title2)
+                            Image(systemName: "crown.fill")
+                                .font(.title2)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                                .accessibilityLabel("Go Pro")
+                                .accessibilityHint("View premium features")
                         }
                         Spacer()
                         Text(Date.now, format: .dateTime.weekday(.wide).month().day())
-                            .font(.system(size: 28, weight: .semibold))
+                            .font(.system(size: FontMetrics(forTextStyle: .title).scaledValue(for: 28), weight: .semibold))
                         Spacer()
                         Button { showSettings = true } label: {
-                            Image(systemName: "gearshape.fill").font(.title2)
+                            Image(systemName: "gearshape.fill")
+                                .font(.title2)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                                .accessibilityLabel("Settings")
+                                .accessibilityHint("Open settings")
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top, 12)
+                    .safeAreaPadding(.top, 12)
 
                     // List
                     if items.isEmpty {
@@ -154,12 +164,15 @@ struct CountdownListView: View {
                                             Haptics.warning()
                                         } label: {
                                             Image(systemName: "trash")
-                                                .font(.system(size: 16, weight: .bold))
-                                                .padding(12)
+                                                .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                                .frame(width: 44, height: 44)
                                                 .background(Circle().fill(Color.red))
                                                 .foregroundStyle(.white)
+                                                .accessibilityLabel("Delete")
+                                                .accessibilityHint("Remove countdown")
                                         }
                                         .tint(.clear)
+                                        .contentShape(Rectangle())
                                     }
                                     .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                         Button {
@@ -172,12 +185,15 @@ struct CountdownListView: View {
                                             if item.isArchived { Haptics.light() }
                                         } label: {
                                             Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
-                                                .font(.system(size: 16, weight: .bold))
-                                                .padding(12)
+                                                .font(.system(size: FontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                                .frame(width: 44, height: 44)
                                                 .background(Circle().fill(Color.blue))
                                                 .foregroundStyle(.white)
+                                                .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
+                                                .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
                                         }
                                         .tint(.clear)
+                                        .contentShape(Rectangle())
                                     }
                             }
                         }
@@ -209,8 +225,13 @@ struct CountdownListView: View {
                             .background(Circle().fill(.tint))
                             .foregroundStyle(.white)
                             .shadow(radius: 6, y: 3)
+                            .frame(minWidth: 44, minHeight: 44)
+                            .contentShape(Rectangle())
+                            .accessibilityLabel("Add countdown")
+                            .accessibilityHint("Create new countdown")
                     }
-                    .padding(.bottom, 24)
+                    .safeAreaPadding(.bottom)
+                    .padding(.bottom, 16)
 
                 }
                 .frame(maxWidth: .infinity) // centers horizontally

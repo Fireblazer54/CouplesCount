@@ -191,6 +191,7 @@ struct AddEditCountdownView: View {
                                     .scaledToFill()
                                     .frame(height: 140)
                                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .accessibilityHidden(true)
                             } else {
                                 Text("No image selected")
                                     .foregroundStyle(.secondary)
@@ -334,10 +335,18 @@ struct AddEditCountdownView: View {
                                 showShareSheet = shareURL != nil
                             } label: {
                                 Image(systemName: "square.and.arrow.up")
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                                    .accessibilityLabel("Share")
+                                    .accessibilityHint("Share countdown")
                             }
                         }
                         Button(action: save) {
                             Image(systemName: "checkmark")
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
+                                .accessibilityLabel("Save")
+                                .accessibilityHint("Save countdown")
                         }
                         .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
@@ -351,10 +360,10 @@ struct AddEditCountdownView: View {
                 }
             }
             // Live preview & haptics
-            .onChange(of: title) { _, new in
+            .onChange(of: title, initial: false) { _, new in
                 previewTitle = new.isEmpty ? "Countdown" : new
             }
-            .onChange(of: date) { _, new in
+            .onChange(of: date, initial: false) { _, new in
                 previewDate = new
             }
             .onChange(of: colorHex, initial: false) { _, new in

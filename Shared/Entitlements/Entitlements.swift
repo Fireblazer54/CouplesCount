@@ -9,6 +9,7 @@ struct Entitlements {
     @MainActor private static var provider: ProStatusProviding = ProStatusProvider()
 
 
+    @MainActor
     init(provider: ProStatusProviding) {
         let pro = provider.isPro
         isUnlimited = pro
