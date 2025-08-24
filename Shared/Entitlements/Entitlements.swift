@@ -6,7 +6,8 @@ struct Entitlements {
     let hasDarkMode: Bool
     let hidesAds: Bool
 
-    private static var provider: ProStatusProviding = ProStatusProvider()
+    @MainActor private static var provider: ProStatusProviding = ProStatusProvider()
+
 
     init(provider: ProStatusProviding) {
         let pro = provider.isPro
@@ -16,9 +17,10 @@ struct Entitlements {
         hidesAds = pro
     }
 
-    static var current: Entitlements { Entitlements(provider: provider) }
+    @MainActor static var current: Entitlements { Entitlements(provider: provider) }
 
-    static func setProvider(_ newProvider: ProStatusProviding) {
+    @MainActor static func setProvider(_ newProvider: ProStatusProviding) {
+
         provider = newProvider
     }
 }
