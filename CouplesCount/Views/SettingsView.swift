@@ -10,6 +10,7 @@ struct SettingsView: View {
     @EnvironmentObject private var pro: ProStatusProvider
 
     private let themes: [ColorTheme] = ColorTheme.allCases
+
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
     @State private var showEnjoyPrompt = false
@@ -31,6 +32,7 @@ struct SettingsView: View {
                                     ThemeSwatch(theme: t, isSelected: t == theme.theme, isLocked: false) {
                                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         theme.setTheme(t)
+
                                     }
                                     .environmentObject(theme)
                                 }

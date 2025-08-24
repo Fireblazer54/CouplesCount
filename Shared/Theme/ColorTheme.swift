@@ -6,8 +6,35 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
 
     static let `default`: ColorTheme = .light
 
-    init(rawOrDefault raw: String?) {
-        self = ColorTheme(rawValue: raw ?? "") ?? .light
+    init(rawOrDefault raw: String?) { self = .light }
+
+    var displayName: String { "Light" }
+
+    /// Primary brand color (Rose)
+    var primary: Color {
+        switch self {
+        case .light: Color(hex: "#D94A6A") ?? .pink
+        case .dark, .royalBlues, .barbie, .lucky: .white
+        }
+    }
+
+    /// Secondary accent (Lavender for light theme)
+    var accent: Color {
+        switch self {
+        case .light: Color(hex: "#C7B8EA") ?? .purple
+        case .dark: .white
+        case .royalBlues: .white
+        case .barbie: .white
+        case .lucky: .white
+        }
+    }
+
+    /// Primary brand color (Rose)
+    var primary: Color {
+        switch self {
+        case .light: Color(hex: "#D94A6A") ?? Color.pink
+        case .dark, .royalBlues, .barbie, .lucky: Color.white
+        }
     }
 
     var displayName: String { "Light" }
@@ -35,5 +62,6 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
     var textSecondary: Color { neutralBase.opacity(0.65) }
     var textTertiary: Color { neutralBase.opacity(0.45) }
     var outline: Color { neutralBase.opacity(0.9) }
+
     var divider: Color { neutralBase.opacity(0.1) }
 }
