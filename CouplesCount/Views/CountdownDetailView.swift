@@ -5,7 +5,8 @@ struct CountdownDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.safeAreaInsets) private var safeAreaInsets
+    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+
     let countdown: Countdown
 
     @State private var showShareSheet = false

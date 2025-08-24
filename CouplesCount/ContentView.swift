@@ -37,7 +37,8 @@ struct ContentView: View {
 struct CountdownListView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.safeAreaInsets) private var safeAreaInsets
+    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
            sort: \.targetUTC, order: .forward)
