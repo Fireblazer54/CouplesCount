@@ -7,12 +7,14 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @EnvironmentObject private var theme: ThemeManager
+    @EnvironmentObject private var pro: ProStatusProvider
 
     private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
     @State private var showEnjoyPrompt = false
     @State private var showFeedbackForm = false
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -25,12 +27,28 @@ struct SettingsView: View {
                             spacing: 12
                         ) {
                             ForEach(themes, id: \.self) { t in
-                                ThemeSwatch(theme: t, isSelected: t == theme.theme) {
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                    theme.setTheme(t)   // instant global update
+                                let ent = Entitlements.current
+                                let locked = AppConfig.entitlementsMode == .live && ((t == .dark && !ent.hasDarkMode) || (t != .light && t != .dark && !ent.hasPremiumThemes))
+                                ThemeSwatch(theme: t, isSelected: t == theme.theme, isLocked: locked) {
+                                    if locked {
+                                        showPaywall = true
+                                    } else {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        theme.setTheme(t)   // instant global update
+                                    }
                                 }
                                 .environmentObject(theme)
                             }
+                        }
+                    }
+
+                    if AppConfig.entitlementsMode == .live && !Entitlements.current.isUnlimited {
+                        SettingsCard {
+                            buttonRow(icon: "crown.fill", title: "Go Pro") { showPaywall = true }
+#if DEBUG
+                            Divider().opacity(0.1)
+                            Toggle("Simulate Pro", isOn: $pro.debugIsPro)
+#endif
                         }
                     }
 
@@ -130,6 +148,10 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showFeedbackForm) {
             FeedbackFormView()
+                .environmentObject(theme)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
                 .environmentObject(theme)
         }
     }
