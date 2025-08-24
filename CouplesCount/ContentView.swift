@@ -208,6 +208,7 @@ struct CountdownListView: View {
                         .safeAreaInset(edge: .top) {
                             Color.clear.frame(height: 8)
                         }
+
                         .scrollContentBackground(.hidden)
                         .refreshable { await refreshAction?() }
                         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
