@@ -205,7 +205,9 @@ struct CountdownListView: View {
                         }
                         .listStyle(.plain)
                         .listRowSpacing(16)
-                        .padding(.top, 24)
+                        .safeAreaInset(edge: .top) {
+                            Color.clear.frame(height: 8)
+                        }
 
                         .scrollContentBackground(.hidden)
                         .refreshable { await refreshAction?() }
