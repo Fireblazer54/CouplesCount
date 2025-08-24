@@ -1,16 +1,8 @@
 import SwiftUI
 import SwiftData
-import UIKit
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        .portrait
-    }
-}
 
 @main
 struct CouplesCountApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var pro: ProStatusProvider
     @StateObject private var theme: ThemeManager
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -57,7 +49,7 @@ struct CouplesCountApp: App {
                 .padding()
                 .presentationDetents([.medium])
             }
-            .onChange(of: pro.isPro) { newValue in
+            .onChange(of: pro.isProPublished, initial: false) { _, newValue in
                 if AppConfig.entitlementsMode == .live && !newValue {
                     theme.setTheme(.light)
                 }

@@ -12,6 +12,7 @@ struct TimeZonePickerView: View {
                 if id == selectedID {
                     Image(systemName: "checkmark")
                         .foregroundStyle(.tint)
+                        .accessibilityHidden(true)
                 }
             }
             .contentShape(Rectangle())

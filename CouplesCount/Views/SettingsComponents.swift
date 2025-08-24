@@ -66,11 +66,13 @@ struct ThemeSwatch: View {
                         .foregroundStyle(.white, theme.accent)
                         .padding(8)
                         .shadow(radius: 4, y: 2)
+                        .accessibilityHidden(true)
                 }
 
                 if isLocked {
                     HStack(spacing: 4) {
                         Image(systemName: "crown.fill")
+                            .accessibilityHidden(true)
                         Text("Pro")
                             .font(.caption2.weight(.semibold))
                     }
