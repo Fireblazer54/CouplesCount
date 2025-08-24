@@ -202,6 +202,7 @@ struct CountdownListView: View {
                             .shadow(radius: 6, y: 3)
                     }
                     .padding(.bottom, 24)
+                    .safeAreaPadding(.bottom)
                 }
                 .frame(maxWidth: .infinity) // centers horizontally
             }

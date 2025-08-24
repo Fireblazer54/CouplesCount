@@ -38,6 +38,7 @@ struct CountdownDetailView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 40)
+            .safeAreaPadding(.bottom)
         }
         .background(theme.theme.background.ignoresSafeArea())
         .toolbar {
@@ -85,6 +86,7 @@ struct CountdownDetailView: View {
                     .foregroundStyle(.white)
                     .cornerRadius(8)
                     .padding(.bottom, 40)
+                    .safeAreaPadding(.bottom)
                     .transition(.opacity)
             }
         }
