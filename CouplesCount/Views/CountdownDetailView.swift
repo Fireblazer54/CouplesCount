@@ -212,5 +212,5 @@ struct CountdownDetailView: View {
 #Preview {
     let countdown = Countdown(title: "Preview", targetDate: .now.addingTimeInterval(3600), timeZoneID: TimeZone.current.identifier)
     return CountdownDetailView(countdown: countdown)
-        .environmentObject(ThemeManager(pro: ProStatusProvider()))
+        .environmentObject(ThemeManager())
 }
