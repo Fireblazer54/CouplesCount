@@ -14,7 +14,7 @@ struct CouplesCountApp: App {
         let themeManager = ThemeManager()
         _theme = StateObject(wrappedValue: themeManager)
         Entitlements.setProvider(provider)
-        if AppConfig.entitlementsMode == .live && !provider.isPro {
+        if AppConfig.isStrictLight {
             themeManager.setTheme(.light)
         }
     }
@@ -54,6 +54,7 @@ struct CouplesCountApp: App {
                     theme.setTheme(.light)
                 }
             }
+            .preferredColorScheme(AppConfig.isStrictLight ? .light : nil)
         }
     }
 }
