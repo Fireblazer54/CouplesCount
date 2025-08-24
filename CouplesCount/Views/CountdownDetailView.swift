@@ -39,8 +39,7 @@ struct CountdownDetailView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
-            .padding(.bottom, 40)
-            .safeAreaPadding(.bottom)
+            .padding(.bottom, safeAreaInsets.bottom + 40)
 
         }
         .background(theme.theme.background.ignoresSafeArea())
@@ -88,8 +87,7 @@ struct CountdownDetailView: View {
                     .background(.black.opacity(0.7))
                     .foregroundStyle(.white)
                     .cornerRadius(8)
-                    .padding(.bottom, 40)
-                    .safeAreaPadding(.bottom)
+                    .padding(.bottom, safeAreaInsets.bottom + 40)
 
                     .transition(.opacity)
             }
