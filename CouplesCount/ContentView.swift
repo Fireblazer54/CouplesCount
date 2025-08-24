@@ -37,7 +37,6 @@ struct ContentView: View {
 struct CountdownListView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
            sort: \.targetUTC, order: .forward)
@@ -202,7 +201,7 @@ struct CountdownListView: View {
                             .foregroundStyle(.white)
                             .shadow(radius: 6, y: 3)
                     }
-                    .padding(.bottom, safeAreaInsets.bottom + 24)
+                    .padding(.bottom, 24)
 
                 }
                 .frame(maxWidth: .infinity) // centers horizontally

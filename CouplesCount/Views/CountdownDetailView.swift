@@ -5,7 +5,6 @@ struct CountdownDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
     let countdown: Countdown
 
@@ -39,7 +38,7 @@ struct CountdownDetailView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
-            .padding(.bottom, safeAreaInsets.bottom + 40)
+            .padding(.bottom, 40)
 
         }
         .background(theme.theme.background.ignoresSafeArea())
@@ -87,7 +86,7 @@ struct CountdownDetailView: View {
                     .background(.black.opacity(0.7))
                     .foregroundStyle(.white)
                     .cornerRadius(8)
-                    .padding(.bottom, safeAreaInsets.bottom + 40)
+                    .padding(.bottom, 40)
 
                     .transition(.opacity)
             }

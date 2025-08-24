@@ -78,11 +78,13 @@
 		83E9E7D82E53B34900B99B1D /* Exceptions for "Shared" folder in "CouplesCountWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/CardFontStyle.swift,
 				Models/Countdown.swift,
 				Models/Friend.swift,
 				Theme/ColorTheme.swift,
 				Theme/ThemeManager.swift,
 				Utilities/AppGroup.swift,
+				Utilities/CardTypography.swift,
 				Utilities/DateUtils.swift,
 				Utilities/Persistence.swift,
 				Utilities/WidgetSnapshotStore.swift,

@@ -5,7 +5,6 @@ import UIKit
 struct ProfileView: View {
     @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
     @Query(filter: #Predicate<Countdown> { $0.isShared && !$0.isArchived },
            sort: \Countdown.targetUTC, order: .forward)
     private var shared: [Countdown]
@@ -145,7 +144,7 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .padding(.top, safeAreaInsets.top)
+        .padding(.top)
         .background(theme.theme.background.ignoresSafeArea())
     }
 }
