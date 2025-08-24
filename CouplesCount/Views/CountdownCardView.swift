@@ -50,6 +50,16 @@ struct CountdownCardView: View {
     private let corner: CGFloat = 22
     @State private var now = Date()
 
+    private var isDefaultBackground: Bool {
+        if backgroundStyle == "image" { return false }
+        let hex = colorHex?.uppercased() ?? ""
+        return hex == "" || hex == "#FFFFFF"
+    }
+
+    private var primaryText: Color { isDefaultBackground ? .black : .white }
+    private var secondaryText: Color { isDefaultBackground ? .black.opacity(0.7) : .white.opacity(0.95) }
+    private var shareButtonBg: Color { isDefaultBackground ? .black.opacity(0.05) : .white.opacity(0.25) }
+
     var body: some View {
         ZStack(alignment: .leading) {
             // Background color or image
@@ -70,9 +80,8 @@ struct CountdownCardView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
-                    // tiny inner highlight
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(.white.opacity(0.06), lineWidth: 1)
+                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
 
@@ -81,16 +90,17 @@ struct CountdownCardView: View {
                 Text(title)
                     .font(CardTypography.font(for: fontStyle, role: .title))
                     .lineLimit(1)
+                    .foregroundStyle(primaryText)
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
                     .font(CardTypography.font(for: fontStyle, role: .number))
+                    .foregroundStyle(primaryText)
 
                 Text(dateText)
                     .font(CardTypography.font(for: fontStyle, role: .date))
-                    .opacity(0.95)
+                    .foregroundStyle(secondaryText)
             }
             .padding(18)
-            .foregroundStyle(.white)
         }
         .overlay(alignment: .topTrailing) {
             HStack(spacing: 4) {
@@ -105,7 +115,7 @@ struct CountdownCardView: View {
 
                             .frame(width: 44, height: 44)
                             .background(
-                                Circle().fill(Color.white.opacity(0.25))
+                                Circle().fill(shareButtonBg)
                             )
                             .contentShape(Rectangle())
                             .accessibilityLabel("Share")
@@ -115,7 +125,7 @@ struct CountdownCardView: View {
                 }
             }
             .padding(8)
-            .foregroundStyle(.white)
+            .foregroundStyle(primaryText)
         }
         .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
         .saturation(archived ? 0 : 1)
@@ -126,11 +136,10 @@ struct CountdownCardView: View {
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
     }
 
-    private var accent: Color { theme.theme.accent }
-
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color",
-           let hex = colorHex,
+           let hex = colorHex?.uppercased(),
+           hex != "#FFFFFF",
            let c = Color(hex: hex) {
             return AnyShapeStyle(
                 LinearGradient(colors: [c, c.opacity(0.75)],
@@ -138,10 +147,6 @@ struct CountdownCardView: View {
                                endPoint: .bottomTrailing)
             )
         }
-        return AnyShapeStyle(
-            LinearGradient(colors: [accent, accent.opacity(0.75)],
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
-        )
+        return AnyShapeStyle(Color.white)
     }
 }

@@ -228,7 +228,7 @@ struct CountdownListView: View {
                             .padding(20)
                             .background(Circle().fill(.tint))
                             .foregroundStyle(.white)
-                            .shadow(radius: 6, y: 3)
+                            .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                             .frame(minWidth: 44, minHeight: 44)
                             .contentShape(Rectangle())
                             .accessibilityLabel("Add countdown")

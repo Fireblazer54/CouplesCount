@@ -49,7 +49,7 @@ struct AddEditCountdownView: View {
 
     // Background selection
     @State private var backgroundStyle: String = "color" // "color" | "image"
-    @State private var colorHex: String = "#0A84FF"
+    @State private var colorHex: String = "#FFFFFF"
     @State private var imageData: Data? = nil
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -57,7 +57,7 @@ struct AddEditCountdownView: View {
     // Live preview values
     @State private var previewTitle: String = "Countdown"
     @State private var previewDate: Date = Date().addingTimeInterval(86_400)
-    @State private var previewColorHex: String = "#0A84FF"
+    @State private var previewColorHex: String = "#FFFFFF"
     @State private var previewImageData: Data? = nil
 
     // Reminders
