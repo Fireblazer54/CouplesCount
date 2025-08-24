@@ -23,6 +23,7 @@ struct WidgetPreview: View {
                                 .scaledToFill()
                                 .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                                .accessibilityHidden(true)
                         }
                     }
                 )

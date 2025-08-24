@@ -8,6 +8,7 @@ struct PaywallView: View {
             Image(systemName: "crown.fill")
                 .font(.largeTitle)
                 .foregroundStyle(.yellow)
+                .accessibilityHidden(true)
             Text("CouplesCount Pro")
                 .font(.title2.weight(.semibold))
             Text("Upgrade to unlock premium features.")

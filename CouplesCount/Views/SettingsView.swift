@@ -74,6 +74,7 @@ struct SettingsView: View {
                                           RoundedRectangle(cornerRadius: 8)
                                               .fill(theme.theme.accent)
                                       )
+                                      .accessibilityHidden(true)
                                   Text("Manage Archive")
                                       .font(.body)
                                   Spacer()
@@ -140,7 +141,7 @@ struct SettingsView: View {
         ) {
             Button("Yes") {
                 if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                    SKStoreReviewController.requestReview(in: scene)
+                    AppStore.requestReview(in: scene)
                 }
             }
             Button("No") { showFeedbackForm = true }
@@ -173,6 +174,7 @@ struct SettingsView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(theme.theme.accent)
                     )
+                    .accessibilityHidden(true)
                 Text(title).font(.body)
                 Spacer()
             }
@@ -244,12 +246,15 @@ struct ArchiveView: View {
                                     Haptics.warning()
                                 } label: {
                                     Image(systemName: "trash")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .padding(12)
+                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                        .frame(width: 44, height: 44)
                                         .background(Circle().fill(Color.red))
                                         .foregroundStyle(.white)
+                                        .accessibilityLabel("Delete")
+                                        .accessibilityHint("Remove countdown")
                                 }
                                 .tint(.clear)
+                                .contentShape(Rectangle())
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 Button {
@@ -261,12 +266,15 @@ struct ArchiveView: View {
                                     }
                                 } label: {
                                     Image(systemName: "arrow.uturn.backward")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .padding(12)
+                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                                        .frame(width: 44, height: 44)
                                         .background(Circle().fill(Color.blue))
                                         .foregroundStyle(.white)
+                                        .accessibilityLabel("Unarchive")
+                                        .accessibilityHint("Restore countdown")
                                 }
                                 .tint(.clear)
+                                .contentShape(Rectangle())
                             }
                         }
                     }

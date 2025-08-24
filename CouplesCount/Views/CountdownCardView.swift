@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CountdownCardView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -63,6 +64,7 @@ struct CountdownCardView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .clipped()
+                                .accessibilityHidden(true)
                         }
                     }
                 )
@@ -94,15 +96,19 @@ struct CountdownCardView: View {
             HStack(spacing: 4) {
                 if shared {
                     Image(systemName: "person.2.fill")
+                        .accessibilityHidden(true)
                 }
                 if let shareAction {
                     Button(action: shareAction) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18, weight: .semibold))
-                            .padding(8)
+                            .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 18), weight: .semibold))
+                            .frame(width: 44, height: 44)
                             .background(
                                 Circle().fill(Color.white.opacity(0.25))
                             )
+                            .contentShape(Rectangle())
+                            .accessibilityLabel("Share")
+                            .accessibilityHint("Share this countdown")
                     }
                     .buttonStyle(.plain)
                 }

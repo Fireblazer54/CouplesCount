@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct PremiumPromoView: View {
     @EnvironmentObject private var theme: ThemeManager
@@ -11,8 +12,9 @@ struct PremiumPromoView: View {
             VStack {
                 Spacer()
                 Image(systemName: "crown.fill")
-                    .font(.system(size: 80))
+                    .font(.system(size: UIFontMetrics(forTextStyle: .largeTitle).scaledValue(for: 80)))
                     .foregroundStyle(theme.theme.accent)
+                    .accessibilityHidden(true)
                 Text("CouplesCount Premium")
                     .font(.largeTitle.bold())
                     .padding(.top, 12)
@@ -29,7 +31,10 @@ struct PremiumPromoView: View {
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .padding()
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel("Close")
+                    .accessibilityHint("Dismiss premium promotion")
             }
         }
     }
