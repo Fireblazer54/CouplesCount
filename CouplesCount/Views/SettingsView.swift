@@ -9,7 +9,8 @@ struct SettingsView: View {
     @EnvironmentObject private var theme: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
 
-    private let themes: [ColorTheme] = [.light]
+    private let themes: [ColorTheme] = ColorTheme.allCases
+
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
     @State private var showEnjoyPrompt = false
@@ -29,7 +30,12 @@ struct SettingsView: View {
                             ) {
                                 ForEach(themes, id: \.self) { t in
                                     let ent = Entitlements.current
-                                    let locked = AppConfig.entitlementsMode == .live && ((t == .dark && !ent.hasDarkMode) || (t != .light && t != .dark && !ent.hasPremiumThemes))
+                                    let isDark = (t == .dark)
+                                    let isExtra = (t != .light && !isDark)
+                                    let needsDark = isDark && !ent.hasDarkMode
+                                    let needsPremium = isExtra && !ent.hasPremiumThemes
+                                    let locked = AppConfig.entitlementsMode == .live && (needsDark || needsPremium)
+
                                     ThemeSwatch(theme: t, isSelected: t == theme.theme, isLocked: locked) {
                                         if locked {
                                             showPaywall = true

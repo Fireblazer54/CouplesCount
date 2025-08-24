@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Semantic color tokens for the app. The app only supports a single light
-/// theme, but the structure remains to keep the `ThemeManager` API stable.
+/// Semantic color tokens for the app. Light theme is the default, but legacy
+/// themes remain available behind paywall.
+
 enum ColorTheme: String, CaseIterable, Codable, Sendable {
     case light
 
@@ -12,25 +13,58 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
     var displayName: String { "Light" }
 
     /// Primary brand color (Rose)
-    var primary: Color { Color(hex: "#D94A6A") ?? .pink }
-
-    /// Soft accent color (Lavender)
-    var accent: Color { Color(hex: "#C7B8EA") ?? .purple }
-
-    /// Solid fallback background color
-    var background: Color { Color(hex: "#F9FBFF") ?? .white }
-
-    /// Gradient background from baby blue to white
-    var backgroundGradient: LinearGradient {
-        LinearGradient(
-            colors: [Color(hex: "#E7F3FF") ?? .blue.opacity(0.1), .white],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+    var primary: Color {
+        switch self {
+        case .light: Color(hex: "#D94A6A") ?? .pink
+        case .dark, .royalBlues, .barbie, .lucky: .white
+        }
     }
 
-    /// Base neutral used for text and outlines (#222222)
-    private var neutralBase: Color { Color(hex: "#222222") ?? .black }
+    /// Secondary accent (Lavender for light theme)
+    var accent: Color {
+        switch self {
+        case .light: Color(hex: "#C7B8EA") ?? .purple
+        case .dark: .white
+        case .royalBlues: .white
+        case .barbie: .white
+        case .lucky: .white
+        }
+    }
+
+    /// Solid fallback background color
+    var background: Color {
+        switch self {
+        case .light: Color(hex: "#F9FBFF") ?? .white
+        case .dark: Color(.secondarySystemBackground)
+        case .royalBlues: Color(red: 0.08, green: 0.19, blue: 0.45)
+        case .barbie: Color(red: 0.98, green: 0.36, blue: 0.72)
+        case .lucky: Color(red: 0.10, green: 0.55, blue: 0.28)
+        }
+    }
+
+    /// Background gradient (light theme uses baby blue to white)
+    var backgroundGradient: LinearGradient {
+        switch self {
+        case .light:
+            return LinearGradient(
+                colors: [Color(hex: "#E7F3FF") ?? .blue.opacity(0.1), .white],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        default:
+            return LinearGradient(colors: [background, background],
+                                  startPoint: .top, endPoint: .bottom)
+        }
+    }
+
+    /// Base neutral used for text and outlines
+    private var neutralBase: Color {
+        switch self {
+        case .light: return Color(hex: "#222222") ?? .black
+        case .dark, .royalBlues, .barbie, .lucky: return .white
+        }
+    }
+
 
     var textPrimary: Color { neutralBase }
     var textSecondary: Color { neutralBase.opacity(0.7) }
