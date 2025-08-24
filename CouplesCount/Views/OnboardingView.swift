@@ -78,5 +78,5 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView(onDenied: {})
-        .environmentObject(ThemeManager())
+        .environmentObject(ThemeManager(pro: ProStatusProvider()))
 }

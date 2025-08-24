@@ -9,6 +9,7 @@ struct WidgetPreview: View {
     let bgColorHex: String?
     let imageData: Data?
 
+    @EnvironmentObject private var theme: ThemeManager
     @State private var now = Date()
 
     var body: some View {
@@ -47,6 +48,7 @@ struct WidgetPreview: View {
             .padding()
         }
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
+        .preferredColorScheme(theme.isStrictLight ? .light : nil)
     }
 
     private var backgroundFill: some ShapeStyle {
