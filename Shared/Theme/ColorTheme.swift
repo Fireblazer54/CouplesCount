@@ -31,10 +31,29 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         }
     }
 
+    /// Primary brand color (Rose)
+    var primary: Color {
+        switch self {
+        case .light: Color(hex: "#D94A6A") ?? Color.pink
+        case .dark, .royalBlues, .barbie, .lucky: Color.white
+        }
+    }
+
+    /// Secondary accent (Lavender for light theme)
+    var accent: Color {
+        switch self {
+        case .light: Color(hex: "#C7B8EA") ?? Color.purple
+        case .dark: Color.white
+        case .royalBlues: Color.white
+        case .barbie: Color.white
+        case .lucky: Color.white
+        }
+    }
+
     /// Solid fallback background color
     var background: Color {
         switch self {
-        case .light: Color(hex: "#F9FBFF") ?? .white
+        case .light: Color(hex: "#F9FBFF") ?? Color.white
         case .dark: Color(.secondarySystemBackground)
         case .royalBlues: Color(red: 0.08, green: 0.19, blue: 0.45)
         case .barbie: Color(red: 0.98, green: 0.36, blue: 0.72)
@@ -46,22 +65,22 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
     var backgroundGradient: LinearGradient {
         switch self {
         case .light:
-            return LinearGradient(
-                colors: [Color(hex: "#E7F3FF") ?? .blue.opacity(0.1), .white],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            let top = Color(hex: "#E7F3FF") ?? Color.blue.opacity(0.1)
+            let bottom = Color.white
+            let colors = [top, bottom]
+            return LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
         default:
-            return LinearGradient(colors: [background, background],
-                                  startPoint: .top, endPoint: .bottom)
+            return LinearGradient(colors: [background, background], startPoint: .top, endPoint: .bottom)
         }
     }
 
     /// Base neutral used for text and outlines
     private var neutralBase: Color {
         switch self {
-        case .light: return Color(hex: "#222222") ?? .black
-        case .dark, .royalBlues, .barbie, .lucky: return .white
+        case .light:
+            return Color(hex: "#222222") ?? Color.black
+        case .dark, .royalBlues, .barbie, .lucky:
+            return Color.white
         }
     }
 
