@@ -45,6 +45,7 @@ struct ThemeSwatch: View {
     @EnvironmentObject private var themeManager: ThemeManager
     let theme: ColorTheme
     let isSelected: Bool
+    let isLocked: Bool
     let onTap: () -> Void
 
     var body: some View {
@@ -65,6 +66,19 @@ struct ThemeSwatch: View {
                         .foregroundStyle(.white, theme.accent)
                         .padding(8)
                         .shadow(radius: 4, y: 2)
+                }
+
+                if isLocked {
+                    HStack(spacing: 4) {
+                        Image(systemName: "crown.fill")
+                        Text("Pro")
+                            .font(.caption2.weight(.semibold))
+                    }
+                    .foregroundStyle(.yellow)
+                    .padding(6)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Capsule())
+                    .padding(6)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {

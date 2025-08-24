@@ -3,6 +3,7 @@ import SwiftData
 
 struct CountdownDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
+    @EnvironmentObject private var pro: ProStatusProvider
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
@@ -69,6 +70,7 @@ struct CountdownDetailView: View {
         .sheet(isPresented: $showEdit) {
             AddEditCountdownView(existing: countdown)
                 .environmentObject(theme)
+                .environmentObject(pro)
         }
         .alert("Delete Countdown?", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
