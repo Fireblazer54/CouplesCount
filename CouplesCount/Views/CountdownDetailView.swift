@@ -6,6 +6,7 @@ struct CountdownDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+
     let countdown: Countdown
 
     @State private var showShareSheet = false
