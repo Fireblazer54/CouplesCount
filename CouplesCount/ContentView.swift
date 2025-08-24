@@ -55,6 +55,8 @@ struct CountdownListView: View {
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
 
+    var refreshAction: (() async -> Void)? = nil
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -203,8 +205,11 @@ struct CountdownListView: View {
                         }
                         .listStyle(.plain)
                         .listRowSpacing(16)
-                        .padding(.top, 28)
+                        .safeAreaInset(edge: .top) {
+                            Color.clear.frame(height: 8)
+                        }
                         .scrollContentBackground(.hidden)
+                        .refreshable { await refreshAction?() }
                         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
                     }
                     if !Entitlements.current.hidesAds {
