@@ -11,10 +11,10 @@ struct CouplesCountApp: App {
     init() {
         let provider = ProStatusProvider()
         _pro = StateObject(wrappedValue: provider)
-        let themeManager = ThemeManager(pro: provider)
+        let themeManager = ThemeManager()
         _theme = StateObject(wrappedValue: themeManager)
         Entitlements.setProvider(provider)
-        if themeManager.isStrictLight {
+        if AppConfig.entitlementsMode == .live && !provider.isPro {
             themeManager.setTheme(.light)
         }
     }
@@ -49,13 +49,11 @@ struct CouplesCountApp: App {
                 .padding()
                 .presentationDetents([.medium])
             }
-            .onChange(of: pro.isProPublished, initial: false) { _, _ in
-                theme.refreshStrictLight()
-                if theme.isStrictLight {
+            .onChange(of: pro.isProPublished, initial: false) { _, newValue in
+                if AppConfig.entitlementsMode == .live && !newValue {
                     theme.setTheme(.light)
                 }
             }
-            .preferredColorScheme(theme.isStrictLight ? .light : nil)
         }
     }
 }

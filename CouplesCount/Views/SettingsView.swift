@@ -20,26 +20,24 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
-                    if !theme.isStrictLight {
-                        SettingsCard {
-                            LazyVGrid(
-                                columns: [GridItem(.flexible(), spacing: 12),
-                                          GridItem(.flexible(), spacing: 12)],
-                                spacing: 12
-                            ) {
-                                ForEach(themes, id: \.self) { t in
-                                    let ent = Entitlements.current
-                                    let locked = AppConfig.entitlementsMode == .live && ((t == .dark && !ent.hasDarkMode) || (t != .light && t != .dark && !ent.hasPremiumThemes))
-                                    ThemeSwatch(theme: t, isSelected: t == theme.theme, isLocked: locked) {
-                                        if locked {
-                                            showPaywall = true
-                                        } else {
-                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                            theme.setTheme(t)   // instant global update
-                                        }
+                    SettingsCard {
+                        LazyVGrid(
+                            columns: [GridItem(.flexible(), spacing: 12),
+                                      GridItem(.flexible(), spacing: 12)],
+                            spacing: 12
+                        ) {
+                            ForEach(themes, id: \.self) { t in
+                                let ent = Entitlements.current
+                                let locked = AppConfig.entitlementsMode == .live && ((t == .dark && !ent.hasDarkMode) || (t != .light && t != .dark && !ent.hasPremiumThemes))
+                                ThemeSwatch(theme: t, isSelected: t == theme.theme, isLocked: locked) {
+                                    if locked {
+                                        showPaywall = true
+                                    } else {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        theme.setTheme(t)   // instant global update
                                     }
-                                    .environmentObject(theme)
                                 }
+                                .environmentObject(theme)
                             }
                         }
                     }
