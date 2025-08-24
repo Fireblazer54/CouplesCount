@@ -36,6 +36,7 @@ struct ContentView: View {
 
 struct CountdownListView: View {
     @EnvironmentObject private var theme: ThemeManager
+    @EnvironmentObject private var pro: ProStatusProvider
     @Environment(\.modelContext) private var modelContext
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
@@ -51,6 +52,7 @@ struct CountdownListView: View {
     @State private var selected: Countdown? = nil
     @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -185,14 +187,21 @@ struct CountdownListView: View {
                         .scrollContentBackground(.hidden)
                         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
                     }
+                    if !Entitlements.current.hidesAds {
+                        AdBannerPlaceholderView()
+                    }
                 }
 
                 // Centered bottom +
                 VStack {
                     Spacer()
                     Button {
-                        editing = nil
-                        showAddEdit = true
+                        if Entitlements.current.isUnlimited || items.count < AppLimits.freeMaxCountdowns {
+                            editing = nil
+                            showAddEdit = true
+                        } else {
+                            showPaywall = true
+                        }
                     } label: {
                         Image(systemName: "plus")
                             .font(.title)
@@ -217,9 +226,10 @@ struct CountdownListView: View {
             .sheet(isPresented: $showAddEdit) {
                 AddEditCountdownView(existing: editing)
                     .environmentObject(theme)
+                    .environmentObject(pro)
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView().environmentObject(theme)
+                SettingsView().environmentObject(theme).environmentObject(pro)
             }
             .sheet(isPresented: $showShareSheet) {
                 if let shareURL {
@@ -229,8 +239,12 @@ struct CountdownListView: View {
             .sheet(item: $selected) { countdown in
                 CountdownDetailView(countdown: countdown)
                     .environmentObject(theme)
+                    .environmentObject(pro)
                     .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView().environmentObject(theme)
             }
         }
         .tint(theme.theme.accent)

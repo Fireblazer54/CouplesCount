@@ -11,9 +11,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct CouplesCountApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @StateObject private var theme = ThemeManager()
+    @StateObject private var pro: ProStatusProvider
+    @StateObject private var theme: ThemeManager
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showDeniedInfo = false
+
+    init() {
+        let provider = ProStatusProvider()
+        _pro = StateObject(wrappedValue: provider)
+        let themeManager = ThemeManager()
+        _theme = StateObject(wrappedValue: themeManager)
+        Entitlements.setProvider(provider)
+        if AppConfig.entitlementsMode == .live && !provider.isPro {
+            themeManager.setTheme(.light)
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -21,6 +33,7 @@ struct CouplesCountApp: App {
                 if hasSeenOnboarding {
                     ContentView()
                         .environmentObject(theme)
+                        .environmentObject(pro)
                         // Use a custom container so the widget and app share data
                         .modelContainer(Persistence.container)
                 } else {
@@ -28,6 +41,7 @@ struct CouplesCountApp: App {
                         showDeniedInfo = true
                     }
                     .environmentObject(theme)
+                    .environmentObject(pro)
                 }
             }
             .sheet(isPresented: $showDeniedInfo) {
@@ -42,6 +56,11 @@ struct CouplesCountApp: App {
                 }
                 .padding()
                 .presentationDetents([.medium])
+            }
+            .onChange(of: pro.isPro) { newValue in
+                if AppConfig.entitlementsMode == .live && !newValue {
+                    theme.setTheme(.light)
+                }
             }
         }
     }
