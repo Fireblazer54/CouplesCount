@@ -2,22 +2,32 @@ import SwiftUI
 
 /// Semantic color tokens for the app. Light theme is the default, but legacy
 /// themes remain available behind paywall.
+
 enum ColorTheme: String, CaseIterable, Codable, Sendable {
-    case light, dark, royalBlues, barbie, lucky
+    case light
 
     static let `default`: ColorTheme = .light
 
-    init(rawOrDefault raw: String?) {
-        self = ColorTheme(rawValue: raw ?? "") ?? .light
+    init(rawOrDefault raw: String?) { self = .light }
+
+    var displayName: String { "Light" }
+
+    /// Primary brand color (Rose)
+    var primary: Color {
+        switch self {
+        case .light: Color(hex: "#D94A6A") ?? .pink
+        case .dark, .royalBlues, .barbie, .lucky: .white
+        }
     }
 
-    var displayName: String {
+    /// Secondary accent (Lavender for light theme)
+    var accent: Color {
         switch self {
-        case .light: "Light"
-        case .dark: "Dark"
-        case .royalBlues: "Royal Blues"
-        case .barbie: "Barbie"
-        case .lucky: "Lucky"
+        case .light: Color(hex: "#C7B8EA") ?? .purple
+        case .dark: .white
+        case .royalBlues: .white
+        case .barbie: .white
+        case .lucky: .white
         }
     }
 
@@ -73,6 +83,7 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
             return Color.white
         }
     }
+
 
     var textPrimary: Color { neutralBase }
     var textSecondary: Color { neutralBase.opacity(0.7) }
