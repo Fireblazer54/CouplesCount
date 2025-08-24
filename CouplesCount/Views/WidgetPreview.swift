@@ -17,8 +17,8 @@ struct WidgetPreview: View {
         return hex == "" || hex == "#FFFFFF"
     }
 
-    private var primaryText: Color { isDefaultBackground ? .black : .white }
-    private var secondaryText: Color { isDefaultBackground ? .black.opacity(0.7) : .white.opacity(0.9) }
+    private var titleColor: Color { isDefaultBackground ? ColorTheme.default.textPrimary : .white }
+    private var metaColor: Color { isDefaultBackground ? ColorTheme.default.textSecondary : .white.opacity(0.9) }
 
     var body: some View {
         ZStack {
@@ -36,28 +36,28 @@ struct WidgetPreview: View {
                         }
                     }
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
-
+                        .stroke(ColorTheme.default.outline, lineWidth: 1)
                 )
                 .frame(height: 140)
 
             VStack(spacing: 6) {
                 Text(title)
                     .font(CardTypography.font(for: style, role: .title))
-                    .foregroundStyle(primaryText)
+                    .foregroundStyle(titleColor)
                     .lineLimit(1)
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: tzID))
                     .font(CardTypography.font(for: style, role: .number))
-                    .foregroundStyle(primaryText)
+                    .foregroundStyle(ColorTheme.default.primary)
 
                 Text(targetDate, style: .date)
                     .font(CardTypography.font(for: style, role: .date))
-                    .foregroundStyle(secondaryText)
+                    .foregroundStyle(metaColor)
             }
-            .shadow(color: isDefaultBackground ? .black.opacity(0.1) : .black.opacity(0.3), radius: 6, y: 3)
+            .shadow(color: ColorTheme.default.textPrimary.opacity(isDefaultBackground ? 0.1 : 0.3), radius: 6, y: 3)
             .padding()
         }
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
@@ -67,6 +67,6 @@ struct WidgetPreview: View {
         if backgroundStyle == "color", let hex = bgColorHex?.uppercased(), hex != "#FFFFFF", let c = Color(hex: hex) {
             return AnyShapeStyle(LinearGradient(colors: [c, c.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(ColorTheme.default.backgroundGradient)
     }
 }

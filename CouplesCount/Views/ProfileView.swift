@@ -32,12 +32,12 @@ struct ProfileView: View {
                                 Image(systemName: "person.crop.circle.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(theme.theme.textTertiary)
                                     .padding(4)
                             }
                         }
                         .frame(width: 80, height: 80)
-                        .background(Color.gray.opacity(profileImageData == nil ? 0.2 : 0))
+                        .background(theme.theme.textPrimary.opacity(profileImageData == nil ? 0.2 : 0))
                         .clipShape(Circle())
                     }
                     .accessibilityLabel("Profile photo")
@@ -146,6 +146,6 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .background(theme.theme.background.ignoresSafeArea())
+        .background(theme.theme.backgroundGradient.ignoresSafeArea())
     }
 }

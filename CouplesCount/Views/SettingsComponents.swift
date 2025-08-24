@@ -20,7 +20,7 @@ struct SettingsCard<Content: View>: View {
                             .stroke(.white.opacity(0.08), lineWidth: 1)
                     )
             )
-            .shadow(color: .black.opacity(0.12), radius: 12, y: 6)
+            .shadow(color: theme.theme.textPrimary.opacity(0.12), radius: 12, y: 6)
             .padding(.horizontal, 16)
     }
 }
@@ -76,7 +76,7 @@ struct ThemeSwatch: View {
                         Text("Pro")
                             .font(.caption2.weight(.semibold))
                     }
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(theme.accent)
                     .padding(6)
                     .background(.ultraThinMaterial)
                     .clipShape(Capsule())
@@ -87,7 +87,7 @@ struct ThemeSwatch: View {
                     HStack(spacing: 8) {
                         Circle().fill(theme.accent).frame(width: 10, height: 10)
                         Circle().fill(.white.opacity(0.85)).frame(width: 10, height: 10)
-                        Circle().fill(.black.opacity(0.6)).frame(width: 10, height: 10)
+                        Circle().fill(ColorTheme.default.textPrimary.opacity(0.6)).frame(width: 10, height: 10)
                     }
                     .padding(.top, 12)
 

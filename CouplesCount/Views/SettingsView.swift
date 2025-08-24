@@ -9,7 +9,7 @@ struct SettingsView: View {
     @EnvironmentObject private var theme: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
 
-    private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
+    private let themes: [ColorTheme] = [.light]
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
     @State private var showEnjoyPrompt = false
@@ -118,8 +118,8 @@ struct SettingsView: View {
                 }
                 .padding(.top, 8)
             }
-            .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)            // accent flows everywhere
+            .background(theme.theme.backgroundGradient.ignoresSafeArea())
+            .tint(theme.theme.primary)            // accent flows everywhere
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
             .toolbar {
@@ -208,7 +208,7 @@ struct ArchiveView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                theme.theme.background.ignoresSafeArea()
+                theme.theme.backgroundGradient.ignoresSafeArea()
 
                 if items.isEmpty {
                     VStack(spacing: 8) {
@@ -272,7 +272,7 @@ struct ArchiveView: View {
                                         .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                         .frame(width: 44, height: 44)
-                                        .background(Circle().fill(Color.blue))
+                                        .background(Circle().fill(theme.theme.accent))
                                         .foregroundStyle(.white)
                                         .accessibilityLabel("Unarchive")
                                         .accessibilityHint("Restore countdown")
@@ -295,7 +295,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
     }
 }
 
