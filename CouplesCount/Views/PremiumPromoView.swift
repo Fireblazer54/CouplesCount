@@ -5,7 +5,7 @@ struct PremiumPromoView: View {
     @Binding var show: Bool
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
             theme.theme.background.ignoresSafeArea()
 
             VStack {
@@ -22,7 +22,8 @@ struct PremiumPromoView: View {
                     .padding()
                 Spacer()
             }
-
+        }
+        .safeAreaInset(edge: .top, alignment: .leading) {
             Button {
                 withAnimation(.spring()) { show = false }
             } label: {
