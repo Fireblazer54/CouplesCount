@@ -13,8 +13,8 @@ struct OnboardingView: View {
             finalSlide
         }
         .tabViewStyle(.page)
-        .background(theme.theme.background.ignoresSafeArea())
-        .tint(theme.theme.accent)
+        .background(theme.theme.backgroundGradient.ignoresSafeArea())
+        .tint(theme.theme.primary)
     }
 
     @ViewBuilder
@@ -57,7 +57,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.accent))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.primary))
             }
             .padding(.top, 32)
             .padding(.horizontal)

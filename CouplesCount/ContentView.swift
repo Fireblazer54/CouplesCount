@@ -19,7 +19,7 @@ struct ContentView: View {
                     Label("Profile", systemImage: "person.crop.circle")
                 }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
         .onOpenURL { url in
             do {
                 try CountdownShareService.importCountdown(from: url, context: modelContext)
@@ -60,7 +60,7 @@ struct CountdownListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                theme.theme.background.ignoresSafeArea()
+                theme.theme.backgroundGradient.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     // Top bar
@@ -193,7 +193,7 @@ struct CountdownListView: View {
                                                 .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                                 .frame(width: 44, height: 44)
-                                                .background(Circle().fill(Color.blue))
+                                                .background(Circle().fill(theme.theme.accent))
                                                 .foregroundStyle(.white)
                                                 .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
                                                 .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
@@ -234,7 +234,7 @@ struct CountdownListView: View {
                             .padding(20)
                             .background(Circle().fill(.tint))
                             .foregroundStyle(.white)
-                            .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
+                            .shadow(color: theme.theme.textPrimary.opacity(0.2), radius: 4, y: 2)
                             .frame(minWidth: 44, minHeight: 44)
                             .contentShape(Rectangle())
                             .accessibilityLabel("Add countdown")
@@ -278,6 +278,6 @@ struct CountdownListView: View {
                 PaywallView().environmentObject(theme)
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
     }
 }

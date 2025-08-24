@@ -7,7 +7,7 @@ struct PremiumPromoView: View {
 
     var body: some View {
         ZStack {
-            theme.theme.background.ignoresSafeArea()
+            theme.theme.backgroundGradient.ignoresSafeArea()
 
             VStack {
                 Spacer()
