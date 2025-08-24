@@ -55,16 +55,18 @@ struct CouplesCountWidgetView: View {
             Text(entry.entity.title)
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .title))
                 .lineLimit(1)
+                .foregroundStyle(ColorTheme.default.textPrimary)
 
             Text(DateUtils.remainingText(to: entry.entity.targetDate, from: entry.date, in: entry.entity.timeZoneID))
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .number))
+                .foregroundStyle(ColorTheme.default.primary)
 
             Text(entry.entity.targetDate, style: .date)
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .date))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(ColorTheme.default.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(ColorTheme.default.backgroundGradient, for: .widget)
     }
 }
 
