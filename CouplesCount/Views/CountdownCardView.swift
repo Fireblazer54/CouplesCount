@@ -56,9 +56,9 @@ struct CountdownCardView: View {
         return hex == "" || hex == "#FFFFFF"
     }
 
-    private var primaryText: Color { isDefaultBackground ? .black : .white }
-    private var secondaryText: Color { isDefaultBackground ? .black.opacity(0.7) : .white.opacity(0.95) }
-    private var shareButtonBg: Color { isDefaultBackground ? .black.opacity(0.05) : .white.opacity(0.25) }
+    private var titleColor: Color { isDefaultBackground ? theme.theme.textPrimary : .white }
+    private var metaColor: Color { isDefaultBackground ? theme.theme.textSecondary : .white.opacity(0.9) }
+    private var shareButtonBg: Color { isDefaultBackground ? theme.theme.textPrimary.opacity(0.05) : Color.white.opacity(0.25) }
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -78,28 +78,35 @@ struct CountdownCardView: View {
                         }
                     }
                 )
+                .overlay {
+                    if backgroundStyle == "image" && imageData != nil {
+                        LinearGradient(colors: [theme.theme.textPrimary.opacity(0.35), .clear],
+                                       startPoint: .top,
+                                       endPoint: .center)
+                            .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
+                    }
+                }
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(Color.black.opacity(0.25), lineWidth: 4)
-
+                        .stroke(theme.theme.outline, lineWidth: 1)
                 )
-                .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
+                .shadow(color: theme.theme.textPrimary.opacity(0.1), radius: 4, y: 2)
 
             // Content
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .font(CardTypography.font(for: fontStyle, role: .title))
                     .lineLimit(1)
-                    .foregroundStyle(primaryText)
+                    .foregroundStyle(titleColor)
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
                     .font(CardTypography.font(for: fontStyle, role: .number))
-                    .foregroundStyle(primaryText)
+                    .foregroundStyle(theme.theme.primary)
 
                 Text(dateText)
                     .font(CardTypography.font(for: fontStyle, role: .date))
-                    .foregroundStyle(secondaryText)
+                    .foregroundStyle(metaColor)
             }
             .padding(18)
         }
@@ -126,7 +133,7 @@ struct CountdownCardView: View {
                 }
             }
             .padding(8)
-            .foregroundStyle(primaryText)
+            .foregroundStyle(titleColor)
         }
         .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
         .saturation(archived ? 0 : 1)
@@ -148,6 +155,6 @@ struct CountdownCardView: View {
                                endPoint: .bottomTrailing)
             )
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(theme.theme.backgroundGradient)
     }
 }

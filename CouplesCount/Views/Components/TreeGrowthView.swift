@@ -2,17 +2,18 @@ import SwiftUI
 
 struct TreeGrowthView: View {
     var progress: Double
+    @EnvironmentObject private var theme: ThemeManager
     @State private var animated: Double = 0
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 Rectangle()
-                    .fill(Color.brown)
+                    .fill(theme.theme.textPrimary)
                     .frame(width: geo.size.width * 0.1,
                            height: geo.size.height * CGFloat(animated))
                 Circle()
-                    .fill(Color.green)
+                    .fill(theme.theme.accent)
                     .frame(width: geo.size.width * 0.6,
                            height: geo.size.width * 0.6)
                     .scaleEffect(animated)

@@ -168,9 +168,11 @@ struct AddEditCountdownView: View {
 
                         if backgroundStyle == "color" {
                             HStack(spacing: 10) {
-                                ForEach(["#0A84FF","#5856D6","#FF2D55","#34C759","#FF9F0A"], id: \.self) { hex in
+                                let swatches: [Color] = [theme.theme.primary, theme.theme.accent, theme.theme.background]
+                                ForEach(swatches, id: \.self) { color in
+                                    let hex = color.hexString
                                     Circle()
-                                        .fill(Color(hex: hex) ?? .blue)
+                                        .fill(color)
                                         .frame(width: 32, height: 32)
                                         .overlay(
                                             Circle().stroke(Color.white.opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
@@ -179,7 +181,7 @@ struct AddEditCountdownView: View {
                                 }
                                 Spacer()
                                 ColorPicker("", selection: Binding(
-                                    get: { Color(hex: colorHex) ?? .blue },
+                                    get: { Color(hex: colorHex) ?? theme.theme.primary },
                                     set: { colorHex = $0.hexString }
                                 ))
                                 .labelsHidden()
@@ -254,7 +256,7 @@ struct AddEditCountdownView: View {
                                     }
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(Color(.systemGray5))
+                                    .background(theme.theme.background)
                                     .clipShape(Capsule())
                                 }
                             }
@@ -263,6 +265,7 @@ struct AddEditCountdownView: View {
                     }
                     .sheet(isPresented: $showReminderSheet) {
                         ReminderPicker(selections: $selectedReminders)
+                            .environmentObject(theme)
                     }
 
                     if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -314,13 +317,13 @@ struct AddEditCountdownView: View {
             .scrollIndicators(.hidden)
             .overlay(alignment: .trailing) {
                 RoundedRectangle(cornerRadius: 3)
-                    .fill(.gray.opacity(0.4))
+                    .fill(theme.theme.textTertiary)
                     .frame(width: 6)
                     .padding(.vertical, 8)
                     .padding(.trailing, 2)
             }
-            .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)
+            .background(theme.theme.backgroundGradient.ignoresSafeArea())
+            .tint(theme.theme.primary)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -399,7 +402,7 @@ struct AddEditCountdownView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
         .alert("Couldn’t Save",
                isPresented: Binding(get: { saveError != nil },
                                    set: { if !$0 { saveError = nil } })) {
@@ -478,6 +481,7 @@ struct ReminderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selections: Set<ReminderOption>
     @State private var temp: Set<ReminderOption>
+    @EnvironmentObject private var theme: ThemeManager
 
     init(selections: Binding<Set<ReminderOption>>) {
         self._selections = selections
@@ -492,11 +496,11 @@ struct ReminderPicker: View {
                         let isSel = temp.contains(option)
                         Text(option.label)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(isSel ? Color.accentColor.opacity(0.2) : Color(.systemGray5))
+                            .background(isSel ? theme.theme.primary.opacity(0.2) : theme.theme.background)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isSel ? Color.accentColor : .clear, lineWidth: 2)
+                                    .stroke(isSel ? theme.theme.primary : .clear, lineWidth: 2)
                             )
                             .onTapGesture {
                                 if isSel { temp.remove(option) } else { temp.insert(option) }
