@@ -8,6 +8,10 @@ enum AppEntitlementsMode {
 enum AppConfig {
     // Flip this one line later to enable live gating
     static var entitlementsMode: AppEntitlementsMode = .freeForAll
+
+    static var isStrictLight: Bool {
+        entitlementsMode == .live && !Entitlements.current.isPro
+    }
 }
 
 enum AppLimits {

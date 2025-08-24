@@ -1,6 +1,7 @@
 import Foundation
 
 struct Entitlements {
+    let isPro: Bool
     let isUnlimited: Bool
     let hasPremiumThemes: Bool
     let hasDarkMode: Bool
@@ -12,6 +13,7 @@ struct Entitlements {
     @MainActor
     init(provider: ProStatusProviding) {
         let pro = provider.isPro
+        isPro = pro
         isUnlimited = pro
         hasPremiumThemes = pro
         hasDarkMode = pro
