@@ -73,7 +73,7 @@ struct SettingsView: View {
                                       .frame(width: 30, height: 30)
                                       .background(
                                           RoundedRectangle(cornerRadius: 8)
-                                              .fill(theme.theme.accent)
+                                              .fill(theme.theme.textPrimary.opacity(0.1))
                                       )
                                       .accessibilityHidden(true)
                                   Text("Manage Archive")
@@ -122,6 +122,7 @@ struct SettingsView: View {
             .tint(theme.theme.textPrimary)            // default icons
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
+            .toolbarColorScheme(theme.theme == .light ? .light : .dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
             }
@@ -174,7 +175,7 @@ struct SettingsView: View {
                     .frame(width: 30, height: 30)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(theme.theme.accent)
+                            .fill(theme.theme.textPrimary.opacity(0.1))
                     )
                     .accessibilityHidden(true)
                 Text(title)
