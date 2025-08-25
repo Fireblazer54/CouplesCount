@@ -73,6 +73,9 @@ struct WidgetPreview: View {
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color" {
             let c = cardColor
+            if theme.theme == .light {
+                return AnyShapeStyle(c)
+            }
             return AnyShapeStyle(LinearGradient(colors: [c, c.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         return AnyShapeStyle(theme.theme.primary)
