@@ -119,7 +119,7 @@ struct SettingsView: View {
                 .padding(.top, 8)
             }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)            // accent flows everywhere
+            .tint(theme.theme.primary)            // accent flows everywhere
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
             .toolbar {
@@ -251,7 +251,7 @@ struct ArchiveView: View {
                                         .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                         .frame(width: 44, height: 44)
-                                        .background(Circle().fill(Color.red))
+                                        .background(Circle().fill(theme.theme.primary))
                                         .foregroundStyle(.white)
                                         .accessibilityLabel("Delete")
                                         .accessibilityHint("Remove countdown")
@@ -272,7 +272,7 @@ struct ArchiveView: View {
                                         .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                         .frame(width: 44, height: 44)
-                                        .background(Circle().fill(Color.blue))
+                                        .background(Circle().fill(theme.theme.accent))
                                         .foregroundStyle(.white)
                                         .accessibilityLabel("Unarchive")
                                         .accessibilityHint("Restore countdown")
@@ -295,7 +295,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
     }
 }
 

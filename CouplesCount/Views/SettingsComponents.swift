@@ -14,10 +14,10 @@ struct SettingsCard<Content: View>: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(.ultraThinMaterial)
+                    .fill(theme.theme.background)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(.white.opacity(0.08), lineWidth: 1)
+                            .stroke(theme.theme.background.opacity(0.08), lineWidth: 1)
                     )
             )
             .shadow(color: .black.opacity(0.12), radius: 12, y: 6)
@@ -55,7 +55,7 @@ struct ThemeSwatch: View {
                     .fill(theme.background)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(isSelected ? theme.accent : .white.opacity(0.08), lineWidth: isSelected ? 2 : 1)
+                            .stroke(isSelected ? theme.accent : theme.background.opacity(0.08), lineWidth: isSelected ? 2 : 1)
                     )
                     .frame(height: 88)
 
@@ -63,7 +63,7 @@ struct ThemeSwatch: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title2)
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, theme.accent)
+                        .foregroundStyle(theme.background, theme.accent)
                         .padding(8)
                         .shadow(radius: 4, y: 2)
                         .accessibilityHidden(true)
@@ -76,18 +76,18 @@ struct ThemeSwatch: View {
                         Text("Pro")
                             .font(.caption2.weight(.semibold))
                     }
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(theme.primary)
                     .padding(6)
-                    .background(.ultraThinMaterial)
+                    .background(theme.background)
                     .clipShape(Capsule())
                     .padding(6)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
+                        Circle().fill(theme.primary).frame(width: 10, height: 10)
                         Circle().fill(theme.accent).frame(width: 10, height: 10)
-                        Circle().fill(.white.opacity(0.85)).frame(width: 10, height: 10)
-                        Circle().fill(.black.opacity(0.6)).frame(width: 10, height: 10)
+                        Circle().fill(theme.background).frame(width: 10, height: 10)
                     }
                     .padding(.top, 12)
 

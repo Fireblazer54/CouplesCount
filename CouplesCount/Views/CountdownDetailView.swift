@@ -169,7 +169,7 @@ struct CountdownDetailView: View {
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(.ultraThinMaterial))
+        .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.background))
     }
 
     private func poke(_ p: Participant) {

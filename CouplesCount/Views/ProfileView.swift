@@ -32,12 +32,12 @@ struct ProfileView: View {
                                 Image(systemName: "person.crop.circle.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(theme.theme.accent)
                                     .padding(4)
                             }
                         }
                         .frame(width: 80, height: 80)
-                        .background(Color.gray.opacity(profileImageData == nil ? 0.2 : 0))
+                        .background(theme.theme.accent.opacity(profileImageData == nil ? 0.2 : 0))
                         .clipShape(Circle())
                     }
                     .accessibilityLabel("Profile photo")
@@ -125,7 +125,7 @@ struct ProfileView: View {
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
-                            .tint(.red)
+                            .tint(theme.theme.primary)
 
                             Button {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
