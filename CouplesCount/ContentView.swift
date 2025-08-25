@@ -39,6 +39,7 @@ struct CountdownListView: View {
     @EnvironmentObject private var theme: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
            sort: \.targetUTC, order: .forward)
@@ -54,6 +55,7 @@ struct CountdownListView: View {
     @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @Namespace private var cardNamespace
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -131,22 +133,21 @@ struct CountdownListView: View {
                                         showShareSheet = shareURL != nil
                                     }
                                 )
-
-                                card
+                                let cardView = card
                                     .environmentObject(theme)
                                     .contentShape(Rectangle())
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
-                                    .onTapGesture {
-                                        if !didLongPress {
-                                            selected = item
-                                        }
-                                    }
-                                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+                                    .matchedGeometryEffect(id: item.id, in: cardNamespace)
+                                    .opacity(selected?.id == item.id ? 0 : 1)
+
+                                let longPress = LongPressGesture(minimumDuration: 0.3, maximumDistance: 50)
+                                    .onChanged { pressing in
                                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                             pressingID = pressing ? item.id : nil
                                         }
-                                    }) {
+                                    }
+                                    .onEnded { _ in
                                         didLongPress = true
                                         Haptics.light()
                                         editing = item
@@ -155,6 +156,21 @@ struct CountdownListView: View {
                                             didLongPress = false
                                         }
                                     }
+
+                                cardView
+                                    .onTapGesture {
+                                        if !didLongPress {
+                                            Haptics.long()
+                                            if reduceMotion {
+                                                selected = item
+                                            } else {
+                                                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                                    selected = item
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .simultaneousGesture(longPress)
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                     .listRowBackground(theme.theme.background)
@@ -248,37 +264,51 @@ struct CountdownListView: View {
                 }
                 .frame(maxWidth: .infinity) // centers horizontally
             }
-            .overlay(alignment: .topLeading) {
-                if showPremium {
-                    PremiumPromoView(show: $showPremium)
-                        .environmentObject(theme)
-                        .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
-                        .zIndex(1)
-                }
+        }
+        .scaleEffect(selected != nil && !reduceMotion ? 0.96 : 1)
+        .blur(radius: selected != nil && !reduceMotion ? 8 : 0)
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: selected != nil)
+        .overlay(alignment: .topLeading) {
+            if showPremium {
+                PremiumPromoView(show: $showPremium)
+                    .environmentObject(theme)
+                    .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
+                    .zIndex(1)
             }
-            .sheet(isPresented: $showAddEdit) {
-                AddEditCountdownView(existing: editing)
+        }
+        .overlay {
+            if let selected {
+                CountdownDetailView(countdown: selected, namespace: cardNamespace)
                     .environmentObject(theme)
                     .environmentObject(pro)
+                    .environment(\.dismiss, .init {
+                        if reduceMotion {
+                            selected = nil
+                        } else {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                                selected = nil
+                            }
+                        }
+                    })
+                    .transition(reduceMotion ? .opacity : .identity)
+                    .zIndex(2)
             }
-            .sheet(isPresented: $showSettings) {
-                SettingsView().environmentObject(theme).environmentObject(pro)
+        }
+        .sheet(isPresented: $showAddEdit) {
+            AddEditCountdownView(existing: editing)
+                .environmentObject(theme)
+                .environmentObject(pro)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView().environmentObject(theme).environmentObject(pro)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            if let shareURL {
+                ShareSheet(activityItems: [shareURL])
             }
-            .sheet(isPresented: $showShareSheet) {
-                if let shareURL {
-                    ShareSheet(activityItems: [shareURL])
-                }
-            }
-            .sheet(item: $selected) { countdown in
-                CountdownDetailView(countdown: countdown)
-                    .environmentObject(theme)
-                    .environmentObject(pro)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
-            }
-            .sheet(isPresented: $showPaywall) {
-                PaywallView().environmentObject(theme)
-            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView().environmentObject(theme)
         }
         .tint(theme.theme.textPrimary)
     }
