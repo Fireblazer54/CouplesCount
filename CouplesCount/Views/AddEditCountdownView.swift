@@ -124,7 +124,8 @@ struct AddEditCountdownView: View {
 
                     // MARK: Details
                     SettingsCard {
-                        TextField("Title (e.g., Anniversary)", text: $title)
+                        TextField("", text: $title, prompt: Text("Title (e.g., Anniversary)" ).foregroundStyle(theme.theme.textSecondary))
+                            .foregroundStyle(theme.theme.textPrimary)
                             .textInputAutocapitalization(.words)
                             .onSubmit { lightHaptic() }
 
@@ -138,8 +139,10 @@ struct AddEditCountdownView: View {
 
                         HStack {
                             DatePicker("Date", selection: $date, displayedComponents: .date)
+                                .foregroundStyle(theme.theme.textPrimary)
                             DatePicker("", selection: $date, displayedComponents: .hourAndMinute)
                                 .labelsHidden()
+                                .foregroundStyle(theme.theme.textPrimary)
                         }
 
                         NavigationLink {
@@ -147,9 +150,10 @@ struct AddEditCountdownView: View {
                         } label: {
                             HStack {
                                 Text("Time Zone")
+                                    .foregroundStyle(theme.theme.textPrimary)
                                 Spacer()
                                 Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(theme.theme.textSecondary)
                             }
                         }
                     }
@@ -158,7 +162,7 @@ struct AddEditCountdownView: View {
                     SettingsCard {
                         Text("Background")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(theme.theme.textSecondary)
 
                         Picker("Style", selection: $backgroundStyle) {
                             Text("Color").tag("color")
@@ -173,7 +177,7 @@ struct AddEditCountdownView: View {
                                         .fill(Color(hex: hex) ?? .blue)
                                         .frame(width: 32, height: 32)
                                         .overlay(
-                                            Circle().stroke(Color.white.opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
+                                            Circle().stroke(theme.theme.textPrimary.opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
                                         )
                                         .onTapGesture { colorHex = hex }
                                 }
@@ -194,7 +198,7 @@ struct AddEditCountdownView: View {
                                     .accessibilityHidden(true)
                             } else {
                                 Text("No image selected")
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(theme.theme.textSecondary)
                             }
 
                             HStack(spacing: 12) {
@@ -217,6 +221,7 @@ struct AddEditCountdownView: View {
                     // MARK: Sharing
                     SettingsCard {
                         Toggle("Shared countdown", isOn: $isShared)
+                            .foregroundStyle(theme.theme.textPrimary)
                         if isShared {
                             ForEach(friends) { friend in
                                 let isSelected = Binding<Bool>(
@@ -226,6 +231,7 @@ struct AddEditCountdownView: View {
                                     }
                                 )
                                 Toggle(friend.name, isOn: isSelected)
+                                    .foregroundStyle(theme.theme.textPrimary)
                             }
                         }
                     }
@@ -235,12 +241,13 @@ struct AddEditCountdownView: View {
                         HStack {
                             Text("Reminders")
                                 .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(theme.theme.textSecondary)
                             Spacer()
                             Button("+ Add Reminder") {
                                 NotificationManager.requestAuthorizationIfNeeded()
                                 showReminderSheet = true
                             }
+                            .foregroundStyle(theme.theme.textPrimary)
                         }
 
                         if !selectedReminders.isEmpty {
@@ -248,13 +255,14 @@ struct AddEditCountdownView: View {
                                 ForEach(Array(selectedReminders).sorted { $0.rawValue < $1.rawValue }, id: \.self) { opt in
                                     HStack(spacing: 4) {
                                         Text(opt.label)
+                                            .foregroundStyle(theme.theme.textPrimary)
                                         Image(systemName: "xmark.circle.fill")
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(theme.theme.textSecondary)
                                             .onTapGesture { selectedReminders.remove(opt) }
                                     }
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(Color(.systemGray5))
+                                    .background(theme.theme.textPrimary.opacity(0.1))
                                     .clipShape(Capsule())
                                 }
                             }
@@ -263,6 +271,7 @@ struct AddEditCountdownView: View {
                     }
                     .sheet(isPresented: $showReminderSheet) {
                         ReminderPicker(selections: $selectedReminders)
+                            .environmentObject(theme)
                     }
 
                     if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -288,6 +297,7 @@ struct AddEditCountdownView: View {
                             } label: {
                                 Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
                                       systemImage: existing.isArchived ? "tray.and.arrow.up" : "archivebox")
+                                    .foregroundStyle(theme.theme.textPrimary)
                             }
                         }
 
@@ -304,6 +314,7 @@ struct AddEditCountdownView: View {
                                 dismiss()
                             } label: {
                                 Label("Delete Countdown", systemImage: "trash")
+                                    .foregroundStyle(theme.theme.textPrimary)
                             }
                         }
                     }
@@ -473,9 +484,13 @@ struct AddEditCountdownView: View {
     @ViewBuilder
     private func labelButton(_ title: String, system: String) -> some View {
         Label(title, systemImage: system)
+            .foregroundStyle(theme.theme.textPrimary)
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
-            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(.tint.opacity(0.15)))
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(theme.theme.textPrimary.opacity(0.1))
+            )
     }
 
     private func lightHaptic() {
@@ -487,6 +502,7 @@ struct AddEditCountdownView: View {
 
 struct ReminderPicker: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var theme: ThemeManager
     @Binding var selections: Set<ReminderOption>
     @State private var temp: Set<ReminderOption>
 
@@ -502,12 +518,13 @@ struct ReminderPicker: View {
                     ForEach(ReminderOption.allCases) { option in
                         let isSel = temp.contains(option)
                         Text(option.label)
+                            .foregroundStyle(theme.theme.textPrimary)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(isSel ? Color.accentColor.opacity(0.2) : Color(.systemGray5))
+                            .background(isSel ? theme.theme.textPrimary.opacity(0.2) : theme.theme.textPrimary.opacity(0.1))
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isSel ? Color.accentColor : .clear, lineWidth: 2)
+                                    .stroke(isSel ? theme.theme.textPrimary : .clear, lineWidth: 2)
                             )
                             .onTapGesture {
                                 if isSel { temp.remove(option) } else { temp.insert(option) }
@@ -516,6 +533,8 @@ struct ReminderPicker: View {
                 }
                 .padding()
             }
+            .background(theme.theme.background.ignoresSafeArea())
+            .tint(theme.theme.textPrimary)
             .navigationTitle("Reminders")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
