@@ -334,9 +334,17 @@ struct AddEditCountdownView: View {
             .tint(theme.theme.textPrimary)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(theme.theme == .light ? .light : .dark, for: .navigationBar)
+            .toolbarBackground(theme.theme.background, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .foregroundStyle(theme.theme.textPrimary)
+                }
+                ToolbarItem(placement: .principal) {
+                    Text(existing == nil ? "Add Countdown" : "Edit Countdown")
+                        .foregroundStyle(theme.theme.textPrimary)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
@@ -350,6 +358,7 @@ struct AddEditCountdownView: View {
                                     .contentShape(Rectangle())
                                     .accessibilityLabel("Share")
                                     .accessibilityHint("Share countdown")
+                                    .foregroundStyle(theme.theme.textPrimary)
                             }
                         }
                         Button(action: save) {
@@ -358,6 +367,7 @@ struct AddEditCountdownView: View {
                                 .contentShape(Rectangle())
                                 .accessibilityLabel("Save")
                                 .accessibilityHint("Save countdown")
+                                .foregroundStyle(theme.theme.textPrimary)
                         }
                         .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
@@ -536,12 +546,21 @@ struct ReminderPicker: View {
             .background(theme.theme.background.ignoresSafeArea())
             .tint(theme.theme.textPrimary)
             .navigationTitle("Reminders")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(theme.theme == .light ? .light : .dark, for: .navigationBar)
+            .toolbarBackground(theme.theme.background, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Reminders")
+                        .foregroundStyle(theme.theme.textPrimary)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
                         selections = temp
                         dismiss()
                     }
+                    .foregroundStyle(theme.theme.textPrimary)
                 }
             }
         }
