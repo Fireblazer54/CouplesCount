@@ -21,14 +21,14 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
 
     var primary: Color {
         switch self {
-        case .light: .white
+        case .light: Color(red: 0.851, green: 0.290, blue: 0.416)
         case .dark, .royalBlues, .barbie, .lucky: background
         }
     }
 
     var background: Color {
         switch self {
-        case .light: Color(red: 0.867, green: 0.933, blue: 0.996)
+        case .light: Color(red: 0.976, green: 0.984, blue: 1.000)
         case .dark: Color(.secondarySystemBackground)
         case .royalBlues: Color(red: 0.08, green: 0.19, blue: 0.45)
         case .barbie: Color(red: 0.98, green: 0.36, blue: 0.72)
@@ -38,7 +38,7 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
 
     var accent: Color {
         switch self {
-        case .light: .pink
+        case .light: Color(red: 0.780, green: 0.722, blue: 0.918)
         case .dark: .white
         case .royalBlues: .white
         case .barbie: .white

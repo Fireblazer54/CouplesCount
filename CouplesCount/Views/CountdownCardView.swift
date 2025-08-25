@@ -149,6 +149,9 @@ struct CountdownCardView: View {
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color" {
             let c = cardColor
+            if theme.theme == .light {
+                return AnyShapeStyle(c)
+            }
             return AnyShapeStyle(
                 LinearGradient(colors: [c, c.opacity(0.75)],
                                startPoint: .topLeading,
