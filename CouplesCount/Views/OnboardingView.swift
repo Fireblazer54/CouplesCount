@@ -14,7 +14,7 @@ struct OnboardingView: View {
         }
         .tabViewStyle(.page)
         .background(theme.theme.background.ignoresSafeArea())
-        .tint(theme.theme.primary)
+        .tint(theme.theme.accent)
     }
 
     @ViewBuilder
@@ -25,7 +25,7 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.theme.primary)
+                .foregroundStyle(theme.theme.accent)
                 .accessibilityHidden(true)
             Text(text)
                 .font(.title2)
@@ -44,7 +44,7 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.theme.primary)
+                .foregroundStyle(theme.theme.accent)
                 .accessibilityHidden(true)
             Text("Share with your partner.")
                 .font(.title2)
@@ -57,7 +57,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.primary))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.accent))
             }
             .padding(.top, 32)
             .padding(.horizontal)

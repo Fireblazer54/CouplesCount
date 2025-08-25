@@ -1,11 +1,9 @@
 import SwiftUI
 
 struct AdBannerPlaceholderView: View {
-    @EnvironmentObject private var theme: ThemeManager
-
     var body: some View {
         Rectangle()
-            .fill(theme.theme.accent.opacity(0.2))
+            .fill(Color.gray.opacity(0.2))
             .frame(height: 50)
             .overlay(
                 Text("Ad Banner")

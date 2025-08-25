@@ -18,14 +18,14 @@ struct FeedbackFormView: View {
                     .frame(height: 120)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(theme.theme.accent.opacity(0.2))
+                            .stroke(.secondary.opacity(0.2))
                     )
 
                 HStack {
                     ForEach(1...5, id: \.self) { index in
                         Image(systemName: index <= rating ? "star.fill" : "star")
                             .font(.title)
-                            .foregroundStyle(theme.theme.accent)
+                            .foregroundStyle(.yellow)
                             .onTapGesture { rating = index }
                     }
                 }
@@ -49,7 +49,7 @@ struct FeedbackFormView: View {
                 }
             }
         }
-        .tint(theme.theme.primary)
+        .tint(theme.theme.accent)
     }
 }
 
