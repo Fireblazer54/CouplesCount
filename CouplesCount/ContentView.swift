@@ -133,14 +133,31 @@ struct CountdownListView: View {
                                         showShareSheet = shareURL != nil
                                     }
                                 )
-
-                                card
+                                let cardView = card
                                     .environmentObject(theme)
                                     .contentShape(Rectangle())
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
                                     .matchedGeometryEffect(id: item.id, in: cardNamespace)
                                     .opacity(selected?.id == item.id ? 0 : 1)
+
+                                let longPress = LongPressGesture(minimumDuration: 0.3, maximumDistance: 50)
+                                    .onChanged { pressing in
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            pressingID = pressing ? item.id : nil
+                                        }
+                                    }
+                                    .onEnded { _ in
+                                        didLongPress = true
+                                        Haptics.light()
+                                        editing = item
+                                        showAddEdit = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            didLongPress = false
+                                        }
+                                    }
+
+                                cardView
                                     .onTapGesture {
                                         if !didLongPress {
                                             Haptics.long()
@@ -153,23 +170,8 @@ struct CountdownListView: View {
                                             }
                                         }
                                     }
-                                    .simultaneousGesture(
-                                        LongPressGesture(minimumDuration: 0.3, maximumDistance: 50)
-                                            .onChanged { pressing in
-                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                    pressingID = pressing ? item.id : nil
-                                                }
-                                            }
-                                            .onEnded { _ in
-                                                didLongPress = true
-                                                Haptics.light()
-                                                editing = item
-                                                showAddEdit = true
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                                    didLongPress = false
-                                                }
-                                            }
-                                    )
+                                    .simultaneousGesture(longPress)
+
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                     .listRowBackground(theme.theme.background)
