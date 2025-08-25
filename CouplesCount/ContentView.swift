@@ -80,6 +80,7 @@ struct CountdownListView: View {
                         Spacer()
                         Text(Date.now, format: .dateTime.weekday(.wide).month().day())
                             .font(.system(size: UIFontMetrics(forTextStyle: .title1).scaledValue(for: 28), weight: .semibold))
+                            .foregroundStyle(theme.theme == .light ? theme.theme.textPrimary : .primary)
 
                         Spacer()
                         Button { showSettings = true } label: {
