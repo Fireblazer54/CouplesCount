@@ -171,6 +171,7 @@ struct CountdownListView: View {
                                         }
                                     }
                                     .simultaneousGesture(longPress)
+
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                     .listRowBackground(theme.theme.background)
