@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum ColorTheme: String, CaseIterable, Codable, Sendable {
-    case light, dark, royalBlues, barbie, lucky
+    case light, dark, royalBlues, barbie
 
     static let `default`: ColorTheme = .light
 
@@ -15,14 +15,13 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         case .dark: "Dark"
         case .royalBlues: "Royal Blues"
         case .barbie: "Barbie"
-        case .lucky: "Lucky"
         }
     }
 
     var primary: Color {
         switch self {
         case .light: Color(red: 0.851, green: 0.290, blue: 0.416)
-        case .dark, .royalBlues, .barbie, .lucky: background
+        case .dark, .royalBlues, .barbie: background
         }
     }
 
@@ -32,7 +31,6 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         case .dark: Color(.secondarySystemBackground)
         case .royalBlues: Color(red: 0.08, green: 0.19, blue: 0.45)
         case .barbie: Color(red: 0.98, green: 0.36, blue: 0.72)
-        case .lucky: Color(red: 0.10, green: 0.55, blue: 0.28)
         }
     }
 
@@ -42,7 +40,6 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         case .dark: .white
         case .royalBlues: .white
         case .barbie: .white
-        case .lucky: .white
         }
     }
 
@@ -53,21 +50,21 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
     var textPrimary: Color {
         switch self {
         case .light: Self.lightTextPrimary
-        case .dark, .royalBlues, .barbie, .lucky: .white
+        case .dark, .royalBlues, .barbie: .white
         }
     }
 
     var textSecondary: Color {
         switch self {
         case .light: Self.lightTextPrimary.opacity(0.65)
-        case .dark, .royalBlues, .barbie, .lucky: Color.white.opacity(0.7)
+        case .dark, .royalBlues, .barbie: Color.white.opacity(0.7)
         }
     }
 
     var textTertiary: Color {
         switch self {
         case .light: Self.lightTextPrimary.opacity(0.45)
-        case .dark, .royalBlues, .barbie, .lucky: Color.white.opacity(0.45)
+        case .dark, .royalBlues, .barbie: Color.white.opacity(0.45)
         }
     }
 }

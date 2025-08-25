@@ -9,7 +9,7 @@ struct SettingsView: View {
     @EnvironmentObject private var theme: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
 
-    private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie, .lucky]
+    private let themes: [ColorTheme] = [.light, .dark, .royalBlues, .barbie]
     private let supportEmail = "support@couplescount.app"
     @State private var activeAlert: ActiveAlert?
     @State private var showEnjoyPrompt = false
@@ -38,7 +38,6 @@ struct SettingsView: View {
                                             theme.setTheme(t)   // instant global update
                                         }
                                     }
-                                    .environmentObject(theme)
                                 }
                             }
                         }
@@ -48,7 +47,7 @@ struct SettingsView: View {
                         SettingsCard {
                             buttonRow(icon: "crown.fill", title: "Go Pro") { showPaywall = true }
 #if DEBUG
-                            Divider().opacity(0.1)
+                            Divider().overlay(theme.theme.textPrimary.opacity(0.1))
                             Toggle("Simulate Pro", isOn: $pro.debugIsPro)
 #endif
                         }
@@ -95,7 +94,7 @@ struct SettingsView: View {
                                 openURL(url)
                             }
                         }
-                        Divider().opacity(0.1)
+                        Divider().overlay(theme.theme.textPrimary.opacity(0.1))
                         buttonRow(icon: "star.fill", title: "Rate CouplesCount") {
                             showEnjoyPrompt = true
                         }
@@ -108,7 +107,7 @@ struct SettingsView: View {
                             key: "Version",
                             value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
                         )
-                        Divider().opacity(0.08)
+                        Divider().overlay(theme.theme.textPrimary.opacity(0.08))
                         keyValueRow(
                             key: "Build",
                             value: Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -192,9 +191,10 @@ struct SettingsView: View {
     private func keyValueRow(key: String, value: String) -> some View {
         HStack {
             Text(key)
+                .foregroundStyle(theme.theme.textPrimary)
             Spacer()
             Text(value)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(theme.theme.textSecondary)
         }
         .font(.body)
     }
@@ -217,7 +217,7 @@ struct ArchiveView: View {
                     VStack(spacing: 8) {
                         Text("No archived countdowns")
                             .font(.headline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(theme.theme.textSecondary)
                     }
                 } else {
                     List {
@@ -252,10 +252,9 @@ struct ArchiveView: View {
                                 } label: {
                                     Image(systemName: "trash")
                                         .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-
                                         .frame(width: 44, height: 44)
-                                        .background(Circle().fill(Color.red))
-                                        .foregroundStyle(.white)
+                                        .background(Circle().fill(theme.theme.primary))
+                                        .foregroundStyle(theme.theme.textPrimary)
                                         .accessibilityLabel("Delete")
                                         .accessibilityHint("Remove countdown")
                                 }
@@ -273,10 +272,9 @@ struct ArchiveView: View {
                                 } label: {
                                     Image(systemName: "arrow.uturn.backward")
                                         .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-
                                         .frame(width: 44, height: 44)
-                                        .background(Circle().fill(Color.blue))
-                                        .foregroundStyle(.white)
+                                        .background(Circle().fill(theme.theme.primary))
+                                        .foregroundStyle(theme.theme.textPrimary)
                                         .accessibilityLabel("Unarchive")
                                         .accessibilityHint("Restore countdown")
                                 }
