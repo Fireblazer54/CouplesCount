@@ -50,21 +50,38 @@ struct CouplesCountProvider: AppIntentTimelineProvider {
 struct CouplesCountWidgetView: View {
     var entry: CouplesCountEntry
 
+    private var theme: ColorTheme {
+        let raw = AppGroup.defaults.string(forKey: "global_color_theme")
+        return ColorTheme(rawOrDefault: raw)
+    }
+
+    private var cardColor: Color {
+        resolvedCardColor(theme: theme, backgroundStyle: "color", colorHex: nil)
+    }
+
+    private var primaryText: Color { cardColor.readablePrimary }
+    private var secondaryText: Color { cardColor.readableSecondary }
+
     var body: some View {
         VStack(spacing: 6) {
             Text(entry.entity.title)
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .title))
+                .foregroundStyle(primaryText)
                 .lineLimit(1)
 
             Text(DateUtils.remainingText(to: entry.entity.targetDate, from: entry.date, in: entry.entity.timeZoneID))
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .number))
+                .foregroundStyle(primaryText)
 
             Text(entry.entity.targetDate, style: .date)
                 .font(CardTypography.font(for: entry.entity.cardFontStyle, role: .date))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(
+            LinearGradient(colors: [cardColor, cardColor.opacity(0.75)], startPoint: .topLeading, endPoint: .bottomTrailing),
+            for: .widget
+        )
     }
 }
 

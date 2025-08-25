@@ -49,7 +49,7 @@ struct AddEditCountdownView: View {
 
     // Background selection
     @State private var backgroundStyle: String = "color" // "color" | "image"
-    @State private var colorHex: String = "#FFFFFF"
+    @State private var colorHex: String = ""
     @State private var imageData: Data? = nil
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -57,7 +57,7 @@ struct AddEditCountdownView: View {
     // Live preview values
     @State private var previewTitle: String = "Countdown"
     @State private var previewDate: Date = Date().addingTimeInterval(86_400)
-    @State private var previewColorHex: String = "#FFFFFF"
+    @State private var previewColorHex: String = ""
     @State private var previewImageData: Data? = nil
 
     // Reminders
@@ -375,26 +375,33 @@ struct AddEditCountdownView: View {
                 if new != nil { lightHaptic() }
             }
             .onAppear {
+                let defaultHex = theme.theme.primary.hexString
                 if let existing {
                     title = existing.title
                     date = existing.targetDate
                     timeZoneID = existing.timeZoneID
                     cardFontStyle = existing.cardFontStyle
                     backgroundStyle = existing.backgroundStyle
-                    colorHex = existing.backgroundColorHex ?? colorHex
+                    let stored = existing.backgroundColorHex?.uppercased()
+                    if stored == nil || stored == "#FFFFFF" || stored == defaultHex.uppercased() {
+                        colorHex = defaultHex
+                    } else {
+                        colorHex = stored ?? defaultHex
+                    }
                     imageData = existing.backgroundImageData
                     selectedReminders = Set(existing.reminderOffsets.compactMap { ReminderOption(rawValue: $0) })
                     isShared = existing.isShared
                     selectedFriends = Set(existing.sharedWith.map { $0.id })
                     previewTitle = existing.title
                     previewDate = existing.targetDate
-                    previewColorHex = existing.backgroundColorHex ?? colorHex
+                    previewColorHex = colorHex
                     previewImageData = existing.backgroundImageData
                 } else {
                     NotificationManager.requestAuthorizationIfNeeded()
+                    colorHex = defaultHex
                     previewTitle = title
                     previewDate = date
-                    previewColorHex = colorHex
+                    previewColorHex = defaultHex
                     previewImageData = imageData
                 }
             }
@@ -416,13 +423,17 @@ struct AddEditCountdownView: View {
         guard !trimmed.isEmpty else { showValidation = true; return }
 
         do {
+            let defaultHex = theme.theme.primary.hexString.uppercased()
+            let chosenHex = colorHex.uppercased()
+            let storedHex: String? = (chosenHex == defaultHex) ? nil : chosenHex
+
             if let existing {
                 existing.title = trimmed
                 existing.targetDate = date
                 existing.timeZoneID = timeZoneID
                 existing.cardFontStyle = cardFontStyle
                 existing.backgroundStyle = backgroundStyle
-                existing.backgroundColorHex = colorHex
+                existing.backgroundColorHex = storedHex
                 existing.backgroundImageData = imageData
                 existing.hasImage = backgroundStyle == "image"
                 existing.reminderOffsets = selectedReminders.map { $0.rawValue }
@@ -438,7 +449,7 @@ struct AddEditCountdownView: View {
                     timeZoneID: timeZoneID,
                     cardFontStyle: cardFontStyle,
                     backgroundStyle: backgroundStyle,
-                    backgroundColorHex: colorHex,
+                    backgroundColorHex: storedHex,
                     backgroundImageData: imageData,
                     reminderOffsets: selectedReminders.map { $0.rawValue },
                     isShared: isShared,

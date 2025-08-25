@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct WidgetPreview: View {
+    @EnvironmentObject private var theme: ThemeManager
+
     let title: String
     let targetDate: Date
     let tzID: String
@@ -11,14 +13,19 @@ struct WidgetPreview: View {
 
     @State private var now = Date()
 
-    private var isDefaultBackground: Bool {
-        if backgroundStyle == "image" { return false }
-        let hex = bgColorHex?.uppercased() ?? ""
-        return hex == "" || hex == "#FFFFFF"
+    private var cardColor: Color {
+        resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: bgColorHex)
     }
 
-    private var primaryText: Color { isDefaultBackground ? .black : .white }
-    private var secondaryText: Color { isDefaultBackground ? .black.opacity(0.7) : .white.opacity(0.9) }
+    private var primaryText: Color {
+        if backgroundStyle == "image" { return .white }
+        return cardColor.readablePrimary
+    }
+
+    private var secondaryText: Color {
+        if backgroundStyle == "image" { return Color.white.opacity(0.9) }
+        return cardColor.readableSecondary
+    }
 
     var body: some View {
         ZStack {
@@ -57,16 +64,17 @@ struct WidgetPreview: View {
                     .font(CardTypography.font(for: style, role: .date))
                     .foregroundStyle(secondaryText)
             }
-            .shadow(color: isDefaultBackground ? .black.opacity(0.1) : .black.opacity(0.3), radius: 6, y: 3)
+            .shadow(color: cardColor.isLight ? .black.opacity(0.1) : .black.opacity(0.3), radius: 6, y: 3)
             .padding()
         }
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
     }
 
     private var backgroundFill: some ShapeStyle {
-        if backgroundStyle == "color", let hex = bgColorHex?.uppercased(), hex != "#FFFFFF", let c = Color(hex: hex) {
+        if backgroundStyle == "color" {
+            let c = cardColor
             return AnyShapeStyle(LinearGradient(colors: [c, c.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(theme.theme.primary)
     }
 }

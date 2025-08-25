@@ -19,6 +19,13 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         }
     }
 
+    var primary: Color {
+        switch self {
+        case .light: .white
+        case .dark, .royalBlues, .barbie, .lucky: background
+        }
+    }
+
     var background: Color {
         switch self {
         case .light: Color(red: 0.867, green: 0.933, blue: 0.996)
