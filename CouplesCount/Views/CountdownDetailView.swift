@@ -121,6 +121,7 @@ struct CountdownDetailView: View {
     private var hero: some View {
         let width = UIScreen.main.bounds.width
         let card = CountdownCardView(
+
             title: countdown.title,
             targetDate: countdown.targetDate,
             timeZoneID: countdown.timeZoneID,
@@ -143,6 +144,7 @@ struct CountdownDetailView: View {
         } else {
             card
         }
+
     }
 
     private var info: some View {
