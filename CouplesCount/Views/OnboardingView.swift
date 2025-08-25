@@ -54,7 +54,7 @@ struct OnboardingView: View {
             Button(action: finishOnboarding) {
                 Text("Done")
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.theme.accent.readablePrimary)
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.accent))

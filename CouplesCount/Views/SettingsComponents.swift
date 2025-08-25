@@ -63,7 +63,7 @@ struct ThemeSwatch: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title2)
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, theme.accent)
+                        .foregroundStyle(theme.primary, theme.accent)
                         .padding(8)
                         .shadow(radius: 4, y: 2)
                         .accessibilityHidden(true)

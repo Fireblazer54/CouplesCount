@@ -50,15 +50,24 @@ struct CountdownCardView: View {
     private let corner: CGFloat = 22
     @State private var now = Date()
 
-    private var isDefaultBackground: Bool {
-        if backgroundStyle == "image" { return false }
-        let hex = colorHex?.uppercased() ?? ""
-        return hex == "" || hex == "#FFFFFF"
+    private var cardColor: Color {
+        resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: colorHex)
     }
 
-    private var primaryText: Color { isDefaultBackground ? .black : .white }
-    private var secondaryText: Color { isDefaultBackground ? .black.opacity(0.7) : .white.opacity(0.95) }
-    private var shareButtonBg: Color { isDefaultBackground ? .black.opacity(0.05) : .white.opacity(0.25) }
+    private var primaryText: Color {
+        if backgroundStyle == "image" { return .white }
+        return cardColor.readablePrimary
+    }
+
+    private var secondaryText: Color {
+        if backgroundStyle == "image" { return Color.white.opacity(0.9) }
+        return cardColor.readableSecondary
+    }
+
+    private var shareButtonBg: Color {
+        if backgroundStyle == "image" { return Color.white.opacity(0.25) }
+        return primaryText.opacity(cardColor.isLight ? 0.05 : 0.25)
+    }
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -138,16 +147,14 @@ struct CountdownCardView: View {
     }
 
     private var backgroundFill: some ShapeStyle {
-        if backgroundStyle == "color",
-           let hex = colorHex?.uppercased(),
-           hex != "#FFFFFF",
-           let c = Color(hex: hex) {
+        if backgroundStyle == "color" {
+            let c = cardColor
             return AnyShapeStyle(
                 LinearGradient(colors: [c, c.opacity(0.75)],
                                startPoint: .topLeading,
                                endPoint: .bottomTrailing)
             )
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(theme.theme.primary)
     }
 }
