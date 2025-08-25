@@ -2,13 +2,12 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var theme: ThemeManager
 
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "crown.fill")
                 .font(.largeTitle)
-                .foregroundStyle(theme.theme.primary)
+                .foregroundStyle(.yellow)
                 .accessibilityHidden(true)
             Text("CouplesCount Pro")
                 .font(.title2.weight(.semibold))

@@ -14,7 +14,7 @@ struct WidgetPreview: View {
     private var isDefaultBackground: Bool {
         if backgroundStyle == "image" { return false }
         let hex = bgColorHex?.uppercased() ?? ""
-        return hex == "" || hex == "#F9FBFF"
+        return hex == "" || hex == "#FFFFFF"
     }
 
     private var primaryText: Color { isDefaultBackground ? .black : .white }
@@ -64,9 +64,9 @@ struct WidgetPreview: View {
     }
 
     private var backgroundFill: some ShapeStyle {
-        if backgroundStyle == "color", let hex = bgColorHex?.uppercased(), hex != "#F9FBFF", let c = Color(hex: hex) {
-            return AnyShapeStyle(c)
+        if backgroundStyle == "color", let hex = bgColorHex?.uppercased(), hex != "#FFFFFF", let c = Color(hex: hex) {
+            return AnyShapeStyle(LinearGradient(colors: [c, c.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
         }
-        return AnyShapeStyle(Color(hex: "#F9FBFF")!)
+        return AnyShapeStyle(Color.white)
     }
 }

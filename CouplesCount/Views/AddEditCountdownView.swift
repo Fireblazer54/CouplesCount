@@ -49,7 +49,7 @@ struct AddEditCountdownView: View {
 
     // Background selection
     @State private var backgroundStyle: String = "color" // "color" | "image"
-    @State private var colorHex: String = "#F9FBFF"
+    @State private var colorHex: String = "#FFFFFF"
     @State private var imageData: Data? = nil
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -57,7 +57,7 @@ struct AddEditCountdownView: View {
     // Live preview values
     @State private var previewTitle: String = "Countdown"
     @State private var previewDate: Date = Date().addingTimeInterval(86_400)
-    @State private var previewColorHex: String = "#F9FBFF"
+    @State private var previewColorHex: String = "#FFFFFF"
     @State private var previewImageData: Data? = nil
 
     // Reminders
@@ -168,16 +168,21 @@ struct AddEditCountdownView: View {
 
                         if backgroundStyle == "color" {
                             HStack(spacing: 10) {
-                                ForEach(["#D94A6A", "#C7B8EA"], id: \.self) { hex in
+                                ForEach(["#0A84FF","#5856D6","#FF2D55","#34C759","#FF9F0A"], id: \.self) { hex in
                                     Circle()
-                                        .fill(Color(hex: hex)!)
+                                        .fill(Color(hex: hex) ?? .blue)
                                         .frame(width: 32, height: 32)
                                         .overlay(
-                                            Circle().stroke(Color(hex: "#F9FBFF")!.opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
+                                            Circle().stroke(Color.white.opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
                                         )
                                         .onTapGesture { colorHex = hex }
                                 }
                                 Spacer()
+                                ColorPicker("", selection: Binding(
+                                    get: { Color(hex: colorHex) ?? .blue },
+                                    set: { colorHex = $0.hexString }
+                                ))
+                                .labelsHidden()
                             }
                         } else {
                             if let data = imageData, let ui = UIImage(data: data) {
@@ -249,7 +254,7 @@ struct AddEditCountdownView: View {
                                     }
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
-                                    .background(theme.theme.accent)
+                                    .background(Color(.systemGray5))
                                     .clipShape(Capsule())
                                 }
                             }
@@ -258,12 +263,11 @@ struct AddEditCountdownView: View {
                     }
                     .sheet(isPresented: $showReminderSheet) {
                         ReminderPicker(selections: $selectedReminders)
-                            .environmentObject(theme)
                     }
 
                     if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
                         Text("Please enter a title.")
-                            .foregroundStyle(theme.theme.primary)
+                            .foregroundStyle(.red)
                             .padding(.horizontal, 16)
                     }
 
@@ -310,13 +314,13 @@ struct AddEditCountdownView: View {
             .scrollIndicators(.hidden)
             .overlay(alignment: .trailing) {
                 RoundedRectangle(cornerRadius: 3)
-                    .fill(theme.theme.accent.opacity(0.4))
+                    .fill(.gray.opacity(0.4))
                     .frame(width: 6)
                     .padding(.vertical, 8)
                     .padding(.trailing, 2)
             }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.primary)
+            .tint(theme.theme.accent)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -395,7 +399,7 @@ struct AddEditCountdownView: View {
                 }
             }
         }
-        .tint(theme.theme.primary)
+        .tint(theme.theme.accent)
         .alert("Couldn’t Save",
                isPresented: Binding(get: { saveError != nil },
                                    set: { if !$0 { saveError = nil } })) {
@@ -472,7 +476,6 @@ struct AddEditCountdownView: View {
 
 struct ReminderPicker: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var theme: ThemeManager
     @Binding var selections: Set<ReminderOption>
     @State private var temp: Set<ReminderOption>
 
@@ -489,11 +492,11 @@ struct ReminderPicker: View {
                         let isSel = temp.contains(option)
                         Text(option.label)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(isSel ? theme.theme.primary.opacity(0.2) : theme.theme.background)
+                            .background(isSel ? Color.accentColor.opacity(0.2) : Color(.systemGray5))
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isSel ? theme.theme.primary : .clear, lineWidth: 2)
+                                    .stroke(isSel ? Color.accentColor : .clear, lineWidth: 2)
                             )
                             .onTapGesture {
                                 if isSel { temp.remove(option) } else { temp.insert(option) }

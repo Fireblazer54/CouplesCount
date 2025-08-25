@@ -14,7 +14,7 @@ struct PremiumPromoView: View {
                 Image(systemName: "crown.fill")
                     .font(.system(size: UIFontMetrics(forTextStyle: .largeTitle).scaledValue(for: 80)))
 
-                    .foregroundStyle(theme.theme.primary)
+                    .foregroundStyle(theme.theme.accent)
                     .accessibilityHidden(true)
                 Text("CouplesCount Premium")
                     .font(.largeTitle.bold())
