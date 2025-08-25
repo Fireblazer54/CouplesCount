@@ -56,7 +56,7 @@ final class Countdown {
          isArchived: Bool = false,
          cardFontStyle: CardFontStyle = .classic,
          backgroundStyle: String = "color",
-         backgroundColorHex: String? = "#FFFFFF",
+         backgroundColorHex: String? = "#F9FBFF",
          backgroundImageData: Data? = nil,
          reminderOffsets: [Int] = [],
          isShared: Bool = false,
@@ -66,7 +66,7 @@ final class Countdown {
         self.targetUTC = targetDate
         self.timeZoneID = timeZoneID
         self.includeTime = true
-        self.colorTheme = backgroundColorHex ?? "#FFFFFF"
+        self.colorTheme = backgroundColorHex ?? "#F9FBFF"
         self.hasImage = backgroundStyle == "image"
         self.imageData = backgroundImageData
         self.cardFontStyleRaw = cardFontStyle.rawValue

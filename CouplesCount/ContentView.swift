@@ -19,7 +19,7 @@ struct ContentView: View {
                     Label("Profile", systemImage: "person.crop.circle")
                 }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
         .onOpenURL { url in
             do {
                 try CountdownShareService.importCountdown(from: url, context: modelContext)
@@ -171,7 +171,7 @@ struct CountdownListView: View {
                                                 .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                                 .frame(width: 44, height: 44)
-                                                .background(Circle().fill(Color.red))
+                                                .background(Circle().fill(theme.theme.primary))
                                                 .foregroundStyle(.white)
                                                 .accessibilityLabel("Delete")
                                                 .accessibilityHint("Remove countdown")
@@ -193,7 +193,7 @@ struct CountdownListView: View {
                                                 .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
 
                                                 .frame(width: 44, height: 44)
-                                                .background(Circle().fill(Color.blue))
+                                                .background(Circle().fill(theme.theme.accent))
                                                 .foregroundStyle(.white)
                                                 .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
                                                 .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
@@ -278,6 +278,6 @@ struct CountdownListView: View {
                 PaywallView().environmentObject(theme)
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.primary)
     }
 }

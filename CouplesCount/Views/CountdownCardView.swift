@@ -53,7 +53,7 @@ struct CountdownCardView: View {
     private var isDefaultBackground: Bool {
         if backgroundStyle == "image" { return false }
         let hex = colorHex?.uppercased() ?? ""
-        return hex == "" || hex == "#FFFFFF"
+        return hex == "" || hex == "#F9FBFF"
     }
 
     private var primaryText: Color { isDefaultBackground ? .black : .white }
@@ -140,14 +140,10 @@ struct CountdownCardView: View {
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color",
            let hex = colorHex?.uppercased(),
-           hex != "#FFFFFF",
+           hex != "#F9FBFF",
            let c = Color(hex: hex) {
-            return AnyShapeStyle(
-                LinearGradient(colors: [c, c.opacity(0.75)],
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-            )
+            return AnyShapeStyle(c)
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(Color(hex: "#F9FBFF")!)
     }
 }
