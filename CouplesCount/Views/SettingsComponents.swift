@@ -27,12 +27,13 @@ struct SettingsCard<Content: View>: View {
 
 // Section label that floats above the card
 struct SectionHeader: View {
+    @EnvironmentObject private var theme: ThemeManager
     let text: String
     var body: some View {
         HStack {
             Text(text.uppercased())
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(theme.theme.textSecondary)
             Spacer()
         }
         .padding(.horizontal, 16)

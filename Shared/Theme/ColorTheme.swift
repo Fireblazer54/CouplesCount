@@ -45,4 +45,29 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         case .lucky: .white
         }
     }
+
+    // MARK: - Text colors
+
+    private static let lightTextPrimary = Color(red: 0.067, green: 0.067, blue: 0.067) // #111111
+
+    var textPrimary: Color {
+        switch self {
+        case .light: Self.lightTextPrimary
+        case .dark, .royalBlues, .barbie, .lucky: .white
+        }
+    }
+
+    var textSecondary: Color {
+        switch self {
+        case .light: Self.lightTextPrimary.opacity(0.65)
+        case .dark, .royalBlues, .barbie, .lucky: Color.white.opacity(0.7)
+        }
+    }
+
+    var textTertiary: Color {
+        switch self {
+        case .light: Self.lightTextPrimary.opacity(0.45)
+        case .dark, .royalBlues, .barbie, .lucky: Color.white.opacity(0.45)
+        }
+    }
 }

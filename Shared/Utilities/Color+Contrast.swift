@@ -22,11 +22,12 @@ extension Color {
 ///   - theme: Active `ColorTheme` providing the default color.
 ///   - backgroundStyle: `"color"` or `"image"`.
 ///   - colorHex: Optional hex override saved with the countdown.
-/// - Returns: Chosen color following precedence: override > theme default > white.
+/// - Returns: Chosen color following precedence: override > theme default > fallback.
 func resolvedCardColor(theme: ColorTheme, backgroundStyle: String, colorHex: String?) -> Color {
     guard backgroundStyle == "color" else { return theme.primary }
     let upper = colorHex?.uppercased() ?? ""
-    if upper != "" && upper != "#FFFFFF" && upper != theme.primary.hexString.uppercased(),
+    let defaults = Set(ColorTheme.allCases.map { $0.primary.hexString.uppercased() })
+    if upper != "" && upper != "#FFFFFF" && !defaults.contains(upper),
        let c = Color(hex: upper) {
         return c
     }

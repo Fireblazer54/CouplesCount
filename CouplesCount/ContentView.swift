@@ -19,7 +19,7 @@ struct ContentView: View {
                     Label("Profile", systemImage: "person.crop.circle")
                 }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
         .onOpenURL { url in
             do {
                 try CountdownShareService.importCountdown(from: url, context: modelContext)
@@ -232,8 +232,8 @@ struct CountdownListView: View {
                         Image(systemName: "plus")
                             .font(.title)
                             .padding(20)
-                            .background(Circle().fill(.tint))
-                            .foregroundStyle(.white)
+                            .background(Circle().fill(theme.theme.primary))
+                            .foregroundStyle(Color.white)
                             .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                             .frame(minWidth: 44, minHeight: 44)
                             .contentShape(Rectangle())
@@ -278,6 +278,6 @@ struct CountdownListView: View {
                 PaywallView().environmentObject(theme)
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
     }
 }

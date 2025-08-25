@@ -14,7 +14,7 @@ struct OnboardingView: View {
         }
         .tabViewStyle(.page)
         .background(theme.theme.background.ignoresSafeArea())
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
     }
 
     @ViewBuilder
@@ -25,11 +25,12 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.theme.accent)
+                .foregroundStyle(theme.theme.textPrimary)
                 .accessibilityHidden(true)
             Text(text)
                 .font(.title2)
                 .multilineTextAlignment(.center)
+                .foregroundStyle(theme.theme.textPrimary)
                 .padding(.top, 24)
                 .padding(.horizontal)
             Spacer()
@@ -44,20 +45,21 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.theme.accent)
+                .foregroundStyle(theme.theme.primary)
                 .accessibilityHidden(true)
             Text("Share with your partner.")
                 .font(.title2)
                 .multilineTextAlignment(.center)
+                .foregroundStyle(theme.theme.textPrimary)
                 .padding(.top, 24)
                 .padding(.horizontal)
             Button(action: finishOnboarding) {
                 Text("Done")
                     .font(.headline)
-                    .foregroundStyle(theme.theme.accent.readablePrimary)
+                    .foregroundStyle(Color.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.accent))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.theme.primary))
             }
             .padding(.top, 32)
             .padding(.horizontal)

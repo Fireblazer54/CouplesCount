@@ -70,7 +70,7 @@ struct SettingsView: View {
                               HStack(spacing: 12) {
                                   Image(systemName: "archivebox.fill")
                                       .font(.title3)
-                                      .foregroundStyle(theme.theme.background)
+                                      .foregroundStyle(theme.theme.textPrimary)
                                       .frame(width: 30, height: 30)
                                       .background(
                                           RoundedRectangle(cornerRadius: 8)
@@ -79,6 +79,7 @@ struct SettingsView: View {
                                       .accessibilityHidden(true)
                                   Text("Manage Archive")
                                       .font(.body)
+                                      .foregroundStyle(theme.theme.textPrimary)
                                   Spacer()
                               }
                             .contentShape(Rectangle())
@@ -119,7 +120,7 @@ struct SettingsView: View {
                 .padding(.top, 8)
             }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)            // accent flows everywhere
+            .tint(theme.theme.textPrimary)            // default icons
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
             .toolbar {
@@ -170,14 +171,16 @@ struct SettingsView: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundStyle(theme.theme.background)
+                    .foregroundStyle(theme.theme.textPrimary)
                     .frame(width: 30, height: 30)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(theme.theme.accent)
                     )
                     .accessibilityHidden(true)
-                Text(title).font(.body)
+                Text(title)
+                    .font(.body)
+                    .foregroundStyle(theme.theme.textPrimary)
                 Spacer()
             }
             .contentShape(Rectangle())
@@ -295,7 +298,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
     }
 }
 

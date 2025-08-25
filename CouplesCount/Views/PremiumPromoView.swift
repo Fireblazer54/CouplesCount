@@ -13,8 +13,7 @@ struct PremiumPromoView: View {
                 Spacer()
                 Image(systemName: "crown.fill")
                     .font(.system(size: UIFontMetrics(forTextStyle: .largeTitle).scaledValue(for: 80)))
-
-                    .foregroundStyle(theme.theme.accent)
+                    .foregroundStyle(theme.theme.primary)
                     .accessibilityHidden(true)
                 Text("CouplesCount Premium")
                     .font(.largeTitle.bold())
@@ -26,6 +25,7 @@ struct PremiumPromoView: View {
                 Spacer()
             }
         }
+        .tint(theme.theme.textPrimary)
         .safeAreaInset(edge: .top, alignment: .leading) {
             Button {
                 withAnimation(.spring()) { show = false }
