@@ -117,9 +117,11 @@ struct CountdownDetailView: View {
         .accessibilityLabel("Countdown \(countdown.title), \(DateUtils.remainingText(to: countdown.targetDate, from: now, in: countdown.timeZoneID))")
     }
 
+    @ViewBuilder
     private var hero: some View {
         let width = UIScreen.main.bounds.width
-        var card = CountdownCardView(
+        let card = CountdownCardView(
+
             title: countdown.title,
             targetDate: countdown.targetDate,
             timeZoneID: countdown.timeZoneID,
@@ -136,10 +138,13 @@ struct CountdownDetailView: View {
         )
         .environmentObject(theme)
         .frame(width: width, height: width)
+
         if let ns = namespace {
-            card = card.matchedGeometryEffect(id: countdown.id, in: ns)
+            card.matchedGeometryEffect(id: countdown.id, in: ns)
+        } else {
+            card
         }
-        return card
+
     }
 
     private var info: some View {
