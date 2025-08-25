@@ -17,15 +17,9 @@ struct WidgetPreview: View {
         resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: bgColorHex)
     }
 
-    private var primaryText: Color {
-        if backgroundStyle == "image" { return .white }
-        return cardColor.readablePrimary
-    }
+    private var primaryText: Color { cardColor.readablePrimary }
 
-    private var secondaryText: Color {
-        if backgroundStyle == "image" { return Color.white.opacity(0.9) }
-        return cardColor.readableSecondary
-    }
+    private var secondaryText: Color { cardColor.readableSecondary }
 
     var body: some View {
         ZStack {
@@ -45,8 +39,7 @@ struct WidgetPreview: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .stroke(Color.black.opacity(0.25), lineWidth: 1)
-
+                        .stroke(Color.black, lineWidth: 1)
                 )
                 .frame(height: 140)
 

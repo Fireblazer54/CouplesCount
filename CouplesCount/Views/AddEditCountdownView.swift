@@ -320,7 +320,7 @@ struct AddEditCountdownView: View {
                     .padding(.trailing, 2)
             }
             .background(theme.theme.background.ignoresSafeArea())
-            .tint(theme.theme.accent)
+            .tint(theme.theme.textPrimary)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -406,7 +406,7 @@ struct AddEditCountdownView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
         .alert("Couldn’t Save",
                isPresented: Binding(get: { saveError != nil },
                                    set: { if !$0 { saveError = nil } })) {

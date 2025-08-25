@@ -54,19 +54,12 @@ struct CountdownCardView: View {
         resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: colorHex)
     }
 
-    private var primaryText: Color {
-        if backgroundStyle == "image" { return .white }
-        return cardColor.readablePrimary
-    }
+    private var primaryText: Color { cardColor.readablePrimary }
 
-    private var secondaryText: Color {
-        if backgroundStyle == "image" { return Color.white.opacity(0.9) }
-        return cardColor.readableSecondary
-    }
+    private var secondaryText: Color { cardColor.readableSecondary }
 
     private var shareButtonBg: Color {
-        if backgroundStyle == "image" { return Color.white.opacity(0.25) }
-        return primaryText.opacity(cardColor.isLight ? 0.05 : 0.25)
+        primaryText.opacity(cardColor.isLight ? 0.05 : 0.25)
     }
 
     var body: some View {
@@ -90,8 +83,7 @@ struct CountdownCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(Color.black.opacity(0.25), lineWidth: 4)
-
+                        .stroke(Color.black, lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
 

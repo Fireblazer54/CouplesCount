@@ -39,6 +39,7 @@ struct FeedbackFormView: View {
                 .frame(maxWidth: .infinity)
                 .controlSize(.large)
                 .buttonStyle(.borderedProminent)
+                .tint(theme.theme.primary)
             }
             .padding()
             .navigationTitle("Feedback")
@@ -49,7 +50,7 @@ struct FeedbackFormView: View {
                 }
             }
         }
-        .tint(theme.theme.accent)
+        .tint(theme.theme.textPrimary)
     }
 }
 
