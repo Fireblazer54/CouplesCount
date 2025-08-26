@@ -8,6 +8,7 @@ struct CountdownDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     let countdown: Countdown
+    var namespace: Namespace.ID? = nil
 
     @State private var showShareSheet = false
     @State private var shareURL: URL? = nil
@@ -116,9 +117,10 @@ struct CountdownDetailView: View {
         .accessibilityLabel("Countdown \(countdown.title), \(DateUtils.remainingText(to: countdown.targetDate, from: now, in: countdown.timeZoneID))")
     }
 
+    @ViewBuilder
     private var hero: some View {
         let width = UIScreen.main.bounds.width - 32
-        return CountdownCardView(
+        let card = CountdownCardView(
             title: countdown.title,
             targetDate: countdown.targetDate,
             timeZoneID: countdown.timeZoneID,
@@ -134,6 +136,13 @@ struct CountdownDetailView: View {
         )
         .environmentObject(theme)
         .frame(width: width, height: width)
+
+        if let ns = namespace {
+            card
+                .matchedGeometryEffect(id: countdown.id, in: ns)
+        } else {
+            card
+        }
     }
 
     private var info: some View {
