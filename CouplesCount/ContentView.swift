@@ -54,6 +54,7 @@ struct CountdownListView: View {
     @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @Namespace private var heroNamespace
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -129,7 +130,9 @@ struct CountdownListView: View {
                                     shareAction: {
                                         shareURL = exportURL
                                         showShareSheet = shareURL != nil
-                                    }
+                                    },
+                                    namespace: heroNamespace,
+                                    matchedID: item.id
                                 )
 
                                 card
@@ -139,7 +142,9 @@ struct CountdownListView: View {
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
                                     .onTapGesture {
                                         if !didLongPress {
-                                            selected = item
+                                            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                                                selected = item
+                                            }
                                         }
                                     }
                                     .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
@@ -269,12 +274,15 @@ struct CountdownListView: View {
                     ShareSheet(activityItems: [shareURL])
                 }
             }
-            .sheet(item: $selected) { countdown in
-                CountdownDetailView(countdown: countdown)
+            .overlay {
+                if let selected {
+                    CountdownDetailHeroView(countdown: selected, namespace: heroNamespace) {
+                        selected = nil
+                    }
                     .environmentObject(theme)
                     .environmentObject(pro)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
+                    .transition(.identity)
+                }
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)

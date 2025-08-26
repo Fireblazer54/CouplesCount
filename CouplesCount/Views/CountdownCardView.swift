@@ -17,6 +17,9 @@ struct CountdownCardView: View {
     let shared: Bool
     let shareAction: (() -> Void)?
     let height: CGFloat
+    let namespace: Namespace.ID?
+    let matchedID: UUID?
+    let cornerRadius: CGFloat
 
     init(
         title: String,
@@ -30,7 +33,10 @@ struct CountdownCardView: View {
         fontStyle: CardFontStyle = .classic,
         shared: Bool,
         shareAction: (() -> Void)? = nil,
-        height: CGFloat = 120
+        height: CGFloat = 120,
+        namespace: Namespace.ID? = nil,
+        matchedID: UUID? = nil,
+        cornerRadius: CGFloat = 22
     ) {
         self.title = title
         self.targetDate = targetDate
@@ -44,10 +50,10 @@ struct CountdownCardView: View {
         self.shared = shared
         self.shareAction = shareAction
         self.height = height
+        self.namespace = namespace
+        self.matchedID = matchedID
+        self.cornerRadius = cornerRadius
     }
-
-
-    private let corner: CGFloat = 22
     @State private var now = Date()
 
     private var cardColor: Color {
@@ -65,7 +71,7 @@ struct CountdownCardView: View {
     var body: some View {
         ZStack(alignment: .leading) {
             // Background color or image
-            RoundedRectangle(cornerRadius: corner, style: .continuous)
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .fill(backgroundFill)
                 .overlay(
                     Group {
@@ -80,12 +86,15 @@ struct CountdownCardView: View {
                         }
                     }
                 )
-                .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: corner, style: .continuous)
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .stroke(Color.black, lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
+                .ifLet(namespace, matchedID) { view, ns, id in
+                    view.matchedGeometryEffect(id: "background-\(id)", in: ns)
+                }
 
             // Content
             VStack(alignment: .leading, spacing: 8) {
@@ -93,6 +102,9 @@ struct CountdownCardView: View {
                     .font(CardTypography.font(for: fontStyle, role: .title))
                     .lineLimit(1)
                     .foregroundStyle(primaryText)
+                    .ifLet(namespace, matchedID) { view, ns, id in
+                        view.matchedGeometryEffect(id: "title-\(id)", in: ns)
+                    }
 
                 Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
                     .font(CardTypography.font(for: fontStyle, role: .number))
