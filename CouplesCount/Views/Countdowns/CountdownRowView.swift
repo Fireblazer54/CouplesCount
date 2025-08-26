@@ -50,30 +50,15 @@ struct CountdownRowView: View {
         .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
         .listRowBackground(theme.theme.background)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button { onDelete(countdown) } label: {
-                Image(systemName: "trash")
-                    .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.red))
-                    .foregroundStyle(.white)
-                    .accessibilityLabel("Delete")
-                    .accessibilityHint("Remove countdown")
-            }
-            .tint(.clear)
-            .contentShape(Rectangle())
+            DeleteSwipeButton { onDelete(countdown) }
         }
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            Button { onArchiveToggle(countdown) } label: {
-                Image(systemName: countdown.isArchived ? "arrow.uturn.backward" : "archivebox")
-                    .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.blue))
-                    .foregroundStyle(.white)
-                    .accessibilityLabel(countdown.isArchived ? "Unarchive" : "Archive")
-                    .accessibilityHint(countdown.isArchived ? "Restore countdown" : "Archive countdown")
-            }
-            .tint(.clear)
-            .contentShape(Rectangle())
+            ArchiveSwipeButton(
+                { onArchiveToggle(countdown) },
+                label: countdown.isArchived ? "Unarchive" : "Archive",
+                systemImage: countdown.isArchived ? "arrow.uturn.backward" : "archivebox",
+                hint: countdown.isArchived ? "Restore countdown" : "Archive countdown"
+            )
         }
     }
 }
