@@ -2,7 +2,7 @@ import SwiftUI
 
 struct BlankDetailView: View {
     @EnvironmentObject private var theme: ThemeManager
-    @Environment(\.dismiss) private var dismiss
+    let onClose: () -> Void
 
     var body: some View {
         ZStack {
@@ -13,17 +13,24 @@ struct BlankDetailView: View {
         }
         .overlay(alignment: .topLeading) {
             Button {
-                dismiss()
+                Haptics.light()
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                    onClose()
+                }
+
             } label: {
                 Image(systemName: "xmark")
                     .font(.title2)
                     .padding()
                     .foregroundStyle(theme.theme.textPrimary)
             }
+            .accessibilityLabel("Close")
         }
+        .accessibilityAddTraits(.isModal)
     }
 }
 
 #Preview {
-    BlankDetailView().environmentObject(ThemeManager())
+    BlankDetailView(onClose: {}).environmentObject(ThemeManager())
+
 }
