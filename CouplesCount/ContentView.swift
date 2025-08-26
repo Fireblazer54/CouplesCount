@@ -50,8 +50,6 @@ struct CountdownListView: View {
     @State private var showPremium = false
     @State private var shareURL: URL? = nil
     @State private var showShareSheet = false
-    @State private var selected: Countdown? = nil
-    @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
 
@@ -137,24 +135,15 @@ struct CountdownListView: View {
                                     .contentShape(Rectangle())
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
-                                    .onTapGesture {
-                                        if !didLongPress {
-                                            selected = item
-                                        }
-                                    }
-                                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            pressingID = pressing ? item.id : nil
-                                        }
-                                    }) {
-                                        didLongPress = true
-                                        Haptics.light()
-                                        editing = item
-                                        showAddEdit = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            didLongPress = false
-                                        }
-                                    }
+                                  .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+                                      withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                          pressingID = pressing ? item.id : nil
+                                      }
+                                  }) {
+                                      Haptics.light()
+                                      editing = item
+                                      showAddEdit = true
+                                  }
                                     .listRowSeparator(.hidden)
                                     .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
                                     .listRowBackground(theme.theme.background)
@@ -268,13 +257,6 @@ struct CountdownListView: View {
                 if let shareURL {
                     ShareSheet(activityItems: [shareURL])
                 }
-            }
-            .sheet(item: $selected) { countdown in
-                CountdownDetailView(countdown: countdown)
-                    .environmentObject(theme)
-                    .environmentObject(pro)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)
