@@ -108,3 +108,52 @@ struct ThemeSwatch: View {
     }
 }
 
+struct SettingsButtonRow: View {
+    @EnvironmentObject private var theme: ThemeManager
+    let icon: String
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            action()
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(theme.theme.textPrimary)
+                    .frame(width: 30, height: 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(theme.theme.textPrimary.opacity(0.1))
+                    )
+                    .accessibilityHidden(true)
+                Text(title)
+                    .font(.body)
+                    .foregroundStyle(theme.theme.textPrimary)
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct SettingsKeyValueRow: View {
+    @EnvironmentObject private var theme: ThemeManager
+    let key: String
+    let value: String
+
+    var body: some View {
+        HStack {
+            Text(key)
+                .foregroundStyle(theme.theme.textPrimary)
+            Spacer()
+            Text(value)
+                .foregroundStyle(theme.theme.textSecondary)
+        }
+        .font(.body)
+    }
+}
+
