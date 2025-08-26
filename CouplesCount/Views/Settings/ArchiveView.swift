@@ -42,45 +42,36 @@ struct ArchiveView: View {
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                        modelContext.delete(item)
-                                        try? modelContext.save()
-                                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                        updateWidgetSnapshot(afterSaving: all)
-                                    }
-                                    Haptics.warning()
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                                        .frame(width: 44, height: 44)
-                                        .background(Circle().fill(theme.theme.primary))
-                                        .foregroundStyle(theme.theme.textPrimary)
-                                        .accessibilityLabel("Delete")
-                                        .accessibilityHint("Remove countdown")
-                                }
-                                .tint(.clear)
-                                .contentShape(Rectangle())
+                                DeleteSwipeButton(
+                                    {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                            modelContext.delete(item)
+                                            try? modelContext.save()
+                                            let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                            updateWidgetSnapshot(afterSaving: all)
+                                        }
+                                        Haptics.warning()
+                                    },
+                                    background: theme.theme.primary,
+                                    foreground: theme.theme.textPrimary
+                                )
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                Button {
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                        item.isArchived = false
-                                        try? modelContext.save()
-                                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                        updateWidgetSnapshot(afterSaving: all)
-                                    }
-                                } label: {
-                                    Image(systemName: "arrow.uturn.backward")
-                                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                                        .frame(width: 44, height: 44)
-                                        .background(Circle().fill(theme.theme.primary))
-                                        .foregroundStyle(theme.theme.textPrimary)
-                                        .accessibilityLabel("Unarchive")
-                                        .accessibilityHint("Restore countdown")
-                                }
-                                .tint(.clear)
-                                .contentShape(Rectangle())
+                                ArchiveSwipeButton(
+                                    {
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                            item.isArchived = false
+                                            try? modelContext.save()
+                                            let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                                            updateWidgetSnapshot(afterSaving: all)
+                                        }
+                                    },
+                                    label: "Unarchive",
+                                    systemImage: "arrow.uturn.backward",
+                                    hint: "Restore countdown",
+                                    background: theme.theme.primary,
+                                    foreground: theme.theme.textPrimary
+                                )
                             }
                         }
                     }

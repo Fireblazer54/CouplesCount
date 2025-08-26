@@ -114,7 +114,7 @@ struct ProfileView: View {
                         )
                         .environmentObject(theme)
                         .contextMenu {
-                            Button(role: .destructive) {
+                            DeleteSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                     modelContext.delete(item)
                                     try? modelContext.save()
@@ -122,12 +122,9 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.warning()
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            .tint(.red)
+                            }, iconOnly: false)
 
-                            Button {
+                            ArchiveSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                     item.isArchived = true
                                     try? modelContext.save()
@@ -135,9 +132,7 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.light()
-                            } label: {
-                                Label("Archive", systemImage: "archivebox")
-                            }
+                            }, iconOnly: false)
                         }
                     }
                 }
