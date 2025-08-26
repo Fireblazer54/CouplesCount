@@ -19,13 +19,11 @@ struct CountdownListView: View {
     @State private var showPaywall = false
     @State private var showingBlankDetail = false
     @Namespace private var heroNamespace
-    @AppStorage("useHeroTransition") private var useHeroTransition = false
-    @State private var navigationPath = NavigationPath()
 
     var refreshAction: (() async -> Void)? = nil
 
     var body: some View {
-        NavigationStack(path: $navigationPath) {
+        NavigationStack {
             ZStack {
                 theme.theme.background.ignoresSafeArea()
 
@@ -44,8 +42,7 @@ struct CountdownListView: View {
                             showShareSheet: $showShareSheet,
                             showingBlankDetail: $showingBlankDetail,
                             refreshAction: refreshAction,
-                            heroNamespace: heroNamespace,
-                            useHeroTransition: useHeroTransition
+                            heroNamespace: heroNamespace
                         )
                     }
 
@@ -70,12 +67,7 @@ struct CountdownListView: View {
             .sheet(isPresented: $showShareSheet, content: shareSheet)
             .sheet(isPresented: $showPaywall, content: paywallSheet)
             .fullScreenCover(isPresented: $showingBlankDetail) {
-                if useHeroTransition {
-                    blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
-                }
-            }
-            .navigationDestination(for: UUID.self) { _ in
-                BlankDetailView().environmentObject(theme)
+                blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
             }
         }
         .tint(theme.theme.textPrimary)
@@ -228,7 +220,6 @@ private struct CountdownListSection: View {
     @Binding var showingBlankDetail: Bool
     var refreshAction: (() async -> Void)?
     var heroNamespace: Namespace.ID
-    let useHeroTransition: Bool
 
     var body: some View {
         List {
@@ -236,7 +227,6 @@ private struct CountdownListSection: View {
                 CountdownRowView(
                     countdown: item,
                     heroNamespace: heroNamespace,
-                    useHeroTransition: useHeroTransition,
                     onShare: { url in
                         shareURL = url
                         showShareSheet = true
@@ -264,9 +254,7 @@ private struct CountdownListSection: View {
                         if countdown.isArchived { Haptics.light() }
                     },
                     onSelect: { _ in
-                        if useHeroTransition {
-                            showingBlankDetail = true
-                        }
+                        showingBlankDetail = true
                     }
                 )
             }
