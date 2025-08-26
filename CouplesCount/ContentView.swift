@@ -139,6 +139,7 @@ struct CountdownListView: View {
                                         withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                             showingBlankDetail = true
                                         }
+
                                     }
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
@@ -285,6 +286,10 @@ struct CountdownListView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)
+            }
+            .fullScreenCover(isPresented: $showingBlankDetail) {
+                BlankDetailView()
+                    .environmentObject(theme)
             }
         }
         .tint(theme.theme.textPrimary)

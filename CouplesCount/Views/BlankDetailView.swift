@@ -17,6 +17,7 @@ struct BlankDetailView: View {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                     onClose()
                 }
+
             } label: {
                 Image(systemName: "xmark")
                     .font(.title2)
@@ -31,4 +32,5 @@ struct BlankDetailView: View {
 
 #Preview {
     BlankDetailView(onClose: {}).environmentObject(ThemeManager())
+
 }
