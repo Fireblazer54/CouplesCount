@@ -54,6 +54,7 @@ struct CountdownListView: View {
     @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @Namespace private var heroNamespace
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -110,98 +111,7 @@ struct CountdownListView: View {
                     } else {
                         List {
                             ForEach(items) { item in
-                                // Compute per-item display values
-                                let dateText = DateUtils.readableDate.string(from: item.targetDate)
-                                let exportURL = CountdownShareService.exportURL(for: item)
-
-                                // Build the countdown card separately to reduce type-checking complexity
-                                let card = CountdownCardView(
-                                    title: item.title,
-                                    targetDate: item.targetDate,
-                                    timeZoneID: item.timeZoneID,
-                                    dateText: dateText,
-                                    archived: item.isArchived,
-                                    backgroundStyle: item.backgroundStyle,
-                                    colorHex: item.backgroundColorHex,
-                                    imageData: item.backgroundImageData,
-                                    fontStyle: item.cardFontStyle,
-                                    shared: item.isShared,
-                                    shareAction: {
-                                        shareURL = exportURL
-                                        showShareSheet = shareURL != nil
-                                    }
-                                )
-
-                                card
-                                    .environmentObject(theme)
-                                    .contentShape(Rectangle())
-                                    .scaleEffect(pressingID == item.id ? 0.97 : 1)
-                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
-                                    .onTapGesture {
-                                        if !didLongPress {
-                                            selected = item
-                                        }
-                                    }
-                                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            pressingID = pressing ? item.id : nil
-                                        }
-                                    }) {
-                                        didLongPress = true
-                                        Haptics.light()
-                                        editing = item
-                                        showAddEdit = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            didLongPress = false
-                                        }
-                                    }
-                                    .listRowSeparator(.hidden)
-                                    .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                    .listRowBackground(theme.theme.background)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                        Button {
-                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                                modelContext.delete(item)
-                                                try? modelContext.save()
-                                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                                updateWidgetSnapshot(afterSaving: all)
-                                            }
-                                            Haptics.warning()
-                                        } label: {
-                                            Image(systemName: "trash")
-                                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-
-                                                .frame(width: 44, height: 44)
-                                                .background(Circle().fill(Color.red))
-                                                .foregroundStyle(.white)
-                                                .accessibilityLabel("Delete")
-                                                .accessibilityHint("Remove countdown")
-                                        }
-                                        .tint(.clear)
-                                        .contentShape(Rectangle())
-                                    }
-                                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                        Button {
-                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                                item.isArchived.toggle()
-                                                try? modelContext.save()
-                                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                                updateWidgetSnapshot(afterSaving: all)
-                                            }
-                                            if item.isArchived { Haptics.light() }
-                                        } label: {
-                                            Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
-                                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-
-                                                .frame(width: 44, height: 44)
-                                                .background(Circle().fill(Color.blue))
-                                                .foregroundStyle(.white)
-                                                .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
-                                                .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
-                                        }
-                                        .tint(.clear)
-                                        .contentShape(Rectangle())
-                                    }
+                                countdownRow(for: item)
                             }
                         }
                         .listStyle(.plain)
@@ -269,18 +179,117 @@ struct CountdownListView: View {
                     ShareSheet(activityItems: [shareURL])
                 }
             }
-            .sheet(item: $selected) { countdown in
-                CountdownDetailView(countdown: countdown)
+            .overlay {
+                if let selectedCountdown = selected {
+                    CountdownDetailHeroView(countdown: selectedCountdown, namespace: heroNamespace) {
+                        selected = nil
+                    }
                     .environmentObject(theme)
                     .environmentObject(pro)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
+                    .transition(.identity)
+                }
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)
             }
         }
         .tint(theme.theme.textPrimary)
+    }
+
+    @ViewBuilder
+    private func countdownRow(for item: Countdown) -> some View {
+        let dateText = DateUtils.readableDate.string(from: item.targetDate)
+        let exportURL = CountdownShareService.exportURL(for: item)
+
+        let card = CountdownCardView(
+            title: item.title,
+            targetDate: item.targetDate,
+            timeZoneID: item.timeZoneID,
+            dateText: dateText,
+            archived: item.isArchived,
+            backgroundStyle: item.backgroundStyle,
+            colorHex: item.backgroundColorHex,
+            imageData: item.backgroundImageData,
+            fontStyle: item.cardFontStyle,
+            shared: item.isShared,
+            shareAction: {
+                shareURL = exportURL
+                showShareSheet = shareURL != nil
+            },
+            namespace: heroNamespace,
+            matchedID: item.id
+        )
+
+        card
+            .environmentObject(theme)
+            .contentShape(Rectangle())
+            .scaleEffect(pressingID == item.id ? 0.97 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
+            .onTapGesture {
+                if !didLongPress {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                        selected = item
+                    }
+                }
+            }
+            .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    pressingID = pressing ? item.id : nil
+                }
+            }) {
+                didLongPress = true
+                Haptics.light()
+                editing = item
+                showAddEdit = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    didLongPress = false
+                }
+            }
+            .listRowSeparator(.hidden)
+            .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+            .listRowBackground(theme.theme.background)
+            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                Button {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                        modelContext.delete(item)
+                        try? modelContext.save()
+                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                        updateWidgetSnapshot(afterSaving: all)
+                    }
+                    Haptics.warning()
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                        .frame(width: 44, height: 44)
+                        .background(Circle().fill(Color.red))
+                        .foregroundStyle(.white)
+                        .accessibilityLabel("Delete")
+                        .accessibilityHint("Remove countdown")
+                }
+                .tint(.clear)
+                .contentShape(Rectangle())
+            }
+            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                Button {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                        item.isArchived.toggle()
+                        try? modelContext.save()
+                        let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                        updateWidgetSnapshot(afterSaving: all)
+                    }
+                    if item.isArchived { Haptics.light() }
+                } label: {
+                    Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
+                        .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                        .frame(width: 44, height: 44)
+                        .background(Circle().fill(Color.blue))
+                        .foregroundStyle(.white)
+                        .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
+                        .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
+                }
+                .tint(.clear)
+                .contentShape(Rectangle())
+            }
     }
 }
 
