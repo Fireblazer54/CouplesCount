@@ -1,0 +1,80 @@
+import SwiftUI
+import SwiftData
+
+struct CountdownRowView: View {
+    @EnvironmentObject private var theme: ThemeManager
+
+    let countdown: Countdown
+    let heroNamespace: Namespace.ID
+    let onShare: (URL) -> Void
+    let onEdit: (Countdown) -> Void
+    let onDelete: (Countdown) -> Void
+    let onArchiveToggle: (Countdown) -> Void
+    let onSelect: (Countdown) -> Void
+
+    @State private var isPressing = false
+
+    var body: some View {
+        let dateText = DateUtils.readableDate.string(from: countdown.targetDate)
+        let exportURL = CountdownShareService.exportURL(for: countdown)
+
+        CountdownCardView(
+            title: countdown.title,
+            targetDate: countdown.targetDate,
+            timeZoneID: countdown.timeZoneID,
+            dateText: dateText,
+            archived: countdown.isArchived,
+            backgroundStyle: countdown.backgroundStyle,
+            colorHex: countdown.backgroundColorHex,
+            imageData: countdown.backgroundImageData,
+            fontStyle: countdown.cardFontStyle,
+            shared: countdown.isShared,
+            shareAction: {
+                if let exportURL { onShare(exportURL) }
+            }
+        )
+        .environmentObject(theme)
+        .contentShape(Rectangle())
+        .onTapGesture { onSelect(countdown) }
+        .scaleEffect(isPressing ? 0.97 : 1)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressing)
+        .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                isPressing = pressing
+            }
+        }) {
+            Haptics.light()
+            onEdit(countdown)
+        }
+        .listRowSeparator(.hidden)
+        .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+        .listRowBackground(theme.theme.background)
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button { onDelete(countdown) } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color.red))
+                    .foregroundStyle(.white)
+                    .accessibilityLabel("Delete")
+                    .accessibilityHint("Remove countdown")
+            }
+            .tint(.clear)
+            .contentShape(Rectangle())
+        }
+        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+            Button { onArchiveToggle(countdown) } label: {
+                Image(systemName: countdown.isArchived ? "arrow.uturn.backward" : "archivebox")
+                    .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(Color.blue))
+                    .foregroundStyle(.white)
+                    .accessibilityLabel(countdown.isArchived ? "Unarchive" : "Archive")
+                    .accessibilityHint(countdown.isArchived ? "Restore countdown" : "Archive countdown")
+            }
+            .tint(.clear)
+            .contentShape(Rectangle())
+        }
+    }
+}
+

@@ -16,9 +16,9 @@ struct CountdownListView: View {
     @State private var showPremium = false
     @State private var shareURL: URL? = nil
     @State private var showShareSheet = false
-    @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
     @State private var showingBlankDetail = false
+    @Namespace private var heroNamespace
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -36,13 +36,13 @@ struct CountdownListView: View {
                     } else {
                         CountdownListSection(
                             items: items,
-                            pressingID: $pressingID,
                             editing: $editing,
                             showAddEdit: $showAddEdit,
                             shareURL: $shareURL,
                             showShareSheet: $showShareSheet,
                             showingBlankDetail: $showingBlankDetail,
-                            refreshAction: refreshAction
+                            refreshAction: refreshAction,
+                            heroNamespace: heroNamespace
                         )
                     }
 
@@ -60,38 +60,59 @@ struct CountdownListView: View {
                 .environmentObject(theme)
             }
             .overlay(alignment: .topLeading) {
-                if showPremium {
-                    PremiumPromoView(show: $showPremium)
-                        .environmentObject(theme)
-                        .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
-                        .zIndex(1)
-                }
+                premiumPromoOverlay(show: $showPremium)
             }
-            .sheet(isPresented: $showAddEdit) {
-                AddEditCountdownView(existing: editing)
-                    .environmentObject(theme)
-                    .environmentObject(pro)
-            }
-            .sheet(isPresented: $showSettings) {
-                SettingsView()
-                    .environmentObject(theme)
-                    .environmentObject(pro)
-            }
-            .sheet(isPresented: $showShareSheet) {
-                if let shareURL {
-                    ShareSheet(activityItems: [shareURL])
-                }
-            }
-            .sheet(isPresented: $showPaywall) {
-                PaywallView()
-                    .environmentObject(theme)
-            }
+            .sheet(isPresented: $showAddEdit, content: addEditSheet)
+            .sheet(isPresented: $showSettings, content: settingsSheet)
+            .sheet(isPresented: $showShareSheet, content: shareSheet)
+            .sheet(isPresented: $showPaywall, content: paywallSheet)
             .fullScreenCover(isPresented: $showingBlankDetail) {
-                BlankDetailView()
-                    .environmentObject(theme)
+                blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
             }
         }
         .tint(theme.theme.textPrimary)
+    }
+
+    // MARK: - Overlays & Sheets
+
+    @ViewBuilder
+    private func premiumPromoOverlay(show: Binding<Bool>) -> some View {
+        if show.wrappedValue {
+            PremiumPromoView(show: show)
+                .environmentObject(theme)
+                .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
+                .zIndex(1)
+        }
+    }
+
+    @ViewBuilder
+    private func blankDetailOverlay(isPresented _: Binding<Bool>, onClose _: () -> Void) -> some View {
+        BlankDetailView()
+            .environmentObject(theme)
+    }
+
+    private func addEditSheet() -> some View {
+        AddEditCountdownView(existing: editing)
+            .environmentObject(theme)
+            .environmentObject(pro)
+    }
+
+    private func settingsSheet() -> some View {
+        SettingsView()
+            .environmentObject(theme)
+            .environmentObject(pro)
+    }
+
+    @ViewBuilder
+    private func shareSheet() -> some View {
+        if let shareURL {
+            ShareSheet(activityItems: [shareURL])
+        }
+    }
+
+    private func paywallSheet() -> some View {
+        PaywallView()
+            .environmentObject(theme)
     }
 }
 
@@ -192,99 +213,50 @@ private struct CountdownListSection: View {
     @Environment(\.modelContext) private var modelContext
 
     var items: [Countdown]
-    @Binding var pressingID: UUID?
     @Binding var editing: Countdown?
     @Binding var showAddEdit: Bool
     @Binding var shareURL: URL?
     @Binding var showShareSheet: Bool
     @Binding var showingBlankDetail: Bool
     var refreshAction: (() async -> Void)?
+    var heroNamespace: Namespace.ID
 
     var body: some View {
         List {
             ForEach(items) { item in
-                let dateText = DateUtils.readableDate.string(from: item.targetDate)
-                let exportURL = CountdownShareService.exportURL(for: item)
-
-                let card = CountdownCardView(
-                    title: item.title,
-                    targetDate: item.targetDate,
-                    timeZoneID: item.timeZoneID,
-                    dateText: dateText,
-                    archived: item.isArchived,
-                    backgroundStyle: item.backgroundStyle,
-                    colorHex: item.backgroundColorHex,
-                    imageData: item.backgroundImageData,
-                    fontStyle: item.cardFontStyle,
-                    shared: item.isShared,
-                    shareAction: {
-                        shareURL = exportURL
-                        showShareSheet = shareURL != nil
-                    }
-                )
-
-                card
-                    .environmentObject(theme)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
+                CountdownRowView(
+                    countdown: item,
+                    heroNamespace: heroNamespace,
+                    onShare: { url in
+                        shareURL = url
+                        showShareSheet = true
+                    },
+                    onEdit: { countdown in
+                        editing = countdown
+                        showAddEdit = true
+                    },
+                    onDelete: { countdown in
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                            modelContext.delete(countdown)
+                            try? modelContext.save()
+                            let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                            updateWidgetSnapshot(afterSaving: all)
+                        }
+                        Haptics.warning()
+                    },
+                    onArchiveToggle: { countdown in
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                            countdown.isArchived.toggle()
+                            try? modelContext.save()
+                            let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
+                            updateWidgetSnapshot(afterSaving: all)
+                        }
+                        if countdown.isArchived { Haptics.light() }
+                    },
+                    onSelect: { _ in
                         showingBlankDetail = true
                     }
-                    .scaleEffect(pressingID == item.id ? 0.97 : 1)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
-                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            pressingID = pressing ? item.id : nil
-                        }
-                    }) {
-                        Haptics.light()
-                        editing = item
-                        showAddEdit = true
-                    }
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    .listRowBackground(theme.theme.background)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                modelContext.delete(item)
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
-                            }
-                            Haptics.warning()
-                        } label: {
-                            Image(systemName: "trash")
-                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                                .frame(width: 44, height: 44)
-                                .background(Circle().fill(Color.red))
-                                .foregroundStyle(.white)
-                                .accessibilityLabel("Delete")
-                                .accessibilityHint("Remove countdown")
-                        }
-                        .tint(.clear)
-                        .contentShape(Rectangle())
-                    }
-                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                        Button {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
-                                item.isArchived.toggle()
-                                try? modelContext.save()
-                                let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
-                                updateWidgetSnapshot(afterSaving: all)
-                            }
-                            if item.isArchived { Haptics.light() }
-                        } label: {
-                            Image(systemName: item.isArchived ? "arrow.uturn.backward" : "archivebox")
-                                .font(.system(size: UIFontMetrics(forTextStyle: .body).scaledValue(for: 16), weight: .bold))
-                                .frame(width: 44, height: 44)
-                                .background(Circle().fill(Color.blue))
-                                .foregroundStyle(.white)
-                                .accessibilityLabel(item.isArchived ? "Unarchive" : "Archive")
-                                .accessibilityHint(item.isArchived ? "Restore countdown" : "Archive countdown")
-                        }
-                        .tint(.clear)
-                        .contentShape(Rectangle())
-                    }
+                )
             }
         }
         .listStyle(.plain)
