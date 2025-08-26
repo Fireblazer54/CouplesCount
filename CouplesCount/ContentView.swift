@@ -52,6 +52,7 @@ struct CountdownListView: View {
     @State private var showShareSheet = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @State private var showingBlankDetail = false
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -133,6 +134,12 @@ struct CountdownListView: View {
                                 card
                                     .environmentObject(theme)
                                     .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        Haptics.medium()
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+                                            showingBlankDetail = true
+                                        }
+                                    }
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
                                   .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
@@ -243,6 +250,24 @@ struct CountdownListView: View {
                         .environmentObject(theme)
                         .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
                         .zIndex(1)
+                }
+            }
+            .overlay {
+                if showingBlankDetail {
+                    ZStack {
+                        Color.black.opacity(0.08)
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+
+                        BlankDetailView {
+                            showingBlankDetail = false
+                        }
+                        .environmentObject(theme)
+                        .transition(.asymmetric(insertion: .scale(scale: 0.9).combined(with: .opacity),
+                                                 removal: .opacity))
+                        .zIndex(1)
+                    }
+                    .zIndex(1)
                 }
             }
             .sheet(isPresented: $showAddEdit) {
