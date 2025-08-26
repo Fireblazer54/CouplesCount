@@ -54,6 +54,7 @@ struct CountdownListView: View {
     @State private var didLongPress = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @Namespace private var cardNamespace
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -132,33 +133,42 @@ struct CountdownListView: View {
                                     }
                                 )
 
-                                card
-                                    .environmentObject(theme)
-                                    .contentShape(Rectangle())
-                                    .scaleEffect(pressingID == item.id ? 0.97 : 1)
-                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
-                                    .onTapGesture {
-                                        if !didLongPress {
-                                            selected = item
-                                        }
+                                Group {
+                                    if selected?.id == item.id {
+                                        Color.clear.frame(height: 120)
+                                    } else {
+                                        card
+                                            .environmentObject(theme)
+                                            .matchedGeometryEffect(id: item.id, in: cardNamespace)
+                                            .contentShape(Rectangle())
+                                            .scaleEffect(pressingID == item.id ? 0.97 : 1)
+                                            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
+                                            .onTapGesture {
+                                                if !didLongPress {
+                                                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                                                        selected = item
+                                                    }
+                                                }
+                                            }
+                                            .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                    pressingID = pressing ? item.id : nil
+                                                }
+                                            }) {
+                                                didLongPress = true
+                                                Haptics.light()
+                                                editing = item
+                                                showAddEdit = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                                    didLongPress = false
+                                                }
+                                            }
                                     }
-                                    .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            pressingID = pressing ? item.id : nil
-                                        }
-                                    }) {
-                                        didLongPress = true
-                                        Haptics.light()
-                                        editing = item
-                                        showAddEdit = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            didLongPress = false
-                                        }
-                                    }
-                                    .listRowSeparator(.hidden)
-                                    .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                    .listRowBackground(theme.theme.background)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+                                .listRowBackground(theme.theme.background)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                         Button {
                                             withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
                                                 modelContext.delete(item)
@@ -247,7 +257,22 @@ struct CountdownListView: View {
 
                 }
                 .frame(maxWidth: .infinity) // centers horizontally
+                if let selected {
+                    NavigationStack {
+                        CountdownDetailView(countdown: selected, namespace: cardNamespace)
+                            .environmentObject(theme)
+                            .environmentObject(pro)
+                    }
+                    .environment(\.dismiss, DismissAction {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                            self.selected = nil
+                        }
+                    })
+                    .transition(.identity)
+                    .zIndex(2)
+                }
             }
+            .disabled(selected != nil)
             .overlay(alignment: .topLeading) {
                 if showPremium {
                     PremiumPromoView(show: $showPremium)
@@ -268,13 +293,6 @@ struct CountdownListView: View {
                 if let shareURL {
                     ShareSheet(activityItems: [shareURL])
                 }
-            }
-            .sheet(item: $selected) { countdown in
-                CountdownDetailView(countdown: countdown)
-                    .environmentObject(theme)
-                    .environmentObject(pro)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)
