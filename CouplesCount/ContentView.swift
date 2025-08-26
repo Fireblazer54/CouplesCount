@@ -52,6 +52,7 @@ struct CountdownListView: View {
     @State private var showShareSheet = false
     @State private var pressingID: UUID? = nil
     @State private var showPaywall = false
+    @State private var showingBlankDetail = false
 
     var refreshAction: (() async -> Void)? = nil
 
@@ -133,6 +134,9 @@ struct CountdownListView: View {
                                 card
                                     .environmentObject(theme)
                                     .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        showingBlankDetail = true
+                                    }
                                     .scaleEffect(pressingID == item.id ? 0.97 : 1)
                                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: pressingID == item.id)
                                   .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
@@ -260,6 +264,10 @@ struct CountdownListView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView().environmentObject(theme)
+            }
+            .fullScreenCover(isPresented: $showingBlankDetail) {
+                BlankDetailView()
+                    .environmentObject(theme)
             }
         }
         .tint(theme.theme.textPrimary)
