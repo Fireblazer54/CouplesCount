@@ -33,7 +33,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
 @MainActor
 final class ThemeSettings: ObservableObject {
     @AppStorage("app_theme_selection") private var stored = AppTheme.system.rawValue
-    @Published var selection: AppTheme
+    @Published var selection: AppTheme = .system
 
     init() {
         selection = AppTheme(rawValue: stored) ?? .system
