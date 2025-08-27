@@ -30,7 +30,7 @@ struct CountdownCardView: View {
         fontStyle: CardFontStyle = .classic,
         shared: Bool,
         shareAction: (() -> Void)? = nil,
-        height: CGFloat = 120
+        height: CGFloat = 140
     ) {
         self.title = title
         self.targetDate = targetDate
@@ -62,6 +62,14 @@ struct CountdownCardView: View {
         primaryText.opacity(cardColor.isLight ? 0.05 : 0.25)
     }
 
+    private var remaining: (value: String, unit: String) {
+        let text = DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)
+        let parts = text.split(separator: " ")
+        let value = parts.first.map(String.init) ?? ""
+        let unit = parts.dropFirst().first.map { $0.uppercased() } ?? ""
+        return (value, unit)
+    }
+
     var body: some View {
         ZStack(alignment: .leading) {
             // Background color or image
@@ -88,21 +96,36 @@ struct CountdownCardView: View {
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
 
             // Content
-            VStack(alignment: .leading, spacing: 8) {
-                Text(title)
-                    .font(CardTypography.font(for: fontStyle, role: .title))
-                    .lineLimit(1)
-                    .foregroundStyle(primaryText)
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(dateText)
+                        .font(CardTypography.font(for: fontStyle, role: .date))
+                        .foregroundStyle(secondaryText)
 
-                Text(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID))
-                    .font(CardTypography.font(for: fontStyle, role: .number))
-                    .foregroundStyle(primaryText)
+                    Text(title)
+                        .font(CardTypography.font(for: fontStyle, role: .title))
+                        .lineLimit(1)
+                        .foregroundStyle(primaryText)
 
-                Text(dateText)
-                    .font(CardTypography.font(for: fontStyle, role: .date))
-                    .foregroundStyle(secondaryText)
+                    Text("\(remaining.unit) REMAINING")
+                        .font(.caption2)
+                        .foregroundStyle(secondaryText)
+                }
+
+                Spacer()
+
+                VStack(alignment: .center, spacing: 4) {
+                    Text(remaining.value)
+                        .font(CardTypography.font(for: fontStyle, role: .number))
+                        .foregroundStyle(primaryText)
+
+                    Text(remaining.unit)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(primaryText)
+                }
             }
-            .padding(18)
+            .padding(20)
         }
         .overlay(alignment: .topTrailing) {
             HStack(spacing: 4) {
