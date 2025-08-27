@@ -30,6 +30,7 @@ struct CountdownListView: View {
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
 
+
                     if items.isEmpty {
                         EmptyStateView()
                     } else {

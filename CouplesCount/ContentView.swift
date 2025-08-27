@@ -29,6 +29,7 @@ struct ContentView: View {
                 } catch {
                     importError = error.localizedDescription
                 }
+
             }
             .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
                 Button("OK", role: .cancel) {}

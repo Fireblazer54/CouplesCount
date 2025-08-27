@@ -58,6 +58,7 @@ struct CouplesCountApp: App {
             .preferredColorScheme(
                 AppConfig.isStrictLight ? .light : theme.theme.colorScheme
             )
+
             .applyTheme()
         }
     }
