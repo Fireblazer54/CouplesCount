@@ -7,29 +7,35 @@ struct ContentView: View {
     @State private var importError: String?
 
     var body: some View {
-        TabView {
-            CountdownListView()
-                .tabItem {
-                    Label("Countdowns", systemImage: "timer")
+        ZStack {
+            LinearGradient(colors: [theme.color(.Background), theme.color(.Primary)], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+
+            TabView {
+                CountdownListView()
+                    .tabItem {
+                        Label("Countdowns", systemImage: "timer")
+                    }
+
+                ProfileView()
+                    .tabItem {
+                        Label("Profile", systemImage: "person.crop.circle")
+                    }
+            }
+            .tint(theme.color(.Primary))
+            .onOpenURL { url in
+                do {
+                    try CountdownShareService.importCountdown(from: url, context: modelContext)
+                } catch {
+                    importError = error.localizedDescription
                 }
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle")
-                }
-        }
-        .tint(theme.color(.Primary))
-        .onOpenURL { url in
-            do {
-                try CountdownShareService.importCountdown(from: url, context: modelContext)
-            } catch {
-                importError = error.localizedDescription
             }
-        }
-        .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(importError ?? "")
+            .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(importError ?? "")
+            }
         }
     }
 }

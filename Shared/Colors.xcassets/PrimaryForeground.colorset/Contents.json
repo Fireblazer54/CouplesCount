@@ -3,7 +3,7 @@
     "version": 1,
     "author": "xcode",
     "light": "light:oklch(1 0 0)",
-    "dark": "dark:oklch(0.205 0 0)"
+    "dark": "dark:oklch(1 0 0)"
   },
   "colors": [
     {
@@ -29,9 +29,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": "0.090",
-          "green": "0.090",
-          "blue": "0.090",
+          "red": "1.000",
+          "green": "1.000",
+          "blue": "1.000",
           "alpha": "1.000"
         }
       }
