@@ -17,6 +17,7 @@ struct CouplesCountApp: App {
         if AppConfig.isStrictLight {
             themeManager.setTheme(.light)
         }
+        ThemeDevLog.log()
     }
 
     var body: some Scene {
@@ -54,7 +55,10 @@ struct CouplesCountApp: App {
                     theme.setTheme(.light)
                 }
             }
-            .preferredColorScheme(AppConfig.isStrictLight ? .light : nil)
+            .preferredColorScheme(
+                AppConfig.isStrictLight ? .light : theme.theme.colorScheme
+            )
+            .applyTheme()
         }
     }
 }

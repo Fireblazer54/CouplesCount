@@ -3,7 +3,8 @@ import SwiftData
 import UIKit
 
 struct ProfileView: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.theme) private var theme
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<Countdown> { $0.isShared && !$0.isArchived },
            sort: \Countdown.targetUTC, order: .forward)
@@ -32,12 +33,12 @@ struct ProfileView: View {
                                 Image(systemName: "person.crop.circle.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(theme.color(.MutedForeground))
                                     .padding(4)
                             }
                         }
                         .frame(width: 80, height: 80)
-                        .background(Color.gray.opacity(profileImageData == nil ? 0.2 : 0))
+                        .background(theme.color(.Muted).opacity(profileImageData == nil ? 0.2 : 0))
                         .clipShape(Circle())
                     }
                     .accessibilityLabel("Profile photo")
@@ -112,7 +113,7 @@ struct ProfileView: View {
                             shared: item.isShared,
                             shareAction: nil
                         )
-                        .environmentObject(theme)
+                        .environmentObject(themeManager)
                         .contextMenu {
                             DeleteSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -141,6 +142,6 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .background(theme.theme.background.ignoresSafeArea())
+        .background(theme.color(.Background).ignoresSafeArea())
     }
 }

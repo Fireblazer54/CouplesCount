@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     @Environment(\.modelContext) private var modelContext
     @State private var importError: String?
 
@@ -18,7 +18,7 @@ struct ContentView: View {
                     Label("Profile", systemImage: "person.crop.circle")
                 }
         }
-        .tint(theme.theme.textPrimary)
+        .tint(theme.color(.Primary))
         .onOpenURL { url in
             do {
                 try CountdownShareService.importCountdown(from: url, context: modelContext)
