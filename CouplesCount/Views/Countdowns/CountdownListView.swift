@@ -16,7 +16,6 @@ struct CountdownListView: View {
     @State private var showShareSheet = false
     @State private var showPaywall = false
     @State private var showingBlankDetail = false
-    @State private var showCrownPage = false
     @State private var showSettingsPage = false
     @Namespace private var heroNamespace
 
@@ -28,7 +27,7 @@ struct CountdownListView: View {
                 theme.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    HeaderView(showCrownPage: $showCrownPage, showSettingsPage: $showSettingsPage)
+                    HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
                         .environmentObject(theme)
 
                     if items.isEmpty {
@@ -61,13 +60,7 @@ struct CountdownListView: View {
             }
             .sheet(isPresented: $showAddEdit, content: addEditSheet)
             .sheet(isPresented: $showShareSheet, content: shareSheet)
-            .sheet(isPresented: $showPaywall, content: paywallSheet)
-            .sheet(isPresented: $showCrownPage) {
-                NavigationStack {
-                    PlaceholderPageView(title: "Crown")
-                        .environmentObject(theme)
-                }
-            }
+            .fullScreenCover(isPresented: $showPaywall, content: paywallSheet)
             .sheet(isPresented: $showSettingsPage) {
                 SettingsView()
                     .environmentObject(theme)
@@ -108,13 +101,13 @@ struct CountdownListView: View {
 
 private struct HeaderView: View {
     @EnvironmentObject private var theme: ThemeManager
-    @Binding var showCrownPage: Bool
+    @Binding var showPaywall: Bool
     @Binding var showSettingsPage: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Button { showCrownPage = true } label: {
+                Button { showPaywall = true } label: {
                     Image(systemName: "crown")
                         .foregroundStyle(theme.theme.textPrimary)
                 }
