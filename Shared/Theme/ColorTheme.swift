@@ -67,4 +67,14 @@ enum ColorTheme: String, CaseIterable, Codable, Sendable {
         case .dark, .royalBlues, .barbie: Color.white.opacity(0.45)
         }
     }
+
+    /// Maps the theme to a SwiftUI `ColorScheme` used by the new `Theme` system.
+    var colorScheme: ColorScheme {
+        switch self {
+        case .dark:
+            return .dark
+        default:
+            return .light
+        }
+    }
 }
