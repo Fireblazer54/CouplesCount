@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ShareSection: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     @Binding var isShared: Bool
     @Binding var selectedFriends: Set<UUID>
     var friends: [Friend]
@@ -9,7 +9,7 @@ struct ShareSection: View {
     var body: some View {
         SettingsCard {
             Toggle("Shared countdown", isOn: $isShared)
-                .foregroundStyle(theme.theme.textPrimary)
+                .foregroundStyle(theme.color(.Foreground))
             if isShared {
                 ForEach(friends) { friend in
                     let isSelected = Binding<Bool>(
@@ -19,7 +19,7 @@ struct ShareSection: View {
                         }
                     )
                     Toggle(friend.name, isOn: isSelected)
-                        .foregroundStyle(theme.theme.textPrimary)
+                        .foregroundStyle(theme.color(.Foreground))
                 }
             }
         }
