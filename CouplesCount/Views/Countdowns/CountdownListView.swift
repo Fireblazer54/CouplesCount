@@ -69,10 +69,8 @@ struct CountdownListView: View {
                 }
             }
             .sheet(isPresented: $showSettingsPage) {
-                NavigationStack {
-                    PlaceholderPageView(title: "Settings")
-                        .environmentObject(theme)
-                }
+                SettingsView()
+                    .environmentObject(theme)
             }
             .fullScreenCover(isPresented: $showingBlankDetail) {
                 blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
