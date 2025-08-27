@@ -5,6 +5,7 @@ import SwiftData
 struct CouplesCountApp: App {
     @StateObject private var pro: ProStatusProvider
     @StateObject private var theme: ThemeManager
+    @StateObject private var themeSettings = ThemeSettings()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showDeniedInfo = false
 
@@ -27,6 +28,7 @@ struct CouplesCountApp: App {
                     ContentView()
                         .environmentObject(theme)
                         .environmentObject(pro)
+                        .environmentObject(themeSettings)
                         // Use a custom container so the widget and app share data
                         .modelContainer(Persistence.container)
                 } else {
@@ -35,6 +37,7 @@ struct CouplesCountApp: App {
                     }
                     .environmentObject(theme)
                     .environmentObject(pro)
+                    .environmentObject(themeSettings)
                 }
             }
             .sheet(isPresented: $showDeniedInfo) {
@@ -56,7 +59,7 @@ struct CouplesCountApp: App {
                 }
             }
             .preferredColorScheme(
-                AppConfig.isStrictLight ? .light : theme.theme.colorScheme
+                AppConfig.isStrictLight ? .light : themeSettings.selection.colorScheme
             )
 
             .applyTheme()
