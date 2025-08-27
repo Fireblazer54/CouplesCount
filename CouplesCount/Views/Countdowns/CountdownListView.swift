@@ -29,7 +29,7 @@ struct CountdownListView: View {
 
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
-                        .environmentObject(themeManager)
+
 
                     if items.isEmpty {
                         EmptyStateView()
@@ -57,7 +57,7 @@ struct CountdownListView: View {
                     showPaywall: $showPaywall,
                     editing: $editing
                 )
-                .environmentObject(themeManager)
+
             }
             .sheet(isPresented: $showAddEdit, content: addEditSheet)
             .sheet(isPresented: $showShareSheet, content: shareSheet)
@@ -101,7 +101,7 @@ struct CountdownListView: View {
 }
 
 private struct HeaderView: View {
-    @EnvironmentObject private var themeManager: ThemeManager
+
     @Environment(\.theme) private var theme
     @Binding var showPaywall: Bool
     @Binding var showSettingsPage: Bool
@@ -121,7 +121,7 @@ private struct HeaderView: View {
             }
             Text("Countdowns")
                 .font(.largeTitle.bold())
-                .foregroundStyle(theme.theme.textPrimary)
+                .foregroundStyle(theme.color(.Foreground))
             Text("Shared moments with loved ones")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -149,7 +149,7 @@ private struct EmptyStateView: View {
 }
 
 private struct AddButton: View {
-    @EnvironmentObject private var themeManager: ThemeManager
+
     @Environment(\.theme) private var theme
     let itemCount: Int
     @Binding var showAddEdit: Bool
