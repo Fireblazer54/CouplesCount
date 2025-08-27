@@ -2,7 +2,7 @@ import SwiftUI
 
 // A soft, modern card container we can reuse
 struct SettingsCard<Content: View>: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     var content: () -> Content
 
     init(@ViewBuilder _ content: @escaping () -> Content) {
@@ -14,26 +14,26 @@ struct SettingsCard<Content: View>: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(theme.theme.background)
+                    .fill(theme.color(.Card))
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(Color.black, lineWidth: 1)
+                            .stroke(theme.color(.Border), lineWidth: 1)
                     )
             )
-            .shadow(color: theme.theme.textPrimary.opacity(0.12), radius: 12, y: 6)
+            .shadow(color: theme.color(.Foreground).opacity(0.12), radius: 12, y: 6)
             .padding(.horizontal, 16)
     }
 }
 
 // Section label that floats above the card
 struct SectionHeader: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     let text: String
     var body: some View {
         HStack {
             Text(text.uppercased())
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(theme.theme.textSecondary)
+                .foregroundStyle(theme.color(.MutedForeground))
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -109,7 +109,7 @@ struct ThemeSwatch: View {
 }
 
 struct SettingsButtonRow: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     let icon: String
     let title: String
     let action: () -> Void
@@ -122,16 +122,16 @@ struct SettingsButtonRow: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundStyle(theme.theme.textPrimary)
+                    .foregroundStyle(theme.color(.Foreground))
                     .frame(width: 30, height: 30)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(theme.theme.textPrimary.opacity(0.1))
+                            .fill(theme.color(.Foreground).opacity(0.1))
                     )
                     .accessibilityHidden(true)
                 Text(title)
                     .font(.body)
-                    .foregroundStyle(theme.theme.textPrimary)
+                    .foregroundStyle(theme.color(.Foreground))
                 Spacer()
             }
             .contentShape(Rectangle())
@@ -141,17 +141,17 @@ struct SettingsButtonRow: View {
 }
 
 struct SettingsKeyValueRow: View {
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(\.theme) private var theme
     let key: String
     let value: String
 
     var body: some View {
         HStack {
             Text(key)
-                .foregroundStyle(theme.theme.textPrimary)
+                .foregroundStyle(theme.color(.Foreground))
             Spacer()
             Text(value)
-                .foregroundStyle(theme.theme.textSecondary)
+                .foregroundStyle(theme.color(.MutedForeground))
         }
         .font(.body)
     }
