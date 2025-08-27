@@ -30,6 +30,7 @@ struct CountdownListView: View {
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
 
+
                     if items.isEmpty {
                         EmptyStateView()
                     } else {
@@ -56,6 +57,7 @@ struct CountdownListView: View {
                     showPaywall: $showPaywall,
                     editing: $editing
                 )
+
             }
             .sheet(isPresented: $showAddEdit, content: addEditSheet)
             .sheet(isPresented: $showShareSheet, content: shareSheet)
@@ -99,6 +101,7 @@ struct CountdownListView: View {
 }
 
 private struct HeaderView: View {
+
     @Environment(\.theme) private var theme
     @Binding var showPaywall: Bool
     @Binding var showSettingsPage: Bool
@@ -146,6 +149,7 @@ private struct EmptyStateView: View {
 }
 
 private struct AddButton: View {
+
     @Environment(\.theme) private var theme
     let itemCount: Int
     @Binding var showAddEdit: Bool
