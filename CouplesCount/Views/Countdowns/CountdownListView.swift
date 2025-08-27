@@ -12,8 +12,6 @@ struct CountdownListView: View {
 
     @State private var showAddEdit = false
     @State private var editing: Countdown? = nil
-    @State private var showSettings = false
-    @State private var showPremium = false
     @State private var shareURL: URL? = nil
     @State private var showShareSheet = false
     @State private var showPaywall = false
@@ -28,7 +26,7 @@ struct CountdownListView: View {
                 theme.theme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    TopBar(showPremium: $showPremium, showSettings: $showSettings)
+                    HeaderView()
                         .environmentObject(theme)
 
                     if items.isEmpty {
@@ -59,11 +57,7 @@ struct CountdownListView: View {
                 )
                 .environmentObject(theme)
             }
-            .overlay(alignment: .topLeading) {
-                premiumPromoOverlay(show: $showPremium)
-            }
             .sheet(isPresented: $showAddEdit, content: addEditSheet)
-            .sheet(isPresented: $showSettings, content: settingsSheet)
             .sheet(isPresented: $showShareSheet, content: shareSheet)
             .sheet(isPresented: $showPaywall, content: paywallSheet)
             .fullScreenCover(isPresented: $showingBlankDetail) {
@@ -76,16 +70,6 @@ struct CountdownListView: View {
     // MARK: - Overlays & Sheets
 
     @ViewBuilder
-    private func premiumPromoOverlay(show: Binding<Bool>) -> some View {
-        if show.wrappedValue {
-            PremiumPromoView(show: show)
-                .environmentObject(theme)
-                .transition(.scale(scale: 0.1, anchor: .topLeading).combined(with: .opacity))
-                .zIndex(1)
-        }
-    }
-
-    @ViewBuilder
     private func blankDetailOverlay(isPresented _: Binding<Bool>, onClose _: () -> Void) -> some View {
         BlankDetailView()
             .environmentObject(theme)
@@ -93,12 +77,6 @@ struct CountdownListView: View {
 
     private func addEditSheet() -> some View {
         AddEditCountdownView(existing: editing)
-            .environmentObject(theme)
-            .environmentObject(pro)
-    }
-
-    private func settingsSheet() -> some View {
-        SettingsView()
             .environmentObject(theme)
             .environmentObject(pro)
     }
@@ -116,42 +94,22 @@ struct CountdownListView: View {
     }
 }
 
-private struct TopBar: View {
+private struct HeaderView: View {
     @EnvironmentObject private var theme: ThemeManager
-    @Binding var showPremium: Bool
-    @Binding var showSettings: Bool
 
     var body: some View {
-        HStack {
-            Button {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                    showPremium = true
-                }
-            } label: {
-                Image(systemName: "crown.fill")
-                    .font(.title2)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Go Pro")
-                    .accessibilityHint("View premium features")
-            }
-            Spacer()
-            Text(Date.now, format: .dateTime.weekday(.wide).month().day())
-                .font(.system(size: UIFontMetrics(forTextStyle: .title1).scaledValue(for: 28), weight: .semibold))
-                .foregroundStyle(theme.theme == .light ? theme.theme.textPrimary : .primary)
-
-            Spacer()
-            Button { showSettings = true } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.title2)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Settings")
-                    .accessibilityHint("Open settings")
-            }
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Countdowns")
+                .font(.largeTitle.bold())
+                .foregroundStyle(theme.theme.textPrimary)
+            Text("Shared moments with loved ones")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
-        .safeAreaPadding(.top, 12)
+        .padding(.top, 32)
+        .padding(.bottom, 16)
     }
 }
 
