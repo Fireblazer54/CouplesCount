@@ -63,16 +63,14 @@ struct CountdownListView: View {
             .fullScreenCover(item: $selectedCountdown) { countdown in
                 CountdownDetailView(countdown: countdown)
             }
-            .navigationTitle("Countdowns")
-            .navigationBarTitleDisplayMode(.large)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button { showPaywall = true } label: {
                         Image(systemName: "crown")
                             .foregroundStyle(Color("Foreground"))
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettingsPage = true } label: {
                         Image(systemName: "gearshape")
                             .foregroundStyle(Color("Foreground"))
@@ -91,6 +89,7 @@ struct CountdownListView: View {
                 }
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
         .tint(Theme.accent)
         .environmentObject(nowProvider)
     }
