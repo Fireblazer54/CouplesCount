@@ -7,8 +7,8 @@ func DeleteSwipeButton(
     label: String = "Delete",
     hint: String = "Remove countdown",
     iconOnly: Bool = true,
-    background: Color = .red,
-    foreground: Color = .white
+    background: Color = Color("Destructive"),
+    foreground: Color = Color("Background")
 ) -> some View {
     Button(role: .destructive, action: action) {
         if iconOnly {
@@ -34,8 +34,8 @@ func ArchiveSwipeButton(
     systemImage: String = "archivebox",
     hint: String = "Archive countdown",
     iconOnly: Bool = true,
-    background: Color = .blue,
-    foreground: Color = .white
+    background: Color = Color("Primary"),
+    foreground: Color = Color("Background")
 ) -> some View {
     Button(action: action) {
         if iconOnly {
@@ -60,8 +60,8 @@ func ShareSwipeButton(
     label: String = "Share",
     hint: String = "Share countdown",
     iconOnly: Bool = true,
-    background: Color = .blue,
-    foreground: Color = .white
+    background: Color = Color("Accent"),
+    foreground: Color = Color("Background")
 ) -> some View {
     Button(action: action) {
         if iconOnly {

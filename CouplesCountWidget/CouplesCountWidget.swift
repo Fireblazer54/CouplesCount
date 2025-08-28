@@ -50,13 +50,8 @@ struct CouplesCountProvider: AppIntentTimelineProvider {
 struct CouplesCountWidgetView: View {
     var entry: CouplesCountEntry
 
-    private var theme: ColorTheme {
-        let raw = AppGroup.defaults.string(forKey: "global_color_theme")
-        return ColorTheme(rawOrDefault: raw)
-    }
-
     private var cardColor: Color {
-        resolvedCardColor(theme: theme, backgroundStyle: "color", colorHex: nil)
+        resolvedCardColor(backgroundStyle: "color", colorHex: nil)
     }
 
     private var primaryText: Color { cardColor.readablePrimary }
@@ -79,9 +74,7 @@ struct CouplesCountWidgetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .containerBackground(
-            theme == .light ?
-                AnyShapeStyle(cardColor) :
-                AnyShapeStyle(LinearGradient(colors: [cardColor, cardColor.opacity(0.75)], startPoint: .topLeading, endPoint: .bottomTrailing)),
+            AnyShapeStyle(cardColor),
             for: .widget
         )
     }

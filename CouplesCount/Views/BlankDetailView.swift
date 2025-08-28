@@ -1,12 +1,11 @@
 import SwiftUI
 
 struct BlankDetailView: View {
-    @EnvironmentObject private var theme: ThemeManager
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
-            theme.theme.background
+            Color("Background")
                 .ignoresSafeArea()
             Text("Detail (blank)")
                 .font(.title2)
@@ -18,12 +17,12 @@ struct BlankDetailView: View {
                 Image(systemName: "xmark")
                     .font(.title2)
                     .padding()
-                    .foregroundStyle(theme.theme.textPrimary)
+                    .foregroundStyle(Color("Foreground"))
             }
         }
     }
 }
 
 #Preview {
-    BlankDetailView().environmentObject(ThemeManager())
+    BlankDetailView()
 }

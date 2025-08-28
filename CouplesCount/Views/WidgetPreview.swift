@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct WidgetPreview: View {
-    @EnvironmentObject private var theme: ThemeManager
 
     let title: String
     let targetDate: Date
@@ -14,7 +13,7 @@ struct WidgetPreview: View {
     @State private var now = Date()
 
     private var cardColor: Color {
-        resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: bgColorHex)
+        resolvedCardColor(backgroundStyle: backgroundStyle, colorHex: bgColorHex)
     }
 
     private var primaryText: Color { cardColor.readablePrimary }
@@ -39,7 +38,7 @@ struct WidgetPreview: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .stroke(Color.black, lineWidth: 1)
+                        .stroke(Color("Border"), lineWidth: 1)
                 )
                 .frame(height: 140)
 
@@ -66,11 +65,8 @@ struct WidgetPreview: View {
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color" {
             let c = cardColor
-            if theme.theme == .light {
-                return AnyShapeStyle(c)
-            }
-            return AnyShapeStyle(LinearGradient(colors: [c, c.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
+            return AnyShapeStyle(c)
         }
-        return AnyShapeStyle(theme.theme.primary)
+        return AnyShapeStyle(Color("Primary"))
     }
 }

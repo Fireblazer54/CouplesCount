@@ -4,7 +4,6 @@ import SwiftData
 struct ArchiveView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject private var theme: ThemeManager
     @Query(filter: #Predicate<Countdown> { $0.isArchived },
            sort: \Countdown.targetUTC, order: .forward)
     private var items: [Countdown]
@@ -12,13 +11,13 @@ struct ArchiveView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                theme.theme.background.ignoresSafeArea()
+                Color("Background").ignoresSafeArea()
 
                 if items.isEmpty {
                     VStack(spacing: 8) {
                         Text("No archived countdowns")
                             .font(.headline)
-                            .foregroundStyle(theme.theme.textSecondary)
+                            .foregroundStyle(Color("Secondary"))
                     }
                 } else {
                     List {
@@ -38,7 +37,6 @@ struct ArchiveView: View {
                                     shared: item.isShared,
                                     shareAction: nil
                                 )
-                            .environmentObject(theme)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -52,8 +50,8 @@ struct ArchiveView: View {
                                         }
                                         Haptics.warning()
                                     },
-                                    background: theme.theme.primary,
-                                    foreground: theme.theme.textPrimary
+                                    background: Color("Destructive"),
+                                    foreground: Color("Background")
                                 )
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
@@ -69,8 +67,8 @@ struct ArchiveView: View {
                                     label: "Unarchive",
                                     systemImage: "arrow.uturn.backward",
                                     hint: "Restore countdown",
-                                    background: theme.theme.primary,
-                                    foreground: theme.theme.textPrimary
+                                    background: Color("Primary"),
+                                    foreground: Color("Background")
                                 )
                             }
                         }
@@ -88,7 +86,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .tint(theme.theme.textPrimary)
+        .tint(Color("Foreground"))
     }
 }
 

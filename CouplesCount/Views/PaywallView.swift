@@ -2,19 +2,14 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
 
     private var backgroundGradient: LinearGradient {
         let light = [
             Color(red: 1.0, green: 0.95, blue: 0.92),
             Color(red: 1.0, green: 0.90, blue: 0.85)
         ]
-        let dark = [
-            Color(red: 0.10, green: 0.09, blue: 0.15),
-            Color(red: 0.04, green: 0.05, blue: 0.08)
-        ]
         return LinearGradient(
-            colors: colorScheme == .dark ? dark : light,
+            colors: light,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
@@ -31,9 +26,7 @@ struct PaywallView: View {
                         Circle()
                             .fill(
                                 RadialGradient(
-                                    colors: colorScheme == .dark ?
-                                        [Color.purple.opacity(0.6), .clear] :
-                                        [Color.orange.opacity(0.6), .clear],
+                                    colors: [Color.orange.opacity(0.6), .clear],
                                     center: .center,
                                     startRadius: 0,
                                     endRadius: 100

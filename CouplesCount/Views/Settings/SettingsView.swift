@@ -3,9 +3,6 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
-    @EnvironmentObject private var themeSettings: ThemeSettings
     @Query(filter: #Predicate<Countdown> { $0.isArchived })
     private var archivedItems: [Countdown]
 
@@ -15,8 +12,6 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
-                    appearanceSection
-
                     if AppConfig.entitlementsMode == .live && !Entitlements.current.isUnlimited {
                         premiumSection
                     }
@@ -27,11 +22,10 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 20)
             }
-            .background(theme.color(.Background).ignoresSafeArea())
-            .tint(theme.color(.Primary))
+            .background(Color("Background").ignoresSafeArea())
+            .tint(Color("Primary"))
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
-            .toolbarColorScheme(themeSettings.selection.colorScheme ?? colorScheme, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
             }
@@ -43,76 +37,34 @@ struct SettingsView: View {
 }
 
 private extension SettingsView {
-    var appearanceSection: some View {
-        SettingsCard {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 12) {
-                    Image(systemName: "paintpalette.fill")
-                        .font(.title3)
-                        .foregroundStyle(theme.color(.Foreground))
-                        .frame(width: 30, height: 30)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(theme.color(.Foreground).opacity(0.1))
-                        )
-                        .accessibilityHidden(true)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Appearance")
-                            .font(.body)
-                            .foregroundStyle(theme.color(.Foreground))
-                        Text("Choose your preferred theme")
-                            .font(.footnote)
-                            .foregroundStyle(theme.color(.MutedForeground))
-                    }
-
-                    Spacer()
-                }
-
-                Picker(
-                    "Appearance",
-                    selection: Binding(
-                        get: { themeSettings.selection },
-                        set: { themeSettings.set($0) }
-                    )
-                ) {
-                    Text("System").tag(AppTheme.system)
-                    Text("Light").tag(AppTheme.light)
-                    Text("Dark").tag(AppTheme.dark)
-                }
-                .pickerStyle(.segmented)
-            }
-        }
-    }
-
     var premiumSection: some View {
         SettingsCard {
             Button(action: { showPaywall = true }) {
                 HStack(spacing: 12) {
                     Image(systemName: "crown.fill")
                         .font(.title3)
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                         .frame(width: 30, height: 30)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(theme.color(.Foreground).opacity(0.1))
+                                .fill(Color("Foreground").opacity(0.1))
                         )
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Premium")
                             .font(.body)
-                            .foregroundStyle(theme.color(.Foreground))
+                            .foregroundStyle(Color("Foreground"))
                         Text("Unlock unlimited countdowns and features")
                             .font(.footnote)
-                            .foregroundStyle(theme.color(.MutedForeground))
+                            .foregroundStyle(Color("Secondary"))
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(theme.color(.MutedForeground))
+                        .foregroundStyle(Color("Secondary"))
                 }
                 .contentShape(Rectangle())
             }
@@ -128,28 +80,28 @@ private extension SettingsView {
                 HStack(spacing: 12) {
                     Image(systemName: "archivebox.fill")
                         .font(.title3)
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                         .frame(width: 30, height: 30)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(theme.color(.Foreground).opacity(0.1))
+                                .fill(Color("Foreground").opacity(0.1))
                         )
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Archive")
                             .font(.body)
-                            .foregroundStyle(theme.color(.Foreground))
+                            .foregroundStyle(Color("Foreground"))
                         Text("\(archivedItems.count) completed countdowns")
                             .font(.footnote)
-                            .foregroundStyle(theme.color(.MutedForeground))
+                            .foregroundStyle(Color("Secondary"))
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
-                        .foregroundStyle(theme.color(.MutedForeground))
+                        .foregroundStyle(Color("Secondary"))
                 }
                 .contentShape(Rectangle())
             }
@@ -161,13 +113,13 @@ private extension SettingsView {
         VStack(spacing: 4) {
             Text("Countdowns")
                 .font(.footnote.weight(.semibold))
-                .foregroundStyle(theme.color(.MutedForeground))
+                .foregroundStyle(Color("Secondary"))
             Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
                 .font(.footnote)
-                .foregroundStyle(theme.color(.MutedForeground))
+                .foregroundStyle(Color("Secondary"))
             Text("Made with ❤️ for shared moments")
                 .font(.footnote)
-                .foregroundStyle(theme.color(.MutedForeground))
+                .foregroundStyle(Color("Secondary"))
         }
         .padding(.top, 12)
     }

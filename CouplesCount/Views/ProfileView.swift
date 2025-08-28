@@ -3,8 +3,6 @@ import SwiftData
 import UIKit
 
 struct ProfileView: View {
-    @EnvironmentObject private var themeManager: ThemeManager
-    @Environment(\.theme) private var theme
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<Countdown> { $0.isShared && !$0.isArchived },
            sort: \Countdown.targetUTC, order: .forward)
@@ -33,12 +31,12 @@ struct ProfileView: View {
                                 Image(systemName: "person.crop.circle.fill")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundStyle(theme.color(.MutedForeground))
+                                    .foregroundStyle(Color("Secondary"))
                                     .padding(4)
                             }
                         }
                         .frame(width: 80, height: 80)
-                        .background(theme.color(.Muted).opacity(profileImageData == nil ? 0.2 : 0))
+                        .background(Color("Secondary").opacity(profileImageData == nil ? 0.2 : 0))
                         .clipShape(Circle())
                     }
                     .accessibilityLabel("Profile photo")
@@ -63,22 +61,28 @@ struct ProfileView: View {
                     VStack {
                         Text("\(shared.count)")
                             .font(.headline)
+                            .foregroundStyle(Color("Foreground"))
                         Text("Posts")
                             .font(.subheadline)
+                            .foregroundStyle(Color("Secondary"))
                     }
                     Spacer()
                     VStack {
                         Text("0")
                             .font(.headline)
+                            .foregroundStyle(Color("Foreground"))
                         Text("Followers")
                             .font(.subheadline)
+                            .foregroundStyle(Color("Secondary"))
                     }
                     Spacer()
                     VStack {
                         Text("0")
                             .font(.headline)
+                            .foregroundStyle(Color("Foreground"))
                         Text("Following")
                             .font(.subheadline)
+                            .foregroundStyle(Color("Secondary"))
                     }
                 }
                 .padding(.horizontal)
@@ -87,12 +91,14 @@ struct ProfileView: View {
                 Text("Username")
                     .font(.title2)
                     .fontWeight(.semibold)
+                    .foregroundStyle(Color("Foreground"))
                     .padding(.horizontal)
                     .padding(.top, 4)
 
                 Button("Add Friend") {
                     // Placeholder for friend adding flow
                 }
+                .foregroundStyle(Color("Accent"))
                 .padding(.horizontal)
                 .padding(.bottom, 4)
 
@@ -113,7 +119,6 @@ struct ProfileView: View {
                             shared: item.isShared,
                             shareAction: nil
                         )
-                        .environmentObject(themeManager)
                         .contextMenu {
                             DeleteSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -123,7 +128,7 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.warning()
-                            }, iconOnly: false)
+                            }, iconOnly: false, background: Color("Destructive"), foreground: Color("Background"))
 
                             ArchiveSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -133,7 +138,7 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.light()
-                            }, iconOnly: false)
+                            }, iconOnly: false, background: Color("Primary"), foreground: Color("Background"))
                         }
                     }
                 }
@@ -142,6 +147,6 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .background(theme.color(.Background).ignoresSafeArea())
+        .background(Color("Background").ignoresSafeArea())
     }
 }
