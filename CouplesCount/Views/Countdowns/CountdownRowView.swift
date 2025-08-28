@@ -38,7 +38,7 @@ struct CountdownRowView: View {
             onSelect(countdown)
         }
         .scaleEffect(isPressed ? 0.97 : 1)
-        .shadow(radius: isPressed ? 0 : 4)
+        .shadow(color: .black.opacity(0.05), radius: isPressed ? 0 : 4, y: 2)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
