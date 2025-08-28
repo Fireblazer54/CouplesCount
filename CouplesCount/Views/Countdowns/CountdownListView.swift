@@ -4,6 +4,7 @@ import UIKit
 
 struct CountdownListView: View {
     @EnvironmentObject private var pro: ProStatusProvider
+    @StateObject private var nowProvider = NowProvider()
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
            sort: \.targetUTC, order: .forward)
@@ -68,6 +69,7 @@ struct CountdownListView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .tint(Theme.accent)
+        .environmentObject(nowProvider)
     }
 
     private func addEditSheet() -> some View {
