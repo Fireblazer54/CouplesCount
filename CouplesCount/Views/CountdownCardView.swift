@@ -47,7 +47,7 @@ struct CountdownCardView: View {
 
 
     private let corner: CGFloat = 16
-    @State private var now = Date()
+    @EnvironmentObject private var nowProvider: NowProvider
 
     private var cardColor: Color {
         resolvedCardColor(backgroundStyle: backgroundStyle, colorHex: colorHex)
@@ -62,7 +62,7 @@ struct CountdownCardView: View {
     }
 
     private var remaining: (value: String, unit: String) {
-        let text = DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)
+        let text = DateUtils.remainingText(to: targetDate, from: nowProvider.now, in: timeZoneID)
         let parts = text.split(separator: " ")
         let value = parts.first.map(String.init) ?? ""
         let unit = parts.dropFirst().first.map { $0.uppercased() } ?? ""
@@ -196,8 +196,7 @@ struct CountdownCardView: View {
         .opacity(archived ? 0.55 : 1)
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: archived)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title), \(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)), \(dateText)")
-        .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
+        .accessibilityLabel("\(title), \(DateUtils.remainingText(to: targetDate, from: nowProvider.now, in: timeZoneID)), \(dateText)")
     }
 
     private var accentGradient: LinearGradient {
