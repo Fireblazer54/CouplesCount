@@ -5,7 +5,7 @@ struct BlankDetailView: View {
 
     var body: some View {
         ZStack {
-            Color("Background")
+            Theme.backgroundGradient
                 .ignoresSafeArea()
             Text("Detail (blank)")
                 .font(.title2)

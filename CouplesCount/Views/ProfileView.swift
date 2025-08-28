@@ -128,7 +128,7 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.warning()
-                            }, iconOnly: false, background: Color("Destructive"), foreground: Color("Background"))
+                            }, iconOnly: false, background: Color("Destructive"), foreground: .white)
 
                             ArchiveSwipeButton({
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -138,7 +138,7 @@ struct ProfileView: View {
                                     updateWidgetSnapshot(afterSaving: all)
                                 }
                                 Haptics.light()
-                            }, iconOnly: false, background: Color("Primary"), foreground: Color("Background"))
+                            }, iconOnly: false, background: Theme.accent, foreground: .white)
                         }
                     }
                 }
@@ -147,6 +147,6 @@ struct ProfileView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.85), value: shared)
             }
         }
-        .background(Color("Background").ignoresSafeArea())
+        .background(Theme.backgroundGradient.ignoresSafeArea())
     }
 }

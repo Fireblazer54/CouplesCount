@@ -134,11 +134,11 @@ struct AddEditCountdownView: View {
                     .padding(.vertical, 8)
                     .padding(.trailing, 2)
             }
-            .background(Color("Background").ignoresSafeArea())
-            .tint(Color("Primary"))
+            .background(Theme.backgroundGradient.ignoresSafeArea())
+            .tint(Theme.accent)
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color("Background"), for: .navigationBar)
+            .toolbarBackground(Theme.backgroundTop, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -196,7 +196,7 @@ struct AddEditCountdownView: View {
                 if new != nil { Haptics.light() }
             }
             .onAppear {
-                let defaultHex = Color("Primary").hexString
+                let defaultHex = Theme.accent.hexString
                 if let existing {
                     title = existing.title
                     date = existing.targetDate
@@ -227,7 +227,7 @@ struct AddEditCountdownView: View {
                 }
             }
         }
-        .tint(Color("Primary"))
+        .tint(Theme.accent)
         .alert("Couldn’t Save",
                isPresented: Binding(get: { saveError != nil },
                                    set: { if !$0 { saveError = nil } })) {
@@ -244,7 +244,7 @@ struct AddEditCountdownView: View {
         guard !trimmed.isEmpty else { showValidation = true; return }
 
         do {
-            let defaultHex = Color("Primary").hexString.uppercased()
+            let defaultHex = Theme.accent.hexString.uppercased()
             let chosenHex = colorHex.uppercased()
             let storedHex: String? = (chosenHex == defaultHex) ? nil : chosenHex
 

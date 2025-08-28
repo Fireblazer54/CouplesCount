@@ -7,7 +7,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color("Background"), Color("Primary")], startPoint: .top, endPoint: .bottom)
+            Theme.backgroundGradient
                 .ignoresSafeArea()
 
             TabView {
@@ -21,7 +21,7 @@ struct ContentView: View {
                         Label("Profile", systemImage: "person.crop.circle")
                     }
             }
-            .tint(Color("Primary"))
+            .tint(Theme.accent)
             .onOpenURL { url in
                 do {
                     try CountdownShareService.importCountdown(from: url, context: modelContext)

@@ -46,9 +46,9 @@ struct CountdownRowView: View {
         }
         .listRowSeparator(.hidden)
         .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-        .listRowBackground(Color("Background"))
+        .listRowBackground(Color.white)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: Color("Background"))
+            DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: .white)
         }
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
             ArchiveSwipeButton(
@@ -56,8 +56,8 @@ struct CountdownRowView: View {
                 label: countdown.isArchived ? "Unarchive" : "Archive",
                 systemImage: countdown.isArchived ? "arrow.uturn.backward" : "archivebox",
                 hint: countdown.isArchived ? "Restore countdown" : "Archive countdown",
-                background: Color("Primary"),
-                foreground: Color("Background")
+                background: Theme.accent,
+                foreground: .white
             )
         }
     }

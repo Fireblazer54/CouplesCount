@@ -5,9 +5,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": "0.039",
-          "green": "0.039",
-          "blue": "0.039",
+          "red": "0.000",
+          "green": "0.000",
+          "blue": "0.000",
           "alpha": "1.000"
         }
       }
@@ -16,6 +16,6 @@
   "info": {
     "version": 1,
     "author": "xcode",
-    "light": "light:oklch(0.145 0 0)"
+    "light": "light:#000000"
   }
 }

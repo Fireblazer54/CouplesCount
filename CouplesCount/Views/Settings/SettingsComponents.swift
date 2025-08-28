@@ -13,13 +13,13 @@ struct SettingsCard<Content: View>: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color("Background"))
+                    .fill(Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(Color("Border"), lineWidth: 1)
+                            .stroke(Color.black.opacity(0.1), lineWidth: 1)
                     )
             )
-            .shadow(color: Color("Foreground").opacity(0.12), radius: 12, y: 6)
+            .shadow(color: Color.black.opacity(0.12), radius: 12, y: 6)
             .padding(.horizontal, 16)
     }
 }
