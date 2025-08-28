@@ -66,6 +66,7 @@ struct CountdownListView: View {
                 CountdownDetailView(countdown: countdown)
             }
         }
+        .toolbar(.hidden, for: .navigationBar)
         .tint(Theme.accent)
     }
 
