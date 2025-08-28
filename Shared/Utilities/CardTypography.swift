@@ -10,7 +10,8 @@ struct CardTypography {
 
     /// SwiftUI font for a given style and role.
     static func font(for style: CardFontStyle, role: Role) -> Font {
-        Font(uiFont(for: style, role: role))
+        let font = Font(uiFont(for: style, role: role))
+        return role == .number ? font.monospacedDigit() : font
     }
 
     /// UIKit font for a given style and role.
@@ -18,7 +19,7 @@ struct CardTypography {
         let (textStyle, weight): (UIFont.TextStyle, UIFont.Weight) = {
             switch role {
             case .title: return (.headline, .semibold)
-            case .number: return (.largeTitle, .bold)
+            case .number: return (.largeTitle, .heavy)
             case .date: return (.footnote, .regular)
             }
         }()

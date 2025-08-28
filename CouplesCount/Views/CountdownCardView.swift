@@ -144,6 +144,7 @@ struct CountdownCardView: View {
                 VStack(alignment: .center, spacing: 4) {
                     Text(remaining.value)
                         .font(CardTypography.font(for: fontStyle, role: .number))
+                        .monospacedDigit()
                         .foregroundStyle(primaryText)
 
                     Text(remaining.unit)
