@@ -160,6 +160,12 @@ struct CountdownCardView: View {
             }
             .padding(20)
         }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(accentGradient)
+                .frame(height: 1)
+                .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
+        }
         .overlay(alignment: .topTrailing) {
             HStack(spacing: 4) {
                 if shared {
@@ -192,6 +198,20 @@ struct CountdownCardView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(title), \(DateUtils.remainingText(to: targetDate, from: now, in: timeZoneID)), \(dateText)")
         .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { now = $0 }
+    }
+
+    private var accentGradient: LinearGradient {
+        if backgroundStyle == "color",
+           let hex = colorHex,
+           hex.contains(",") {
+            let parts = hex.split(separator: ",")
+            if let c1 = Color(hex: String(parts[0])),
+               let c2 = Color(hex: String(parts.count > 1 ? parts[1] : parts[0])) {
+                return LinearGradient(colors: [c1, c2], startPoint: .leading, endPoint: .trailing)
+            }
+        }
+        let c = cardColor
+        return LinearGradient(colors: [c, c], startPoint: .leading, endPoint: .trailing)
     }
 
     private var backgroundFill: some ShapeStyle {
