@@ -14,10 +14,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     appearanceSection
-
-                    if AppConfig.entitlementsMode == .live && !Entitlements.current.isUnlimited {
-                        premiumSection
-                    }
+                    premiumSection
 
                     archiveSection
 
