@@ -6,6 +6,7 @@ struct CouplesCountApp: App {
     @StateObject private var pro: ProStatusProvider
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showDeniedInfo = false
+    @AppStorage("appearance") private var appearance: Appearance = .light
 
     init() {
         let provider = ProStatusProvider()
@@ -41,7 +42,7 @@ struct CouplesCountApp: App {
                 .padding()
                 .presentationDetents([.medium])
             }
-            .preferredColorScheme(.light)
+            .preferredColorScheme(appearance.colorScheme)
         }
     }
 }

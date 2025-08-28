@@ -6,15 +6,15 @@ struct SettingsView: View {
     @Query(filter: #Predicate<Countdown> { $0.isArchived })
     private var archivedItems: [Countdown]
 
+    @AppStorage("appearance") private var appearance: Appearance = .light
     @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
-                    if AppConfig.entitlementsMode == .live && !Entitlements.current.isUnlimited {
-                        premiumSection
-                    }
+                    appearanceSection
+                    premiumSection
 
                     archiveSection
 
@@ -30,6 +30,7 @@ struct SettingsView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
             }
         }
+        .preferredColorScheme(appearance.colorScheme)
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView()
         }
@@ -37,6 +38,37 @@ struct SettingsView: View {
 }
 
 private extension SettingsView {
+    var appearanceSection: some View {
+        SettingsCard {
+            HStack(spacing: 12) {
+                Image(systemName: "paintpalette.fill")
+                    .font(.title3)
+                    .foregroundStyle(Color("Foreground"))
+                    .frame(width: 30, height: 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color("Foreground").opacity(0.1))
+                    )
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Appearance")
+                        .font(.body)
+                        .foregroundStyle(Color("Foreground"))
+                    Text("Choose your preferred theme")
+                        .font(.footnote)
+                        .foregroundStyle(Color("Secondary"))
+
+                    Picker("Appearance", selection: $appearance) {
+                        Text("Light").tag(Appearance.light)
+                        Text("Dark").tag(Appearance.dark)
+                    }
+                    .pickerStyle(.segmented)
+                }
+            }
+        }
+    }
+
     var premiumSection: some View {
         SettingsCard {
             Button(action: { showPaywall = true }) {
