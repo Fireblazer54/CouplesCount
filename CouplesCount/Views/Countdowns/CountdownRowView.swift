@@ -27,6 +27,7 @@ struct CountdownRowView: View {
             colorHex: countdown.backgroundColorHex,
             imageData: countdown.backgroundImageData,
             fontStyle: countdown.cardFontStyle,
+            useResolvedColor: false,
             shared: countdown.isShared,
             shareAction: {
                 if let exportURL { onShare(exportURL) }
@@ -49,7 +50,7 @@ struct CountdownRowView: View {
             onEdit(countdown)
         }
         .listRowSeparator(.hidden)
-        .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+        .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
         .listRowBackground(Color.clear)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: .white)

@@ -19,8 +19,8 @@ enum CardFontStyle: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .classic: return nil // System font (SF Pro)
         case .cursive: return "Snell Roundhand"
-        case .minimalist: return "Avenir Next"
-        case .artsy: return "Didot"
+        case .minimalist: return nil
+        case .artsy: return nil
         }
     }
 }
