@@ -148,8 +148,8 @@ struct CountdownCardView: View {
                         .foregroundStyle(primaryText)
 
                     Text(remaining.unit)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                         .font(.caption.bold())
                         .tracking(1)
                         .background(

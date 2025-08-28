@@ -49,7 +49,7 @@ struct CountdownRowView: View {
             onEdit(countdown)
         }
         .listRowSeparator(.hidden)
-        .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
+        .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
         .listRowBackground(Color.white)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: .white)
