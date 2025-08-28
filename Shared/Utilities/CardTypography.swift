@@ -19,7 +19,7 @@ struct CardTypography {
         let (textStyle, weight): (UIFont.TextStyle, UIFont.Weight) = {
             switch role {
             case .title: return (.headline, .semibold)
-            case .number: return (.largeTitle, .black)
+            case .number: return (.largeTitle, .heavy)
             case .date: return (.footnote, .regular)
             }
         }()
