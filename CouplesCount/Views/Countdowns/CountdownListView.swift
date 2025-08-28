@@ -27,9 +27,6 @@ struct CountdownListView: View {
                 Theme.backgroundGradient.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
-
-
                     if items.isEmpty {
                         EmptyStateView()
                     } else {
@@ -67,7 +64,33 @@ struct CountdownListView: View {
                 CountdownDetailView(countdown: countdown)
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Countdowns")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button { showPaywall = true } label: {
+                    Image(systemName: "crown")
+                        .foregroundStyle(Color("Foreground"))
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button { showSettingsPage = true } label: {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(Color("Foreground"))
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 4) {
+                    Text("Countdowns")
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(Color("Foreground"))
+                    Text("Shared moments with loved ones")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("Secondary"))
+                }
+                .multilineTextAlignment(.center)
+            }
+        }
         .tint(Theme.accent)
         .environmentObject(nowProvider)
     }
@@ -86,43 +109,6 @@ struct CountdownListView: View {
 
     private func paywallSheet() -> some View {
         PaywallView()
-    }
-}
-
-private struct HeaderView: View {
-    @Binding var showPaywall: Bool
-    @Binding var showSettingsPage: Bool
-
-    var body: some View {
-        VStack(spacing: 4) {
-            HStack {
-                Button { showPaywall = true } label: {
-                    Image(systemName: "crown")
-                        .foregroundStyle(Color("Foreground"))
-                }
-                Spacer()
-                Button { showSettingsPage = true } label: {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(Color("Foreground"))
-                }
-            }
-            .overlay {
-                VStack(spacing: 4) {
-                    Text("Countdowns")
-                        .font(.largeTitle.bold())
-                        .foregroundStyle(Color("Foreground"))
-                    Text("Shared moments with loved ones")
-                        .font(.subheadline)
-                        .foregroundStyle(Color("Secondary"))
-                }
-                .multilineTextAlignment(.center)
-            }
-        }
-        .padding(.horizontal)
-        .padding(.top, 8)
-        .padding(.bottom, 8)
-        .background(Color(uiColor: .systemBackground))
-        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }
 }
 
