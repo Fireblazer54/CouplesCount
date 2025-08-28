@@ -16,7 +16,6 @@ struct CountdownCardView: View {
     let shared: Bool
     let shareAction: (() -> Void)?
     let height: CGFloat
-    let useResolvedColor: Bool
 
     init(
         title: String,
@@ -30,8 +29,7 @@ struct CountdownCardView: View {
         fontStyle: CardFontStyle = .classic,
         shared: Bool,
         shareAction: (() -> Void)? = nil,
-        height: CGFloat = 140,
-        useResolvedColor: Bool = true
+        height: CGFloat = 140
     ) {
         self.title = title
         self.targetDate = targetDate
@@ -45,7 +43,6 @@ struct CountdownCardView: View {
         self.shared = shared
         self.shareAction = shareAction
         self.height = height
-        self.useResolvedColor = useResolvedColor
     }
 
 
@@ -53,9 +50,7 @@ struct CountdownCardView: View {
     @State private var now = Date()
 
     private var cardColor: Color {
-        useResolvedColor
-            ? resolvedCardColor(backgroundStyle: backgroundStyle, colorHex: colorHex)
-            : .white
+        resolvedCardColor(backgroundStyle: backgroundStyle, colorHex: colorHex)
     }
 
     private var primaryText: Color { cardColor.readablePrimary }
@@ -149,19 +144,16 @@ struct CountdownCardView: View {
                 VStack(alignment: .center, spacing: 4) {
                     Text(remaining.value)
                         .font(CardTypography.font(for: fontStyle, role: .number))
+                        .monospacedDigit()
                         .foregroundStyle(primaryText)
 
                     Text(remaining.unit)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .font(.caption.bold())
-                        .tracking(0.5)
+                        .tracking(1)
                         .background(
-                            Capsule()
-                                .fill(primaryText.opacity(0.05))
-                                .overlay(
-                                    Capsule().strokeBorder(primaryText, lineWidth: 0.75)
-                                )
+                            Capsule().stroke(primaryText)
                         )
                         .foregroundStyle(primaryText)
                 }
@@ -209,7 +201,7 @@ struct CountdownCardView: View {
     }
 
     private var accentGradient: LinearGradient {
-        if useResolvedColor, backgroundStyle == "color",
+        if backgroundStyle == "color",
            let hex = colorHex,
            hex.contains(",") {
             let parts = hex.split(separator: ",")
@@ -218,12 +210,12 @@ struct CountdownCardView: View {
                 return LinearGradient(colors: [c1, c2], startPoint: .leading, endPoint: .trailing)
             }
         }
-        let c = useResolvedColor ? cardColor : Theme.accent.opacity(0.2)
+        let c = cardColor
         return LinearGradient(colors: [c, c], startPoint: .leading, endPoint: .trailing)
     }
 
     private var backgroundFill: some ShapeStyle {
-        if useResolvedColor, backgroundStyle == "color" {
+        if backgroundStyle == "color" {
             if let hex = colorHex, hex.contains(",") {
                 let parts = hex.split(separator: ",")
                 if let c1 = Color(hex: String(parts[0])),
@@ -234,6 +226,6 @@ struct CountdownCardView: View {
             let c = cardColor
             return AnyShapeStyle(c)
         }
-        return AnyShapeStyle(Color.white)
+        return AnyShapeStyle(Color("Primary"))
     }
 }
