@@ -121,7 +121,7 @@ private struct HeaderView: View {
         .padding(.horizontal)
         .padding(.top, 8)
         .padding(.bottom, 8)
-        .background(Color.white)
+        .background(Color(uiColor: .systemBackground))
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }
 }
