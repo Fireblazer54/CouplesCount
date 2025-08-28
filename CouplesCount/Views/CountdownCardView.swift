@@ -69,6 +69,14 @@ struct CountdownCardView: View {
         return (value, unit)
     }
 
+    private var timeText: String {
+        let tf = DateFormatter()
+        tf.dateStyle = .none
+        tf.timeStyle = .short
+        tf.timeZone = TimeZone(identifier: timeZoneID)
+        return tf.string(from: targetDate)
+    }
+
     var body: some View {
         ZStack(alignment: .leading) {
             // Background color or image
@@ -97,9 +105,29 @@ struct CountdownCardView: View {
             // Content
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(dateText)
-                        .font(CardTypography.font(for: fontStyle, role: .date))
-                        .foregroundStyle(secondaryText)
+                    HStack(spacing: 4) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "calendar")
+                            Text(dateText)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().stroke(Color("Border"))
+                        )
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                            Text(timeText)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule().stroke(Color("Border"))
+                        )
+                    }
+                    .font(CardTypography.font(for: fontStyle, role: .date))
+                    .foregroundStyle(secondaryText)
 
                     Text(title)
                         .font(CardTypography.font(for: fontStyle, role: .title))
