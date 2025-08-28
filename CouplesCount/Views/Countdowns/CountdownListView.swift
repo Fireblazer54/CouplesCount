@@ -202,7 +202,6 @@ private struct CountdownListSection: View {
                             let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
                             updateWidgetSnapshot(afterSaving: all)
                         }
-                        Haptics.warning()
                     },
                     onArchiveToggle: { countdown in
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
@@ -211,7 +210,6 @@ private struct CountdownListSection: View {
                             let all = (try? modelContext.fetch(FetchDescriptor<Countdown>())) ?? []
                             updateWidgetSnapshot(afterSaving: all)
                         }
-                        if countdown.isArchived { Haptics.light() }
                     },
                     onSelect: { countdown in
                         selectedCountdown = countdown
