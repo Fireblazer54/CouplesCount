@@ -10,31 +10,21 @@ struct ContentView: View {
             Theme.backgroundGradient
                 .ignoresSafeArea()
 
-            TabView {
-                CountdownListView()
-                    .tabItem {
-                        Label("Countdowns", systemImage: "timer")
-                    }
+            CountdownListView()
+        }
+        .tint(Theme.accent)
+        .onOpenURL { url in
+            do {
+                try CountdownShareService.importCountdown(from: url, context: modelContext)
+            } catch {
+                importError = error.localizedDescription
+            }
 
-                ProfileView()
-                    .tabItem {
-                        Label("Profile", systemImage: "person.crop.circle")
-                    }
-            }
-            .tint(Theme.accent)
-            .onOpenURL { url in
-                do {
-                    try CountdownShareService.importCountdown(from: url, context: modelContext)
-                } catch {
-                    importError = error.localizedDescription
-                }
-
-            }
-            .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(importError ?? "")
-            }
+        }
+        .alert("Import Failed", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importError ?? "")
         }
     }
 }
