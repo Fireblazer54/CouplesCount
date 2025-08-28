@@ -91,7 +91,7 @@ private struct HeaderView: View {
     @Binding var showSettingsPage: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(spacing: 4) {
             HStack {
                 Button { showPaywall = true } label: {
                     Image(systemName: "crown")
@@ -103,17 +103,23 @@ private struct HeaderView: View {
                         .foregroundStyle(Color("Foreground"))
                 }
             }
-            Text("Countdowns")
-                .font(.largeTitle.bold())
-                .foregroundStyle(Color("Foreground"))
-            Text("Shared moments with loved ones")
-                .font(.subheadline)
-                .foregroundStyle(Color("Secondary"))
+            .overlay {
+                VStack(spacing: 4) {
+                    Text("Countdowns")
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(Color("Foreground"))
+                    Text("Shared moments with loved ones")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("Secondary"))
+                }
+                .multilineTextAlignment(.center)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
-        .padding(.top, 32)
+        .padding(.top, 8)
         .padding(.bottom, 16)
+        .background(Color.white)
+        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }
 }
 
