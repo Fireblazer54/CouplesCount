@@ -5,7 +5,7 @@ struct PlaceholderPageView: View {
 
     var body: some View {
         ZStack {
-            Color("Background")
+            Theme.backgroundGradient
                 .ignoresSafeArea()
         }
         .navigationTitle(title)

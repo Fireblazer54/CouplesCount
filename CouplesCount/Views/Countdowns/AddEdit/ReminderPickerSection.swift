@@ -102,11 +102,11 @@ struct ReminderPicker: View {
                 }
                 .padding()
             }
-            .background(Color("Background").ignoresSafeArea())
-            .tint(Color("Primary"))
+            .background(Theme.backgroundGradient.ignoresSafeArea())
+            .tint(Theme.accent)
             .navigationTitle("Reminders")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color("Background"), for: .navigationBar)
+            .toolbarBackground(Theme.backgroundTop, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
