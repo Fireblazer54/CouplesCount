@@ -63,32 +63,32 @@ struct CountdownListView: View {
             .fullScreenCover(item: $selectedCountdown) { countdown in
                 CountdownDetailView(countdown: countdown)
             }
-        }
-        .navigationTitle("Countdowns")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { showPaywall = true } label: {
-                    Image(systemName: "crown")
-                        .foregroundStyle(Color("Foreground"))
+            .navigationTitle("Countdowns")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button { showPaywall = true } label: {
+                        Image(systemName: "crown")
+                            .foregroundStyle(Color("Foreground"))
+                    }
                 }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button { showSettingsPage = true } label: {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(Color("Foreground"))
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button { showSettingsPage = true } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundStyle(Color("Foreground"))
+                    }
                 }
-            }
-            ToolbarItem(placement: .principal) {
-                VStack(spacing: 4) {
-                    Text("Countdowns")
-                        .font(.largeTitle.bold())
-                        .foregroundStyle(Color("Foreground"))
-                    Text("Shared moments with loved ones")
-                        .font(.subheadline)
-                        .foregroundStyle(Color("Secondary"))
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 4) {
+                        Text("Countdowns")
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(Color("Foreground"))
+                        Text("Shared moments with loved ones")
+                            .font(.subheadline)
+                            .foregroundStyle(Color("Secondary"))
+                    }
+                    .multilineTextAlignment(.center)
                 }
-                .multilineTextAlignment(.center)
             }
         }
         .tint(Theme.accent)
