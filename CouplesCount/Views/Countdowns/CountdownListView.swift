@@ -27,7 +27,6 @@ struct CountdownListView: View {
 
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
-                        .ignoresSafeArea(edges: .top)
 
 
                     if items.isEmpty {
@@ -118,6 +117,7 @@ private struct HeaderView: View {
             }
         }
         .padding(.horizontal)
+        .padding(.top, 8)
         .padding(.bottom, 8)
         .background(Color.white)
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
