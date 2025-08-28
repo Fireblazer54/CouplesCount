@@ -217,6 +217,7 @@ private struct CountdownListSection: View {
         .listStyle(.plain)
         .listRowSpacing(16)
         .scrollContentBackground(.hidden)
+        .padding(.top, 16)
         .refreshable { await refreshAction?() }
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
     }
