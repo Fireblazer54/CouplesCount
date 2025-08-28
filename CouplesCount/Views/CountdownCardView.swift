@@ -46,7 +46,7 @@ struct CountdownCardView: View {
     }
 
 
-    private let corner: CGFloat = 22
+    private let corner: CGFloat = 16
     @State private var now = Date()
 
     private var cardColor: Color {
@@ -90,9 +90,9 @@ struct CountdownCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(Color("Border"), lineWidth: 1)
+                        .stroke(Color(hex: "#E0E0E0") ?? Color(red: 224/255, green: 224/255, blue: 224/255), lineWidth: 1)
                 )
-                .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
+                .shadow(color: Color(hex: "#0000000D") ?? Color.black.opacity(0.05), radius: 4, y: 2)
 
             // Content
             HStack(alignment: .center) {
