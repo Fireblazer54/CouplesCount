@@ -14,7 +14,7 @@ struct CountdownListView: View {
     @State private var shareURL: URL? = nil
     @State private var showShareSheet = false
     @State private var showPaywall = false
-    @State private var showingBlankDetail = false
+    @State private var selectedCountdown: Countdown? = nil
     @State private var showSettingsPage = false
     @Namespace private var heroNamespace
 
@@ -38,7 +38,7 @@ struct CountdownListView: View {
                             showAddEdit: $showAddEdit,
                             shareURL: $shareURL,
                             showShareSheet: $showShareSheet,
-                            showingBlankDetail: $showingBlankDetail,
+                            selectedCountdown: $selectedCountdown,
                             refreshAction: refreshAction,
                             heroNamespace: heroNamespace
                         )
@@ -62,18 +62,11 @@ struct CountdownListView: View {
             .sheet(isPresented: $showSettingsPage) {
                 SettingsView()
             }
-            .fullScreenCover(isPresented: $showingBlankDetail) {
-                blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
+            .fullScreenCover(item: $selectedCountdown) { countdown in
+                CountdownDetailView(countdown: countdown)
             }
         }
         .tint(Theme.accent)
-    }
-
-    // MARK: - Overlays & Sheets
-
-    @ViewBuilder
-    private func blankDetailOverlay(isPresented _: Binding<Bool>, onClose _: () -> Void) -> some View {
-        BlankDetailView()
     }
 
     private func addEditSheet() -> some View {
@@ -184,7 +177,7 @@ private struct CountdownListSection: View {
     @Binding var showAddEdit: Bool
     @Binding var shareURL: URL?
     @Binding var showShareSheet: Bool
-    @Binding var showingBlankDetail: Bool
+    @Binding var selectedCountdown: Countdown?
     var refreshAction: (() async -> Void)?
     var heroNamespace: Namespace.ID
 
@@ -220,8 +213,8 @@ private struct CountdownListSection: View {
                         }
                         if countdown.isArchived { Haptics.light() }
                     },
-                    onSelect: { _ in
-                        showingBlankDetail = true
+                    onSelect: { countdown in
+                        selectedCountdown = countdown
                     }
                 )
             }
