@@ -11,7 +11,7 @@ struct CountdownRowView: View {
     let onArchiveToggle: (Countdown) -> Void
     let onSelect: (Countdown) -> Void
 
-    @State private var isPressing = false
+    @State private var isPressed = false
 
     var body: some View {
         let dateText = DateUtils.readableDate.string(from: countdown.targetDate)
@@ -33,12 +33,16 @@ struct CountdownRowView: View {
             }
         )
         .contentShape(Rectangle())
-        .onTapGesture { onSelect(countdown) }
-        .scaleEffect(isPressing ? 0.97 : 1)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressing)
+        .onTapGesture {
+            Haptics.light()
+            onSelect(countdown)
+        }
+        .scaleEffect(isPressed ? 0.97 : 1)
+        .shadow(radius: isPressed ? 0 : 4)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 50, pressing: { pressing in
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                isPressing = pressing
+                isPressed = pressing
             }
         }) {
             Haptics.light()
