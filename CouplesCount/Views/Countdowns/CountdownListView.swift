@@ -27,20 +27,23 @@ struct CountdownListView: View {
                 Theme.backgroundGradient.ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    if items.isEmpty {
-                        EmptyStateView()
-                    } else {
-                        CountdownListSection(
-                            items: items,
-                            editing: $editing,
-                            showAddEdit: $showAddEdit,
-                            shareURL: $shareURL,
-                            showShareSheet: $showShareSheet,
-                            selectedCountdown: $selectedCountdown,
-                            refreshAction: refreshAction,
-                            heroNamespace: heroNamespace
-                        )
+                    VStack(spacing: 0) {
+                        if items.isEmpty {
+                            EmptyStateView()
+                        } else {
+                            CountdownListSection(
+                                items: items,
+                                editing: $editing,
+                                showAddEdit: $showAddEdit,
+                                shareURL: $shareURL,
+                                showShareSheet: $showShareSheet,
+                                selectedCountdown: $selectedCountdown,
+                                refreshAction: refreshAction,
+                                heroNamespace: heroNamespace
+                            )
+                        }
                     }
+                    .padding(.top, 16)
 
                     if !Entitlements.current.hidesAds {
                         AdBannerPlaceholderView()
@@ -113,16 +116,18 @@ struct CountdownListView: View {
 
 private struct EmptyStateView: View {
     var body: some View {
-        Spacer(minLength: 40)
-        VStack(spacing: 8) {
-            Text("No countdowns yet")
-                .font(.headline)
-                .foregroundStyle(Color("Secondary"))
-            Text("Tap + to add your first one")
-                .font(.subheadline)
-                .foregroundStyle(Color("Secondary"))
+        VStack {
+            Spacer()
+            VStack(spacing: 8) {
+                Text("No countdowns yet")
+                    .font(.headline)
+                    .foregroundStyle(Color("Secondary"))
+                Text("Tap + to add your first one")
+                    .font(.subheadline)
+                    .foregroundStyle(Color("Secondary"))
+            }
+            Spacer()
         }
-        Spacer()
     }
 }
 
@@ -216,7 +221,6 @@ private struct CountdownListSection: View {
         .listStyle(.plain)
         .listRowSpacing(16)
         .scrollContentBackground(.hidden)
-        .padding(.top, 16)
         .refreshable { await refreshAction?() }
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
     }
