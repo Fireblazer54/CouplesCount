@@ -18,6 +18,10 @@ struct SettingsView: View {
 
                     archiveSection
 
+#if DEBUG
+                    diagnosticsSection
+#endif
+
                     footer
                 }
                 .padding(.vertical, 20)
@@ -140,6 +144,40 @@ private extension SettingsView {
             .buttonStyle(.plain)
         }
     }
+
+#if DEBUG
+    var diagnosticsSection: some View {
+        SettingsCard {
+            NavigationLink {
+                DiagnosticsView()
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "ladybug.fill")
+                        .font(.title3)
+                        .foregroundStyle(Color("Foreground"))
+                        .frame(width: 30, height: 30)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color("Foreground").opacity(0.1))
+                        )
+                        .accessibilityHidden(true)
+
+                    Text("Diagnostics")
+                        .font(.body)
+                        .foregroundStyle(Color("Foreground"))
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Color("Secondary"))
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+#endif
 
     var footer: some View {
         VStack(spacing: 4) {
