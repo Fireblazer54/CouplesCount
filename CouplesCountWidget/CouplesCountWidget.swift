@@ -79,9 +79,7 @@ struct CouplesCountWidgetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .containerBackground(
-            theme == .light ?
-                AnyShapeStyle(cardColor) :
-                AnyShapeStyle(LinearGradient(colors: [cardColor, cardColor.opacity(0.75)], startPoint: .topLeading, endPoint: .bottomTrailing)),
+            AnyShapeStyle(cardColor),
             for: .widget
         )
     }

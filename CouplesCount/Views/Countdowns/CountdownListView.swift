@@ -5,7 +5,6 @@ import UIKit
 struct CountdownListView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
-    @EnvironmentObject private var themeSettings: ThemeSettings
     @Environment(\.theme) private var theme
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
@@ -64,7 +63,6 @@ struct CountdownListView: View {
             .fullScreenCover(isPresented: $showPaywall, content: paywallSheet)
             .sheet(isPresented: $showSettingsPage) {
                 SettingsView()
-                    .environmentObject(themeSettings)
             }
             .fullScreenCover(isPresented: $showingBlankDetail) {
                 blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })

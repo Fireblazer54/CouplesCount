@@ -1,25 +1,13 @@
 import SwiftUI
-import WidgetKit
 
 @MainActor
 final class ThemeManager: ObservableObject {
-    private let key = "global_color_theme"
-    private let defaults = AppGroup.defaults
+    @Published var theme: ColorTheme = .light
 
-    @Published var theme: ColorTheme
+    init() {}
 
-    init() {
-        let raw = defaults.string(forKey: key)
-        self.theme = ColorTheme(rawOrDefault: raw)
-        if raw == "lucky" {
-            defaults.set(ColorTheme.light.rawValue, forKey: key)
-        }
-    }
-
-    // Update theme and notify widgets.
+    // Theme changes are ignored; the app stays in light mode.
     func setTheme(_ newTheme: ColorTheme) {
-        theme = newTheme
-        defaults.set(newTheme.rawValue, forKey: key)
-        WidgetCenter.shared.reloadAllTimelines()
+        theme = .light
     }
 }

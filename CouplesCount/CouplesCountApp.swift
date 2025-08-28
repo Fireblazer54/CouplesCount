@@ -5,7 +5,6 @@ import SwiftData
 struct CouplesCountApp: App {
     @StateObject private var pro: ProStatusProvider
     @StateObject private var theme: ThemeManager
-    @StateObject private var themeSettings = ThemeSettings()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @State private var showDeniedInfo = false
 
@@ -13,12 +12,9 @@ struct CouplesCountApp: App {
         let provider = ProStatusProvider()
         _pro = StateObject(wrappedValue: provider)
         let themeManager = ThemeManager()
+        themeManager.setTheme(.light)
         _theme = StateObject(wrappedValue: themeManager)
         Entitlements.setProvider(provider)
-        if AppConfig.isStrictLight {
-            themeManager.setTheme(.light)
-        }
-        ThemeDevLog.log()
     }
 
     var body: some Scene {
@@ -28,7 +24,6 @@ struct CouplesCountApp: App {
                     ContentView()
                         .environmentObject(theme)
                         .environmentObject(pro)
-                        .environmentObject(themeSettings)
                         // Use a custom container so the widget and app share data
                         .modelContainer(Persistence.container)
                 } else {
@@ -37,7 +32,6 @@ struct CouplesCountApp: App {
                     }
                     .environmentObject(theme)
                     .environmentObject(pro)
-                    .environmentObject(themeSettings)
                 }
             }
             .sheet(isPresented: $showDeniedInfo) {
@@ -53,14 +47,7 @@ struct CouplesCountApp: App {
                 .padding()
                 .presentationDetents([.medium])
             }
-            .onChange(of: pro.isProPublished, initial: false) { _, newValue in
-                if AppConfig.entitlementsMode == .live && !newValue {
-                    theme.setTheme(.light)
-                }
-            }
-            .preferredColorScheme(
-                AppConfig.isStrictLight ? .light : themeSettings.selection.colorScheme
-            )
+            .preferredColorScheme(.light)
 
             .applyTheme()
         }

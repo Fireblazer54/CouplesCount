@@ -5,7 +5,6 @@ struct AddEditCountdownView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
 
     let existing: Countdown?
 
@@ -140,7 +139,6 @@ struct AddEditCountdownView: View {
             .tint(theme.color(.Primary))
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(colorScheme, for: .navigationBar)
             .toolbarBackground(theme.color(.Background), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
