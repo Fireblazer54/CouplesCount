@@ -50,7 +50,7 @@ struct CountdownRowView: View {
         }
         .listRowSeparator(.hidden)
         .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .listRowBackground(Color.white)
+        .listRowBackground(Color.clear)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: .white)
         }
