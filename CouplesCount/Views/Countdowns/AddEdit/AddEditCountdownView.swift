@@ -61,10 +61,11 @@ struct AddEditCountdownView: View {
                         title: $title,
                         date: $date,
                         timeZoneID: $timeZoneID,
-                        cardFontStyle: $cardFontStyle
+                        showValidation: showValidation
                     )
 
-                    BackgroundPickerSection(
+                    StyleBackgroundSection(
+                        cardFontStyle: $cardFontStyle,
                         backgroundStyle: $backgroundStyle,
                         colorHex: $colorHex,
                         imageData: $imageData
@@ -76,13 +77,7 @@ struct AddEditCountdownView: View {
                         friends: friends
                     )
 
-                    ReminderPickerSection(selectedReminders: $selectedReminders)
-
-                    if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
-                        Text("Please enter a title.")
-                            .foregroundStyle(.red)
-                            .padding(.horizontal, 16)
-                    }
+                    ReminderPickerSection()
 
                     if let existing {
                         SettingsCard {
@@ -126,53 +121,34 @@ struct AddEditCountdownView: View {
                 .padding(.top, 14)
                 .padding(.horizontal, 16)
             }
-            .scrollIndicators(.hidden)
-            .overlay(alignment: .trailing) {
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(.gray.opacity(0.4))
-                    .frame(width: 6)
-                    .padding(.vertical, 8)
-                    .padding(.trailing, 2)
-            }
+            .scrollDismissesKeyboard(.interactively)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
             .background(Theme.backgroundGradient.ignoresSafeArea())
             .tint(Theme.accent)
-            .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(existing == nil ? "Add Countdown" : "Edit Event")
+            .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(Theme.backgroundTop, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .foregroundStyle(Color("Foreground"))
-                }
-                ToolbarItem(placement: .principal) {
-                    Text(existing == nil ? "Add Countdown" : "Edit Countdown")
-                        .foregroundStyle(Color("Foreground"))
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "chevron.left")
+                    }
+                    .foregroundStyle(Color("Foreground"))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack {
-                        if let existing {
-                            Button {
-                                shareURL = CountdownShareService.exportURL(for: existing)
-                                showShareSheet = shareURL != nil
-                            } label: {
-                                Image(systemName: "square.and.arrow.up")
-                                    .frame(width: 44, height: 44)
-                                    .contentShape(Rectangle())
-                                    .accessibilityLabel("Share")
-                                    .accessibilityHint("Share countdown")
-                                    .foregroundStyle(Color("Foreground"))
-                            }
-                        }
-                        Button(action: save) {
-                            Image(systemName: "checkmark")
+                    if let existing {
+                        Button {
+                            shareURL = CountdownShareService.exportURL(for: existing)
+                            showShareSheet = shareURL != nil
+                        } label: {
+                            Image(systemName: "square.and.arrow.up")
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
-                                .accessibilityLabel("Save")
-                                .accessibilityHint("Save countdown")
+                                .accessibilityLabel("Share")
+                                .accessibilityHint("Share countdown")
                                 .foregroundStyle(Color("Foreground"))
                         }
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
                 }
             }
@@ -225,6 +201,22 @@ struct AddEditCountdownView: View {
                     previewColorHex = defaultHex
                     previewImageData = imageData
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button(action: save) {
+                    Text("Save Countdown")
+                        .font(.headline)
+                        .foregroundStyle(Color.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Theme.accent)
+                        )
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .background(Color.clear)
             }
         }
         .tint(Theme.accent)
@@ -285,6 +277,7 @@ struct AddEditCountdownView: View {
             try modelContext.save()
             let all = try modelContext.fetch(FetchDescriptor<Countdown>())
             updateWidgetSnapshot(afterSaving: all)
+            Haptics.success()
             dismiss()
         } catch {
             saveError = error.localizedDescription

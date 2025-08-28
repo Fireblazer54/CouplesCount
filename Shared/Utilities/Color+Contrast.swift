@@ -25,7 +25,8 @@ extension Color {
 func resolvedCardColor(backgroundStyle: String, colorHex: String?) -> Color {
     guard backgroundStyle == "color" else { return Color("Primary") }
     let upper = colorHex?.uppercased() ?? ""
-    if upper != "" && upper != "#FFFFFF", let c = Color(hex: upper) {
+    let first = upper.split(separator: ",").first.map(String.init) ?? upper
+    if first != "" && first != "#FFFFFF", let c = Color(hex: first) {
         return c
     }
     return Color("Primary")

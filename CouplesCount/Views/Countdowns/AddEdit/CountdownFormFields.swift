@@ -4,41 +4,66 @@ struct CountdownFormFields: View {
     @Binding var title: String
     @Binding var date: Date
     @Binding var timeZoneID: String
-    @Binding var cardFontStyle: CardFontStyle
+    var showValidation: Bool
 
     var body: some View {
         SettingsCard {
-            TextField("", text: $title, prompt: Text("Title (e.g., Anniversary)").foregroundStyle(Color("Secondary")))
-                .foregroundStyle(Color("Foreground"))
-                .textInputAutocapitalization(.words)
-                .onSubmit { Haptics.light() }
-
-            Picker("Font", selection: $cardFontStyle) {
-                ForEach(CardFontStyle.allCases) { f in
-                    Text(f.displayName).tag(f)
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    Image(systemName: "textformat")
+                        .foregroundStyle(Color("Secondary"))
+                        .frame(width: 24)
+                    TextField("Title", text: $title)
+                        .foregroundStyle(Color("Foreground"))
+                        .textInputAutocapitalization(.words)
+                        .onSubmit { Haptics.light() }
                 }
-            }
-            .pickerStyle(.segmented)
-            .onChange(of: cardFontStyle, initial: false) { _, _ in Haptics.light() }
+                .frame(minHeight: 44)
 
-            HStack {
-                DatePicker("Date", selection: $date, displayedComponents: .date)
-                    .foregroundStyle(Color("Foreground"))
-                DatePicker("", selection: $date, displayedComponents: .hourAndMinute)
-                    .labelsHidden()
-                    .foregroundStyle(Color("Foreground"))
-            }
+                if showValidation && title.trimmingCharacters(in: .whitespaces).isEmpty {
+                    Text("Please enter a title")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 4)
+                }
 
-            NavigationLink {
-                TimeZonePickerView(selectedID: $timeZoneID)
-            } label: {
-                HStack {
-                    Text("Time Zone")
+                Divider().padding(.vertical, 8)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "calendar")
+                        .foregroundStyle(Color("Secondary"))
+                        .frame(width: 24)
+                    DatePicker("", selection: $date, displayedComponents: .date)
+                        .labelsHidden()
                         .foregroundStyle(Color("Foreground"))
                     Spacer()
-                    Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
-                        .foregroundStyle(Color("Secondary"))
+                    DatePicker("", selection: $date, displayedComponents: .hourAndMinute)
+                        .labelsHidden()
+                        .foregroundStyle(Color("Foreground"))
                 }
+                .frame(minHeight: 44)
+
+                Divider().padding(.vertical, 8)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "globe")
+                        .foregroundStyle(Color("Secondary"))
+                        .frame(width: 24)
+                    NavigationLink {
+                        TimeZonePickerView(selectedID: $timeZoneID)
+                    } label: {
+                        HStack {
+                            Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
+                                .foregroundStyle(Color("Secondary"))
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.footnote)
+                                .foregroundStyle(Color("Secondary"))
+                        }
+                    }
+                }
+                .frame(minHeight: 44)
             }
         }
     }

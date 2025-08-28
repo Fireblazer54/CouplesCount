@@ -64,6 +64,13 @@ struct WidgetPreview: View {
 
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color" {
+            if let hex = bgColorHex, hex.contains(",") {
+                let parts = hex.split(separator: ",")
+                if let c1 = Color(hex: String(parts[0])),
+                   let c2 = Color(hex: String(parts.count > 1 ? parts[1] : parts[0])) {
+                    return AnyShapeStyle(LinearGradient(colors: [c1, c2], startPoint: .topLeading, endPoint: .bottomTrailing))
+                }
+            }
             let c = cardColor
             return AnyShapeStyle(c)
         }
