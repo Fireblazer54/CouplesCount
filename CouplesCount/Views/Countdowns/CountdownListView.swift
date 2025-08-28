@@ -23,7 +23,7 @@ struct CountdownListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color("Background").ignoresSafeArea()
+                Theme.backgroundGradient.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
@@ -66,7 +66,7 @@ struct CountdownListView: View {
                 blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
             }
         }
-        .tint(Color("Primary"))
+        .tint(Theme.accent)
     }
 
     // MARK: - Overlays & Sheets
@@ -159,8 +159,8 @@ private struct AddButton: View {
                 Image(systemName: "plus")
                     .font(.title)
                     .padding(20)
-                    .background(Circle().fill(Color("Primary")))
-                    .foregroundStyle(Color("Background"))
+                    .background(Circle().fill(Theme.accent))
+                    .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())

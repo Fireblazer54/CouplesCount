@@ -11,7 +11,7 @@ struct ArchiveView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color("Background").ignoresSafeArea()
+                Theme.backgroundGradient.ignoresSafeArea()
 
                 if items.isEmpty {
                     VStack(spacing: 8) {
@@ -51,7 +51,7 @@ struct ArchiveView: View {
                                         Haptics.warning()
                                     },
                                     background: Color("Destructive"),
-                                    foreground: Color("Background")
+                                    foreground: .white
                                 )
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
@@ -67,8 +67,8 @@ struct ArchiveView: View {
                                     label: "Unarchive",
                                     systemImage: "arrow.uturn.backward",
                                     hint: "Restore countdown",
-                                    background: Color("Primary"),
-                                    foreground: Color("Background")
+                                    background: Theme.accent,
+                                    foreground: .white
                                 )
                             }
                         }
@@ -86,7 +86,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .tint(Color("Foreground"))
+        .tint(Theme.accent)
     }
 }
 

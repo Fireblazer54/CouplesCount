@@ -22,8 +22,8 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 20)
             }
-            .background(Color("Background").ignoresSafeArea())
-            .tint(Color("Primary"))
+            .background(Theme.backgroundGradient.ignoresSafeArea())
+            .tint(Theme.accent)
             .scrollIndicators(.hidden)
             .navigationTitle("Settings")
             .toolbar {

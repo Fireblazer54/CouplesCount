@@ -5,9 +5,9 @@
       "color": {
         "color-space": "srgb",
         "components": {
-          "red": "0.914",
-          "green": "0.922",
-          "blue": "0.937",
+          "red": "1.000",
+          "green": "0.650",
+          "blue": "0.000",
           "alpha": "1.000"
         }
       }
@@ -16,6 +16,6 @@
   "info": {
     "version": 1,
     "author": "xcode",
-    "light": "light:#e9ebef"
+    "light": "light:#ffa500"
   }
 }

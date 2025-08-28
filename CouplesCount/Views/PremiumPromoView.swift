@@ -6,7 +6,7 @@ struct PremiumPromoView: View {
 
     var body: some View {
         ZStack {
-            Color("Background").ignoresSafeArea()
+            Theme.backgroundGradient.ignoresSafeArea()
 
             VStack {
                 Spacer()
@@ -24,7 +24,7 @@ struct PremiumPromoView: View {
                 Spacer()
             }
         }
-        .tint(Color("Foreground"))
+        .tint(Theme.accent)
         .safeAreaInset(edge: .top, alignment: .leading) {
             Button {
                 withAnimation(.spring()) { show = false }

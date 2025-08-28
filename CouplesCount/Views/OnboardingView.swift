@@ -12,8 +12,8 @@ struct OnboardingView: View {
             finalSlide
         }
         .tabViewStyle(.page)
-        .background(Color("Background").ignoresSafeArea())
-        .tint(Color("Primary"))
+        .background(Theme.backgroundGradient.ignoresSafeArea())
+        .tint(Theme.accent)
     }
 
     @ViewBuilder
@@ -55,10 +55,10 @@ struct OnboardingView: View {
             Button(action: finishOnboarding) {
                 Text("Done")
                     .font(.headline)
-                    .foregroundStyle(Color("Background"))
+                    .foregroundStyle(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color("Primary")))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.accent))
             }
             .padding(.top, 32)
             .padding(.horizontal)
