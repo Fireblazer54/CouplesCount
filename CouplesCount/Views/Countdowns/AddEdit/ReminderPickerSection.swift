@@ -74,7 +74,6 @@ struct ReminderPickerSection: View {
 struct ReminderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
     @Binding var selections: Set<ReminderOption>
     @State private var temp: Set<ReminderOption>
 
@@ -109,7 +108,6 @@ struct ReminderPicker: View {
             .tint(theme.color(.Primary))
             .navigationTitle("Reminders")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(colorScheme, for: .navigationBar)
             .toolbarBackground(theme.color(.Background), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {

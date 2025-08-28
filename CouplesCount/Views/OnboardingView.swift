@@ -78,12 +78,7 @@ struct OnboardingView: View {
     }
 }
 
-#Preview("Light") {
+#Preview {
     OnboardingView(onDenied: {})
         .environment(\.theme, Theme(colorScheme: .light))
-}
-
-#Preview("Dark") {
-    OnboardingView(onDenied: {})
-        .environment(\.theme, Theme(colorScheme: .dark))
 }
