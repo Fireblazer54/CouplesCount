@@ -4,8 +4,6 @@ import SwiftData
 struct AddEditCountdownView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
 
     let existing: Countdown?
 
@@ -103,7 +101,7 @@ struct AddEditCountdownView: View {
                             } label: {
                                 Label(existing.isArchived ? "Unarchive Countdown" : "Archive Countdown",
                                       systemImage: existing.isArchived ? "tray.and.arrow.up" : "archivebox")
-                                    .foregroundStyle(theme.color(.Foreground))
+                    .foregroundStyle(Color("Foreground"))
                             }
                         }
 
@@ -120,7 +118,7 @@ struct AddEditCountdownView: View {
                                 dismiss()
                             } label: {
                                 Label("Delete Countdown", systemImage: "trash")
-                                    .foregroundStyle(theme.color(.Foreground))
+                                    .foregroundStyle(Color("Foreground"))
                             }
                         }
                     }
@@ -136,21 +134,20 @@ struct AddEditCountdownView: View {
                     .padding(.vertical, 8)
                     .padding(.trailing, 2)
             }
-            .background(theme.color(.Background).ignoresSafeArea())
-            .tint(theme.color(.Primary))
+            .background(Color("Background").ignoresSafeArea())
+            .tint(Color("Primary"))
             .navigationTitle(existing == nil ? "Add Countdown" : "Edit Countdown")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(colorScheme, for: .navigationBar)
-            .toolbarBackground(theme.color(.Background), for: .navigationBar)
+            .toolbarBackground(Color("Background"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                 }
                 ToolbarItem(placement: .principal) {
                     Text(existing == nil ? "Add Countdown" : "Edit Countdown")
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
@@ -164,7 +161,7 @@ struct AddEditCountdownView: View {
                                     .contentShape(Rectangle())
                                     .accessibilityLabel("Share")
                                     .accessibilityHint("Share countdown")
-                                    .foregroundStyle(theme.color(.Foreground))
+                                    .foregroundStyle(Color("Foreground"))
                             }
                         }
                         Button(action: save) {
@@ -173,7 +170,7 @@ struct AddEditCountdownView: View {
                                 .contentShape(Rectangle())
                                 .accessibilityLabel("Save")
                                 .accessibilityHint("Save countdown")
-                                .foregroundStyle(theme.color(.Foreground))
+                                .foregroundStyle(Color("Foreground"))
                         }
                         .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
@@ -199,7 +196,7 @@ struct AddEditCountdownView: View {
                 if new != nil { Haptics.light() }
             }
             .onAppear {
-                let defaultHex = theme.color(.Primary).hexString
+                let defaultHex = Color("Primary").hexString
                 if let existing {
                     title = existing.title
                     date = existing.targetDate
@@ -230,7 +227,7 @@ struct AddEditCountdownView: View {
                 }
             }
         }
-        .tint(theme.color(.Primary))
+        .tint(Color("Primary"))
         .alert("Couldn’t Save",
                isPresented: Binding(get: { saveError != nil },
                                    set: { if !$0 { saveError = nil } })) {
@@ -247,7 +244,7 @@ struct AddEditCountdownView: View {
         guard !trimmed.isEmpty else { showValidation = true; return }
 
         do {
-            let defaultHex = theme.color(.Primary).hexString.uppercased()
+            let defaultHex = Color("Primary").hexString.uppercased()
             let chosenHex = colorHex.uppercased()
             let storedHex: String? = (chosenHex == defaultHex) ? nil : chosenHex
 

@@ -2,18 +2,17 @@ import SwiftUI
 import UIKit
 
 struct PremiumPromoView: View {
-    @EnvironmentObject private var theme: ThemeManager
     @Binding var show: Bool
 
     var body: some View {
         ZStack {
-            theme.theme.background.ignoresSafeArea()
+            Color("Background").ignoresSafeArea()
 
             VStack {
                 Spacer()
                 Image(systemName: "crown.fill")
                     .font(.system(size: UIFontMetrics(forTextStyle: .largeTitle).scaledValue(for: 80)))
-                    .foregroundStyle(theme.theme.primary)
+                    .foregroundStyle(Color("Primary"))
                     .accessibilityHidden(true)
                 Text("CouplesCount Premium")
                     .font(.largeTitle.bold())
@@ -25,7 +24,7 @@ struct PremiumPromoView: View {
                 Spacer()
             }
         }
-        .tint(theme.theme.textPrimary)
+        .tint(Color("Foreground"))
         .safeAreaInset(edge: .top, alignment: .leading) {
             Button {
                 withAnimation(.spring()) { show = false }

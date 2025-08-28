@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct CountdownFormFields: View {
-    @Environment(\.theme) private var theme
     @Binding var title: String
     @Binding var date: Date
     @Binding var timeZoneID: String
@@ -9,8 +8,8 @@ struct CountdownFormFields: View {
 
     var body: some View {
         SettingsCard {
-            TextField("", text: $title, prompt: Text("Title (e.g., Anniversary)").foregroundStyle(theme.color(.MutedForeground)))
-                .foregroundStyle(theme.color(.Foreground))
+            TextField("", text: $title, prompt: Text("Title (e.g., Anniversary)").foregroundStyle(Color("Secondary")))
+                .foregroundStyle(Color("Foreground"))
                 .textInputAutocapitalization(.words)
                 .onSubmit { Haptics.light() }
 
@@ -24,10 +23,10 @@ struct CountdownFormFields: View {
 
             HStack {
                 DatePicker("Date", selection: $date, displayedComponents: .date)
-                    .foregroundStyle(theme.color(.Foreground))
+                    .foregroundStyle(Color("Foreground"))
                 DatePicker("", selection: $date, displayedComponents: .hourAndMinute)
                     .labelsHidden()
-                    .foregroundStyle(theme.color(.Foreground))
+                    .foregroundStyle(Color("Foreground"))
             }
 
             NavigationLink {
@@ -35,10 +34,10 @@ struct CountdownFormFields: View {
             } label: {
                 HStack {
                     Text("Time Zone")
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                     Spacer()
                     Text(TimeZone(identifier: timeZoneID)?.identifier ?? "System")
-                        .foregroundStyle(theme.color(.MutedForeground))
+                        .foregroundStyle(Color("Secondary"))
                 }
             }
         }

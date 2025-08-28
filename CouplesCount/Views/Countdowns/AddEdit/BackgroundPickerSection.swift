@@ -4,7 +4,6 @@ import AVFoundation
 import UIKit
 
 struct BackgroundPickerSection: View {
-    @Environment(\.theme) private var theme
     @Binding var backgroundStyle: String
     @Binding var colorHex: String
     @Binding var imageData: Data?
@@ -16,7 +15,7 @@ struct BackgroundPickerSection: View {
         SettingsCard {
             Text("Background")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(theme.color(.MutedForeground))
+                .foregroundStyle(Color("Secondary"))
 
             Picker("Style", selection: $backgroundStyle) {
                 Text("Color").tag("color")
@@ -31,7 +30,7 @@ struct BackgroundPickerSection: View {
                             .fill(Color(hex: hex) ?? .blue)
                             .frame(width: 32, height: 32)
                             .overlay(
-                                Circle().stroke(theme.color(.Foreground).opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
+                                Circle().stroke(Color("Foreground").opacity(colorHex == hex ? 0.9 : 0), lineWidth: 2)
                             )
                             .onTapGesture { colorHex = hex }
                     }
@@ -52,7 +51,7 @@ struct BackgroundPickerSection: View {
                         .accessibilityHidden(true)
                 } else {
                     Text("No image selected")
-                        .foregroundStyle(theme.color(.MutedForeground))
+                        .foregroundStyle(Color("Secondary"))
                 }
 
                 HStack(spacing: 12) {
@@ -78,13 +77,13 @@ struct BackgroundPickerSection: View {
 
     @ViewBuilder
     private func labelButton(_ title: String, system: String) -> some View {
-        Label(title, systemImage: system)
-            .foregroundStyle(theme.color(.Foreground))
+            Label(title, systemImage: system)
+            .foregroundStyle(Color("Foreground"))
             .padding(.vertical, 8)
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(theme.color(.Foreground).opacity(0.1))
+                    .fill(Color("Foreground").opacity(0.1))
             )
     }
 }

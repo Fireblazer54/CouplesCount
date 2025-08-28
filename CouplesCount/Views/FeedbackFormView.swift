@@ -2,7 +2,6 @@ import SwiftUI
 
 struct FeedbackFormView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var theme: ThemeManager
 
     @State private var rating: Int = 3
     @State private var message: String = ""
@@ -13,12 +12,13 @@ struct FeedbackFormView: View {
                 Text("I'm a solo dev and every review means a lot. I read every suggestion, so please let me know how I can improve.")
                     .font(.headline)
                     .multilineTextAlignment(.center)
+                    .foregroundStyle(Color("Foreground"))
 
                 TextEditor(text: $message)
                     .frame(height: 120)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(.secondary.opacity(0.2))
+                            .stroke(Color("Border"))
                     )
 
                 HStack {
@@ -39,7 +39,7 @@ struct FeedbackFormView: View {
                 .frame(maxWidth: .infinity)
                 .controlSize(.large)
                 .buttonStyle(.borderedProminent)
-                .tint(theme.theme.primary)
+                .tint(Color("Primary"))
             }
             .padding()
             .navigationTitle("Feedback")
@@ -50,7 +50,7 @@ struct FeedbackFormView: View {
                 }
             }
         }
-        .tint(theme.theme.textPrimary)
+        .tint(Color("Foreground"))
     }
 }
 

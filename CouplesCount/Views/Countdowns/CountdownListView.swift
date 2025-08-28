@@ -3,10 +3,7 @@ import SwiftData
 import UIKit
 
 struct CountdownListView: View {
-    @EnvironmentObject private var themeManager: ThemeManager
     @EnvironmentObject private var pro: ProStatusProvider
-    @EnvironmentObject private var themeSettings: ThemeSettings
-    @Environment(\.theme) private var theme
 
     @Query(filter: #Predicate<Countdown> { !$0.isArchived },
            sort: \.targetUTC, order: .forward)
@@ -26,7 +23,7 @@ struct CountdownListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                theme.color(.Background).ignoresSafeArea()
+                Color("Background").ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     HeaderView(showPaywall: $showPaywall, showSettingsPage: $showSettingsPage)
@@ -64,13 +61,12 @@ struct CountdownListView: View {
             .fullScreenCover(isPresented: $showPaywall, content: paywallSheet)
             .sheet(isPresented: $showSettingsPage) {
                 SettingsView()
-                    .environmentObject(themeSettings)
             }
             .fullScreenCover(isPresented: $showingBlankDetail) {
                 blankDetailOverlay(isPresented: $showingBlankDetail, onClose: { showingBlankDetail = false })
             }
         }
-        .tint(theme.color(.Primary))
+        .tint(Color("Primary"))
     }
 
     // MARK: - Overlays & Sheets
@@ -78,7 +74,6 @@ struct CountdownListView: View {
     @ViewBuilder
     private func blankDetailOverlay(isPresented _: Binding<Bool>, onClose _: () -> Void) -> some View {
         BlankDetailView()
-            .environmentObject(themeManager)
     }
 
     private func addEditSheet() -> some View {
@@ -95,12 +90,10 @@ struct CountdownListView: View {
 
     private func paywallSheet() -> some View {
         PaywallView()
-            .environmentObject(themeManager)
     }
 }
 
 private struct HeaderView: View {
-    @Environment(\.theme) private var theme
     @Binding var showPaywall: Bool
     @Binding var showSettingsPage: Bool
 
@@ -109,20 +102,20 @@ private struct HeaderView: View {
             HStack {
                 Button { showPaywall = true } label: {
                     Image(systemName: "crown")
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                 }
                 Spacer()
                 Button { showSettingsPage = true } label: {
                     Image(systemName: "gearshape")
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                 }
             }
             Text("Countdowns")
                 .font(.largeTitle.bold())
-                .foregroundStyle(theme.color(.Foreground))
+                .foregroundStyle(Color("Foreground"))
             Text("Shared moments with loved ones")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color("Secondary"))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
@@ -137,17 +130,16 @@ private struct EmptyStateView: View {
         VStack(spacing: 8) {
             Text("No countdowns yet")
                 .font(.headline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color("Secondary"))
             Text("Tap + to add your first one")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color("Secondary"))
         }
         Spacer()
     }
 }
 
 private struct AddButton: View {
-    @Environment(\.theme) private var theme
     let itemCount: Int
     @Binding var showAddEdit: Bool
     @Binding var showPaywall: Bool
@@ -167,8 +159,8 @@ private struct AddButton: View {
                 Image(systemName: "plus")
                     .font(.title)
                     .padding(20)
-                    .background(Circle().fill(theme.color(.Primary)))
-                    .foregroundStyle(theme.color(.PrimaryForeground))
+                    .background(Circle().fill(Color("Primary")))
+                    .foregroundStyle(Color("Background"))
                     .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
@@ -185,7 +177,6 @@ private struct AddButton: View {
 }
 
 private struct CountdownListSection: View {
-    @EnvironmentObject private var theme: ThemeManager
     @Environment(\.modelContext) private var modelContext
 
     var items: [Countdown]

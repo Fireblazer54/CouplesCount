@@ -81,8 +81,6 @@
 				Models/CardFontStyle.swift,
 				Models/Countdown.swift,
 				Models/Friend.swift,
-				Theme/ColorTheme.swift,
-				Theme/ThemeManager.swift,
 				Utilities/AppGroup.swift,
 				Utilities/CardTypography.swift,
 				Utilities/DateUtils.swift,

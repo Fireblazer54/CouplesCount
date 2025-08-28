@@ -28,7 +28,6 @@ enum ReminderOption: Int, CaseIterable, Identifiable {
 }
 
 struct ReminderPickerSection: View {
-    @Environment(\.theme) private var theme
     @Binding var selectedReminders: Set<ReminderOption>
     @State private var showReminderSheet = false
 
@@ -37,13 +36,13 @@ struct ReminderPickerSection: View {
             HStack {
                 Text("Reminders")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(theme.color(.MutedForeground))
+                    .foregroundStyle(Color("Secondary"))
                 Spacer()
                 Button("+ Add Reminder") {
                     NotificationManager.requestAuthorizationIfNeeded()
                     showReminderSheet = true
                 }
-                .foregroundStyle(theme.color(.Foreground))
+                .foregroundStyle(Color("Foreground"))
             }
 
             if !selectedReminders.isEmpty {
@@ -51,14 +50,14 @@ struct ReminderPickerSection: View {
                     ForEach(Array(selectedReminders).sorted { $0.rawValue < $1.rawValue }, id: \.self) { opt in
                         HStack(spacing: 4) {
                             Text(opt.label)
-                                .foregroundStyle(theme.color(.Foreground))
+                                .foregroundStyle(Color("Foreground"))
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(theme.color(.MutedForeground))
+                                .foregroundStyle(Color("Secondary"))
                                 .onTapGesture { selectedReminders.remove(opt) }
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(theme.color(.Foreground).opacity(0.1))
+                        .background(Color("Foreground").opacity(0.1))
                         .clipShape(Capsule())
                     }
                 }
@@ -73,8 +72,6 @@ struct ReminderPickerSection: View {
 
 struct ReminderPicker: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
     @Binding var selections: Set<ReminderOption>
     @State private var temp: Set<ReminderOption>
 
@@ -90,13 +87,13 @@ struct ReminderPicker: View {
                     ForEach(ReminderOption.allCases) { option in
                         let isSel = temp.contains(option)
                         Text(option.label)
-                            .foregroundStyle(theme.color(.Foreground))
+                            .foregroundStyle(Color("Foreground"))
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(isSel ? theme.color(.Foreground).opacity(0.2) : theme.color(.Foreground).opacity(0.1))
+                            .background(isSel ? Color("Foreground").opacity(0.2) : Color("Foreground").opacity(0.1))
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(isSel ? theme.color(.Foreground) : .clear, lineWidth: 2)
+                                    .stroke(isSel ? Color("Foreground") : .clear, lineWidth: 2)
                             )
                             .onTapGesture {
                                 if isSel { temp.remove(option) } else { temp.insert(option) }
@@ -105,24 +102,23 @@ struct ReminderPicker: View {
                 }
                 .padding()
             }
-            .background(theme.color(.Background).ignoresSafeArea())
-            .tint(theme.color(.Primary))
+            .background(Color("Background").ignoresSafeArea())
+            .tint(Color("Primary"))
             .navigationTitle("Reminders")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(colorScheme, for: .navigationBar)
-            .toolbarBackground(theme.color(.Background), for: .navigationBar)
+            .toolbarBackground(Color("Background"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Reminders")
-                        .foregroundStyle(theme.color(.Foreground))
+                        .foregroundStyle(Color("Foreground"))
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
                         selections = temp
                         dismiss()
                     }
-                    .foregroundStyle(theme.color(.Foreground))
+                    .foregroundStyle(Color("Foreground"))
                 }
             }
         }

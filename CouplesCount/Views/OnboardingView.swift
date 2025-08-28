@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @Environment(\.theme) private var theme
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     /// Called when notification access is denied so the host can present guidance.
     let onDenied: () -> Void
@@ -13,8 +12,8 @@ struct OnboardingView: View {
             finalSlide
         }
         .tabViewStyle(.page)
-        .background(theme.color(.Background).ignoresSafeArea())
-        .tint(theme.color(.Primary))
+        .background(Color("Background").ignoresSafeArea())
+        .tint(Color("Primary"))
     }
 
     @ViewBuilder
@@ -25,12 +24,12 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.color(.Foreground))
+                .foregroundStyle(Color("Foreground"))
                 .accessibilityHidden(true)
             Text(text)
                 .font(.title2)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(theme.color(.Foreground))
+                .foregroundStyle(Color("Foreground"))
                 .padding(.top, 24)
                 .padding(.horizontal)
             Spacer()
@@ -45,21 +44,21 @@ struct OnboardingView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .foregroundStyle(theme.color(.Primary))
+                .foregroundStyle(Color("Primary"))
                 .accessibilityHidden(true)
             Text("Share with your partner.")
                 .font(.title2)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(theme.color(.Foreground))
+                .foregroundStyle(Color("Foreground"))
                 .padding(.top, 24)
                 .padding(.horizontal)
             Button(action: finishOnboarding) {
                 Text("Done")
                     .font(.headline)
-                    .foregroundStyle(theme.color(.PrimaryForeground))
+                    .foregroundStyle(Color("Background"))
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(theme.color(.Primary)))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Color("Primary")))
             }
             .padding(.top, 32)
             .padding(.horizontal)
@@ -78,12 +77,6 @@ struct OnboardingView: View {
     }
 }
 
-#Preview("Light") {
+#Preview {
     OnboardingView(onDenied: {})
-        .environment(\.theme, Theme(colorScheme: .light))
-}
-
-#Preview("Dark") {
-    OnboardingView(onDenied: {})
-        .environment(\.theme, Theme(colorScheme: .dark))
 }

@@ -2,13 +2,12 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.theme) private var theme
     @Environment(\.modelContext) private var modelContext
     @State private var importError: String?
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [theme.color(.Background), theme.color(.Primary)], startPoint: .top, endPoint: .bottom)
+            LinearGradient(colors: [Color("Background"), Color("Primary")], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
             TabView {
@@ -22,7 +21,7 @@ struct ContentView: View {
                         Label("Profile", systemImage: "person.crop.circle")
                     }
             }
-            .tint(theme.color(.Primary))
+            .tint(Color("Primary"))
             .onOpenURL { url in
                 do {
                     try CountdownShareService.importCountdown(from: url, context: modelContext)

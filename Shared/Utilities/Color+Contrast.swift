@@ -17,19 +17,16 @@ extension Color {
     var readableSecondary: Color { isLight ? Color.black.opacity(0.7) : Color.white.opacity(0.9) }
 }
 
-/// Resolves a countdown card color given an optional override and theme.
+/// Resolves a countdown card color given an optional override.
 /// - Parameters:
-///   - theme: Active `ColorTheme` providing the default color.
 ///   - backgroundStyle: `"color"` or `"image"`.
 ///   - colorHex: Optional hex override saved with the countdown.
-/// - Returns: Chosen color following precedence: override > theme default > fallback.
-func resolvedCardColor(theme: ColorTheme, backgroundStyle: String, colorHex: String?) -> Color {
-    guard backgroundStyle == "color" else { return theme.primary }
+/// - Returns: Chosen color following precedence: override > default > fallback.
+func resolvedCardColor(backgroundStyle: String, colorHex: String?) -> Color {
+    guard backgroundStyle == "color" else { return Color("Primary") }
     let upper = colorHex?.uppercased() ?? ""
-    let defaults = Set(ColorTheme.allCases.map { $0.primary.hexString.uppercased() })
-    if upper != "" && upper != "#FFFFFF" && !defaults.contains(upper),
-       let c = Color(hex: upper) {
+    if upper != "" && upper != "#FFFFFF", let c = Color(hex: upper) {
         return c
     }
-    return theme.primary
+    return Color("Primary")
 }

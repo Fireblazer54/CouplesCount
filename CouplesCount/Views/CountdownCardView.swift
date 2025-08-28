@@ -2,7 +2,6 @@ import SwiftUI
 import UIKit
 
 struct CountdownCardView: View {
-    @EnvironmentObject private var theme: ThemeManager
 
     let title: String
     let targetDate: Date
@@ -51,7 +50,7 @@ struct CountdownCardView: View {
     @State private var now = Date()
 
     private var cardColor: Color {
-        resolvedCardColor(theme: theme.theme, backgroundStyle: backgroundStyle, colorHex: colorHex)
+        resolvedCardColor(backgroundStyle: backgroundStyle, colorHex: colorHex)
     }
 
     private var primaryText: Color { cardColor.readablePrimary }
@@ -91,7 +90,7 @@ struct CountdownCardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .stroke(Color.black, lineWidth: 1)
+                        .stroke(Color("Border"), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.15), radius: 10, y: 6)
 
@@ -164,15 +163,8 @@ struct CountdownCardView: View {
     private var backgroundFill: some ShapeStyle {
         if backgroundStyle == "color" {
             let c = cardColor
-            if theme.theme == .light {
-                return AnyShapeStyle(c)
-            }
-            return AnyShapeStyle(
-                LinearGradient(colors: [c, c.opacity(0.75)],
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
-            )
+            return AnyShapeStyle(c)
         }
-        return AnyShapeStyle(theme.theme.primary)
+        return AnyShapeStyle(Color("Primary"))
     }
 }

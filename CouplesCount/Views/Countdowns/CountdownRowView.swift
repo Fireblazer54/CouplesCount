@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct CountdownRowView: View {
-    @EnvironmentObject private var theme: ThemeManager
 
     let countdown: Countdown
     let heroNamespace: Namespace.ID
@@ -33,7 +32,6 @@ struct CountdownRowView: View {
                 if let exportURL { onShare(exportURL) }
             }
         )
-        .environmentObject(theme)
         .contentShape(Rectangle())
         .onTapGesture { onSelect(countdown) }
         .scaleEffect(isPressing ? 0.97 : 1)
@@ -48,16 +46,18 @@ struct CountdownRowView: View {
         }
         .listRowSeparator(.hidden)
         .listRowInsets(.init(top: 4, leading: 16, bottom: 4, trailing: 16))
-        .listRowBackground(theme.theme.background)
+        .listRowBackground(Color("Background"))
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            DeleteSwipeButton { onDelete(countdown) }
+            DeleteSwipeButton({ onDelete(countdown) }, background: Color("Destructive"), foreground: Color("Background"))
         }
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
             ArchiveSwipeButton(
                 { onArchiveToggle(countdown) },
                 label: countdown.isArchived ? "Unarchive" : "Archive",
                 systemImage: countdown.isArchived ? "arrow.uturn.backward" : "archivebox",
-                hint: countdown.isArchived ? "Restore countdown" : "Archive countdown"
+                hint: countdown.isArchived ? "Restore countdown" : "Archive countdown",
+                background: Color("Primary"),
+                foreground: Color("Background")
             )
         }
     }
