@@ -117,7 +117,7 @@ private struct HeaderView: View {
         }
         .padding(.horizontal)
         .padding(.top, 8)
-        .padding(.bottom, 16)
+        .padding(.bottom, 8)
         .background(Color.white)
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }
@@ -227,9 +227,6 @@ private struct CountdownListSection: View {
         }
         .listStyle(.plain)
         .listRowSpacing(16)
-        .safeAreaInset(edge: .top) {
-            Color.clear.frame(height: 8)
-        }
         .scrollContentBackground(.hidden)
         .refreshable { await refreshAction?() }
         .animation(.spring(response: 0.4, dampingFraction: 0.85), value: items)
