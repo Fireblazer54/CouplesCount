@@ -69,12 +69,17 @@ struct CountdownCardView: View {
         return (value, unit)
     }
 
+    private static let timeFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateStyle = .none
+        df.timeStyle = .short
+        return df
+    }()
+
     private var timeText: String {
-        let tf = DateFormatter()
-        tf.dateStyle = .none
-        tf.timeStyle = .short
-        tf.timeZone = TimeZone(identifier: timeZoneID)
-        return tf.string(from: targetDate)
+        let formatter = Self.timeFormatter
+        formatter.timeZone = TimeZone(identifier: timeZoneID)
+        return formatter.string(from: targetDate)
     }
 
     var body: some View {
